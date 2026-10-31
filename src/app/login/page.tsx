@@ -26,7 +26,7 @@ const Page = () => {
                 placeholder="Введите пароль"
                 className="border-2 border-black"
               />
-              <Button/>
+              <Button>Войти</Button>
             </div>
           </div>
         </div>
