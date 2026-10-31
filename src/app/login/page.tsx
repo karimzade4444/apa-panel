@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 
 
 const Page = () => {
@@ -25,6 +26,7 @@ const Page = () => {
                 placeholder="Введите пароль"
                 className="border-2 border-black"
               />
+              <Button/>
             </div>
           </div>
         </div>
