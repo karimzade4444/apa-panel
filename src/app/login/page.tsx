@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import FormInput from "@/components/ui/forminput";
 import { useState } from "react";
 import { login } from "@/api/requests/auth";
+import { saveToken } from "@/lib/cookies";
 
 type LoginFormValues = {
   login: string;
@@ -21,9 +22,11 @@ const LogIn = () => {
     onError: () => {
       setError("Неверный логин или пароль");
     },
-    onSuccess: () => {
-      setError(""); // Сбрасываем ошибку при успешном входе, если нужно
-      // Здесь можно добавить редирект, например, через router.push('/dashboard')
+    onSuccess: (res) => {
+      const token = res?.data?.accessToken ?? null;
+      if (token) {
+        saveToken(token);
+      }
     },
   });
 
