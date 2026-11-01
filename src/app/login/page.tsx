@@ -7,6 +7,8 @@ import FormInput from "@/components/ui/forminput";
 import { useState } from "react";
 import { login } from "@/api/requests/auth";
 import { saveToken } from "@/lib/cookies";
+import { useRouter } from "next/navigation";
+
 
 type LoginFormValues = {
   login: string;
@@ -16,16 +18,19 @@ type LoginFormValues = {
 const LogIn = () => {
   const [error, setError] = useState("");
   const { control, handleSubmit } = useForm<LoginFormValues>();
+  const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onError: () => {
       setError("Неверный логин или пароль");
+      
     },
     onSuccess: (res) => {
       const token = res?.data?.accessToken ?? null;
       if (token) {
         saveToken(token);
+        router.push("/");
       }
     },
   });
