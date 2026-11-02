@@ -189,11 +189,11 @@ export default function LoginPage() {
             transition={{ delay: 1, duration: 0.8 }}
             className="mt-16 flex divide-x divide-white/20 rounded-2xl border border-white/20 bg-white/[0.07] px-2 py-4 text-left text-sm text-white backdrop-blur-xl"
           >
-            {[
+            {([
               [GraduationCap, "Образование и наука"],
               [BookOpen, "Профессиональное развитие"],
               [Landmark, "Служение государству"],
-            ].map(([Icon, label]: any) => (
+            ] as const).map(([Icon, label]) => (
               <li key={label} className="flex items-center gap-3 px-5">
                 <Icon className="h-6 w-6 shrink-0" style={{ color: GOLD }} />
                 <span className="max-w-[9rem] leading-snug">{label}</span>

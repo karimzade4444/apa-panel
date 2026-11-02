@@ -27,7 +27,7 @@ export default function LoginHeader() {
           alt="Эмблема Академии"
           width={56}
           height={56}
-          className="h-14 w-14 object-contain"
+          className="h-18 w-18 object-contain rounded-full"
           priority
         />
       </motion.div>

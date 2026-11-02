@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { Check, LockKeyhole, Mail, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { login } from "@/api/requests/auth";
 import { Button } from "@/components/ui/button";
@@ -25,14 +25,14 @@ export default function LoginForm() {
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
 
-  const { control, handleSubmit, setValue, watch } = useForm<LoginFormValues>({
+  const { control, handleSubmit, setValue } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       login: "",
       password: "",
     },
   });
-  const loginValue = watch("login");
+  const loginValue = useWatch({ control, name: "login" });
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,

@@ -89,7 +89,7 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
       </div>
 
       <p className="absolute bottom-5 left-6 z-10 text-xs text-white/60 lg:left-12">
-        © 2025 Академия государственного управления. Все права защищены.
+        © 2026 Академия государственного управления. Все права защищены.
       </p>
     </main>
   );
