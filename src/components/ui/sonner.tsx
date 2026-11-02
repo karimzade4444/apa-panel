@@ -19,8 +19,8 @@ export function Toaster() {
       }}
       icons={{
         success: (
-          <span className="flex h-8 w-8 items-center  justify-center rounded-full border border-[#d4af62]/40 bg-[#d4af62]/15 text-[#f2d99b]">
-            <Check aria-hidden="true" className="h-4 w-4" />
+          <span className="flex h-4 w-4 items-center justify-center rounded-full border border-[#d4af62]/40 bg-[#d4af62]/15 text-[#f2d99b]">
+            <Check aria-hidden="true" className="h-2.5 w-2.5" />
           </span>
         ),
       }}
