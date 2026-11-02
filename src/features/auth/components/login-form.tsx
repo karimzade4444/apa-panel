@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import { isAxiosError } from "axios";
 
 import { login } from "@/api/requests/auth";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,33 @@ import {
 } from "@/features/auth/schemas/login-schema";
 
 import PasswordInput from "./password-input";
+
+function getLoginErrorMessage(error: unknown) {
+  if (!isAxiosError(error)) {
+    return "Не удалось выполнить вход. Попробуйте позже.";
+  }
+
+  const responseData: unknown = error.response?.data;
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "message" in responseData &&
+    typeof responseData.message === "string" &&
+    responseData.message.trim()
+  ) {
+    return responseData.message;
+  }
+
+  if (!error.response) {
+    return "Не удалось связаться с сервером. Проверьте подключение и попробуйте снова.";
+  }
+
+  if (error.response.status === 401 || error.response.status === 403) {
+    return "Сервер отклонил данные входа. Проверьте логин и пароль.";
+  }
+
+  return `Ошибка сервера (${error.response.status}). Попробуйте позже.`;
+}
 
 export default function LoginForm() {
   const [error, setError] = useState("");
@@ -37,8 +65,8 @@ export default function LoginForm() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: login,
-    onError: () => {
-      setError("Неверный логин или пароль");
+    onError: (error: unknown) => {
+      setError(getLoginErrorMessage(error));
     },
     onSuccess: (res) => {
       const token = res?.data?.accessToken ?? null;
