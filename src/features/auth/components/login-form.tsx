@@ -7,6 +7,7 @@ import { Check, LockKeyhole, Mail, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 import { login } from "@/api/requests/auth";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,9 @@ export default function LoginForm() {
       }
 
       saveToken(token);
+      toast.success("Вход выполнен", {
+        description: "Добро пожаловать в панель управления",
+      });
       router.push("/");
       router.refresh();
     },
