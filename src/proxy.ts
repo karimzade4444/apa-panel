@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function proxy(request: NextRequest) {
-  // Proxy logic goes here
-  // const { pathname } = request.nextUrl;
-  // console.log(`Proxying request for: ${pathname}`);
+const publicAssetExtensions =
+  /\.(?:png|jpe?g|gif|svg|webp|avif|ico|bmp|mp4|webm|woff2?|ttf|otf|css|js)$/i;
 
-  // // if (request.nextUrl.pathname.startsWith("/")) {
-  // //   return NextResponse.rewrite(new URL("/login", request.url));
-  // // }
-  //  const allCookies = request.cookies.get("accessToken")?.value;
-  // console.log("All cookies:", allCookies);
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/images/") ||
+    pathname.startsWith("/icons/") ||
+    pathname.startsWith("/favicon") ||
+    publicAssetExtensions.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
 
   const token = request.cookies.get("accessToken")?.value;
 
-  if (!token && !request.nextUrl.pathname.startsWith("/login")) {
-    // If the token is not present, redirect to the login page
+  if (!token && !pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-  if (token && request.nextUrl.pathname.startsWith("/login")) {
 
+  if (token && pathname.startsWith("/login")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -27,7 +31,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Exclude API routes, static files, image optimizations, and .png files
-    "/((?!api|_next/static|_next/image|.*\\.png$).*)",
+    "/((?!api|_next|images|icons|favicon|.*\\.(?:png|jpe?g|gif|svg|webp|avif|ico|bmp|mp4|webm|woff2?|ttf|otf|css|js)$).*)",
   ],
 };

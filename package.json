@@ -16,6 +16,7 @@
     "axios": "^1.21.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.1",
+    "framer-motion": "^14.9.0",
     "js-cookie": "^3.0.8",
     "lucide-react": "^1.66.0",
     "motion": "^14.9.0",
