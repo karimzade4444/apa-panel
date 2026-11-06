@@ -1,29 +1,116 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
+  Ban,
   CalendarDays,
+  Check,
   ChevronDown,
   CircleAlert,
   Eye,
+  Pencil,
+  Plus,
   Search,
   ShieldCheck,
+  Trash2,
   UserRound,
   UserRoundCheck,
   UserRoundX,
   UsersRound,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { isAxiosError } from "axios";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { toast } from "sonner";
 
-import { getUsers } from "@/api/requests/users";
+import {
+  createUser,
+  deleteUser,
+  getUsers,
+  setUserBlocked,
+  updateUser,
+  type UserWriteData,
+} from "@/api/requests/users";
 import { AdminShell } from "@/components/layout/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getAccessToken } from "@/lib/cookies";
 import type { User } from "@/types/userstypes";
 
 const emptyUsers: User[] = [];
+const roleOptions = [
+  { value: "SuperAdmin", label: "Суперадминистратор", level: 3 },
+  { value: "Admin", label: "Администратор", level: 2 },
+  { value: "Editor", label: "Редактор", level: 1 },
+] as const;
+
+type UserRole = (typeof roleOptions)[number]["value"];
+type UserFormValues = Omit<UserWriteData, "fullName" | "password"> & {
+  password: string;
+};
+
+const emptyForm: UserFormValues = {
+  userName: "",
+  email: "",
+  firstName: "",
+  lastName: "",
+  middleName: "",
+  role: "Editor",
+  password: "",
+};
+
+function getActorRole(claims: Record<string, unknown> | null): UserRole | null {
+  const roleClaim =
+    claims?.role ??
+    claims?.Role ??
+    claims?.roles ??
+    claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  const claimsList = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
+  let actorRole: UserRole | null = null;
+  for (const claim of claimsList) {
+    if (typeof claim !== "string") continue;
+    const normalized = claim.toLowerCase().replace(/[^a-z]/g, "");
+    const role = roleOptions.find(
+      (option) => option.value.toLowerCase() === normalized,
+    );
+    if (
+      role &&
+      role.level >
+        (roleOptions.find((option) => option.value === actorRole)?.level ?? 0)
+    ) {
+      actorRole = role.value;
+    }
+  }
+  return actorRole;
+}
+
+function getRoleLevel(roleValue: string) {
+  const normalized = roleValue.toLowerCase().replace(/[^a-z]/g, "");
+  return (
+    roleOptions.find((role) => role.value.toLowerCase() === normalized)?.level ??
+    0
+  );
+}
+
+function getApiErrorMessage(error: unknown) {
+  if (isAxiosError(error)) {
+    const responseData: unknown = error.response?.data;
+    if (
+      responseData &&
+      typeof responseData === "object" &&
+      "message" in responseData &&
+      typeof responseData.message === "string" &&
+      responseData.message.trim()
+    ) {
+      return responseData.message;
+    }
+    if (!error.response) return "Не удалось связаться с сервером.";
+    return `Ошибка сервера (${error.response.status}).`;
+  }
+  return "Не удалось выполнить операцию.";
+}
 
 function getUserName(user: User) {
   return (
@@ -100,10 +187,20 @@ function UserDetails({
   user,
   onClose,
   reduceMotion,
+  onEdit,
+  onToggleBlocked,
+  onDelete,
+  isPending,
+  canManageActions,
 }: {
   user: User;
   onClose: () => void;
   reduceMotion: boolean;
+  onEdit: () => void;
+  onToggleBlocked: () => void;
+  onDelete: () => void;
+  isPending: boolean;
+  canManageActions: boolean;
 }) {
   const details = [
     { icon: ShieldCheck, label: "Роль", value: formatRole(user.role) },
@@ -166,17 +263,176 @@ function UserDetails({
           </div>
         ))}
       </div>
+      {canManageActions && (
+        <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/10 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isPending}
+            onClick={onEdit}
+            className="border-white/15 bg-white/5 text-white hover:bg-white/10"
+          >
+            <Pencil className="size-4" />
+            Изменить
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isPending}
+            onClick={onToggleBlocked}
+            className="border-white/15 bg-white/5 text-white hover:bg-white/10"
+          >
+            {user.isBlocked ? (
+              <Check className="size-4" />
+            ) : (
+              <Ban className="size-4" />
+            )}
+            {user.isBlocked ? "Разблокировать" : "Заблокировать"}
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={isPending}
+            onClick={onDelete}
+            className="col-span-2"
+          >
+            <Trash2 className="size-4" />
+            Удалить пользователя
+          </Button>
+        </div>
+      )}
     </motion.aside>
   );
 }
 
 export default function UsersPage() {
   const shouldReduceMotion = useReducedMotion();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
+  const [formValues, setFormValues] = useState<UserFormValues>(emptyForm);
+
+  const { data: profileClaims } = useQuery({
+    queryKey: ["auth-profile"],
+    queryFn: () => {
+      const token = getAccessToken();
+      return token ? jwtDecode<Record<string, unknown>>(token) : null;
+    },
+    retry: false,
+    staleTime: Infinity,
+  });
+  const actorRole = getActorRole(profileClaims ?? null);
+  const actorLevel =
+    roleOptions.find((role) => role.value === actorRole)?.level ?? 0;
+  const assignableRoles = roleOptions.filter(
+    (role) => role.level < actorLevel,
+  );
+  const canManageUsers = actorRole === "SuperAdmin" || actorRole === "Admin";
+
+  const refreshUsers = () =>
+    queryClient.invalidateQueries({ queryKey: ["users"] });
+  const createMutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: async () => {
+      await refreshUsers();
+      setFormMode(null);
+      toast.success("Пользователь создан");
+    },
+    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
+  });
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UserWriteData }) =>
+      updateUser(id, data),
+    onSuccess: async () => {
+      await refreshUsers();
+      setFormMode(null);
+      toast.success("Данные пользователя обновлены");
+    },
+    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
+  });
+  const blockMutation = useMutation({
+    mutationFn: ({ id, isBlocked }: { id: string; isBlocked: boolean }) =>
+      setUserBlocked(id, isBlocked),
+    onSuccess: async (_, variables) => {
+      await refreshUsers();
+      toast.success(
+        variables.isBlocked ? "Пользователь заблокирован" : "Пользователь разблокирован",
+      );
+    },
+    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: async () => {
+      await refreshUsers();
+      setSelectedId(null);
+      toast.success("Пользователь удалён");
+    },
+    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
+  });
+  const isMutating =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    blockMutation.isPending ||
+    deleteMutation.isPending;
+
+  const openCreateForm = () => {
+    setFormValues({
+      ...emptyForm,
+      role: assignableRoles[assignableRoles.length - 1]?.value ?? "Editor",
+    });
+    setFormMode("create");
+  };
+  const openEditForm = (user: User) => {
+    const editableRoles = roleOptions.filter(
+      (role) => role.level < actorLevel || role.value === user.role,
+    );
+    setFormValues({
+      userName: user.userName,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      middleName: user.middleName,
+      role: editableRoles.some((role) => role.value === user.role)
+        ? (user.role as UserRole)
+        : (editableRoles[editableRoles.length - 1]?.value ?? "Editor"),
+      password: "",
+    });
+    setFormMode("edit");
+  };
+  const handleUserFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const roleLevel = getRoleLevel(formValues.role);
+    if (
+      !canManageUsers ||
+      (formMode === "create" && roleLevel >= actorLevel) ||
+      (formMode === "edit" && roleLevel > actorLevel)
+    ) {
+      toast.error("Недостаточно прав для назначения этой роли.");
+      return;
+    }
+    const { password, ...userData } = formValues;
+    const data: UserWriteData = {
+      ...userData,
+      fullName: [
+        formValues.firstName.trim(),
+        formValues.middleName.trim(),
+        formValues.lastName.trim(),
+      ]
+        .filter(Boolean)
+        .join(" "),
+      ...(password ? { password } : {}),
+    };
+    if (formMode === "create") {
+      createMutation.mutate(data);
+    } else if (formMode === "edit" && selectedUser) {
+      updateMutation.mutate({ id: selectedUser.id, data });
+    }
+  };
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -186,6 +442,7 @@ export default function UsersPage() {
   const { data, isLoading, isError, refetch, isRefetching } = useQuery({
     queryKey: ["users", debouncedSearch],
     queryFn: () => getUsers(debouncedSearch),
+    enabled: canManageUsers,
   });
 
   const users = data?.items ?? emptyUsers;
@@ -206,6 +463,47 @@ export default function UsersPage() {
   const activeCount = users.filter((user) => !user.isBlocked).length;
   const blockedCount = users.length - activeCount;
   const adminCount = users.filter((user) => /admin/i.test(user.role)).length;
+  const canManageSelectedUser =
+    !!selectedUser &&
+    canManageUsers &&
+    getRoleLevel(selectedUser.role) <= actorLevel;
+  const formRoleOptions =
+    formMode === "create"
+      ? assignableRoles
+      : roleOptions.filter(
+          (role) =>
+            role.level < actorLevel || role.value === selectedUser?.role,
+        );
+
+  const handleDeleteSelectedUser = () => {
+    if (!selectedUser) return;
+    if (window.confirm(`Удалить пользователя «${getUserName(selectedUser)}»?`)) {
+      deleteMutation.mutate(selectedUser.id);
+    }
+  };
+
+  if (!canManageUsers) {
+    return (
+      <AdminShell
+        title="Пользователи"
+        description="Управление пользователями системы"
+        fitViewport
+      >
+        <section
+          role="alert"
+          className="glass-panel flex min-h-48 items-center justify-center rounded-2xl p-6 text-center"
+        >
+          <div>
+            <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
+            <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
+            <p className="mt-1 text-sm text-white/55">
+              Раздел пользователей доступен только администраторам.
+            </p>
+          </div>
+        </section>
+      </AdminShell>
+    );
+  }
 
   return (
     <AdminShell
@@ -282,7 +580,7 @@ export default function UsersPage() {
                   className="h-10 border-white/10 bg-white/[0.05] pl-10 text-sm text-white placeholder:text-white/40 focus-visible:border-[#d4af62]/50 focus-visible:ring-[#d4af62]/20"
                 />
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 xl:w-[290px]">
                 <label className="relative">
                   <span className="sr-only">Фильтр по роли</span>
                   <select
@@ -321,6 +619,17 @@ export default function UsersPage() {
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-white/45" />
                 </label>
               </div>
+              {canManageUsers && (
+                <Button
+                  type="button"
+                  disabled={!assignableRoles.length}
+                  onClick={openCreateForm}
+                  className="h-10 shrink-0 bg-[#e1bb6e] text-[#10243a] hover:bg-[#f2d18a]"
+                >
+                  <Plus className="size-4" />
+                  Добавить пользователя
+                </Button>
+              )}
             </div>
 
             <div className="scrollbar-none min-h-0 flex-1 overflow-auto">
@@ -465,11 +774,205 @@ export default function UsersPage() {
                 user={selectedUser}
                 onClose={() => setSelectedId(null)}
                 reduceMotion={shouldReduceMotion ?? false}
+                canManageActions={canManageSelectedUser}
+                isPending={isMutating}
+                onEdit={() => openEditForm(selectedUser)}
+                onToggleBlocked={() =>
+                  blockMutation.mutate({
+                    id: selectedUser.id,
+                    isBlocked: !selectedUser.isBlocked,
+                  })
+                }
+                onDelete={handleDeleteSelectedUser}
               />
             )}
           </AnimatePresence>
         </div>
       </div>
+
+      <AnimatePresence>
+        {formMode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#020d18]/75 p-4 backdrop-blur-sm"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !isMutating) {
+                setFormMode(null);
+              }
+            }}
+          >
+            <motion.section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="user-form-title"
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="glass-panel max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-2xl p-5 sm:p-6"
+            >
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <h2 id="user-form-title" className="text-lg font-semibold text-white">
+                  {formMode === "create"
+                    ? "Создать пользователя"
+                    : "Изменить пользователя"}
+                </h2>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Закрыть форму пользователя"
+                  disabled={isMutating}
+                  onClick={() => setFormMode(null)}
+                  className="text-white/60 hover:bg-white/10 hover:text-white"
+                >
+                  <X className="size-4" />
+                </Button>
+              </div>
+              <form onSubmit={handleUserFormSubmit} className="space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Имя пользователя
+                    <Input
+                      required
+                      autoComplete="username"
+                      value={formValues.userName}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          userName: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Email
+                    <Input
+                      required
+                      type="email"
+                      autoComplete="email"
+                      value={formValues.email}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          email: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Имя
+                    <Input
+                      required
+                      value={formValues.firstName}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          firstName: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Отчество
+                    <Input
+                      value={formValues.middleName}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          middleName: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Фамилия
+                    <Input
+                      required
+                      value={formValues.lastName}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          lastName: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65">
+                    Роль
+                    <select
+                      required
+                      value={formValues.role}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          role: event.target.value,
+                        }))
+                      }
+                      className="h-9 w-full rounded-lg border border-white/10 bg-[#102b46] px-3 text-sm text-white outline-none focus:border-[#d4af62]/50"
+                    >
+                      {formRoleOptions.map((role) => (
+                        <option key={role.value} value={role.value}>
+                          {role.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="space-y-1.5 text-xs text-white/65 sm:col-span-2">
+                    Пароль{formMode === "edit" ? " (оставьте пустым, чтобы не менять)" : ""}
+                    <Input
+                      required={formMode === "create"}
+                      type="password"
+                      autoComplete={
+                        formMode === "create" ? "new-password" : "off"
+                      }
+                      minLength={6}
+                      value={formValues.password}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          password: event.target.value,
+                        }))
+                      }
+                      className="border-white/10 bg-white/[0.05] text-white"
+                    />
+                  </label>
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={isMutating}
+                    onClick={() => setFormMode(null)}
+                    className="text-white/70 hover:bg-white/10 hover:text-white"
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isMutating || !formRoleOptions.length}
+                    className="bg-[#e1bb6e] text-[#10243a] hover:bg-[#f2d18a]"
+                  >
+                    {isMutating
+                      ? "Сохранение..."
+                      : formMode === "create"
+                        ? "Создать"
+                        : "Сохранить"}
+                  </Button>
+                </div>
+              </form>
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AdminShell>
   );
 }

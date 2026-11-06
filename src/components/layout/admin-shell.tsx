@@ -124,6 +124,21 @@ function getProfileRole(claims: AccessTokenClaims | null) {
   return role ? role.replace(/[_-]+/g, " ") : "Не указана";
 }
 
+function hasRole(claims: AccessTokenClaims | null, expectedRole: string) {
+  const roleClaim =
+    claims?.role ??
+    claims?.Role ??
+    claims?.roles ??
+    claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  const roles = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
+  return roles.some(
+    (role) =>
+      typeof role === "string" &&
+      role.toLowerCase().replace(/[^a-z]/g, "") ===
+        expectedRole.toLowerCase().replace(/[^a-z]/g, ""),
+  );
+}
+
 interface AdminShellProps {
   title: string;
   description: string;
@@ -159,6 +174,10 @@ export function AdminShell({
     staleTime: Infinity,
   });
   const profileName = getProfileName(profileClaims ?? null);
+  const isEditor = hasRole(profileClaims ?? null, "Editor");
+  const visibleNavigation = isEditor
+    ? navigation.filter(({ href }) => href !== "/users")
+    : navigation;
   const profileInitials = getProfileInitials(profileName);
   const profileEmail = getClaim(
     profileClaims ?? null,
@@ -295,7 +314,7 @@ export function AdminShell({
           <div className="my-3 h-px bg-white/10" />
 
           <nav aria-label="Главная навигация" className="space-y-1">
-            {navigation.map(({ href, label, icon: Icon }) => {
+            {visibleNavigation.map(({ href, label, icon: Icon }) => {
               const isActive = pathname === href;
               return (
                 <Link
@@ -585,7 +604,7 @@ export function AdminShell({
               aria-label="Мобильная навигация"
               className="mt-4 flex gap-2 overflow-x-auto border-t border-white/10 pt-3 lg:hidden"
             >
-              {navigation.map(({ href, label, icon: Icon }) => {
+              {visibleNavigation.map(({ href, label, icon: Icon }) => {
                 const isActive = pathname === href;
                 return (
                   <Link
