@@ -329,8 +329,8 @@ export default function UsersPage() {
                   <tr className="border-b border-white/10 text-xs text-white/45">
                     <th scope="col" className="px-5 py-3 font-medium">Пользователь</th>
                     <th scope="col" className="px-4 py-3 font-medium">Email</th>
-                    <th scope="col" className="px-4 py-3 font-medium">Роль</th>
-                    <th scope="col" className="px-4 py-3 font-medium">Статус</th>
+                    <th scope="col" className="px-4 py-3 text-center font-medium">Роль</th>
+                    <th scope="col" className="px-4 py-3 text-center font-medium">Статус</th>
                     <th scope="col" className="px-4 py-3 font-medium">Регистрация</th>
                     <th scope="col" className="px-4 py-3 text-right font-medium">Детали</th>
                   </tr>
@@ -381,14 +381,14 @@ export default function UsersPage() {
                           <td className="max-w-[200px] truncate px-4 py-3.5 text-xs text-white/65">
                             {user.email || "—"}
                           </td>
-                          <td className="px-4 py-3.5">
-                            <span className="inline-flex max-w-[150px] items-center truncate rounded-full border border-sky-200/15 bg-sky-300/10 px-2.5 py-1 text-[0.7rem] text-sky-100">
+                          <td className="px-4 py-3.5 text-center">
+                            <span className="mx-auto inline-flex max-w-[150px] items-center truncate rounded-full border border-sky-200/15 bg-sky-300/10 px-2.5 py-1 text-[0.7rem] text-sky-100">
                               {formatRole(user.role)}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5">
+                          <td className="px-4 py-3.5 text-center">
                             <span
-                              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] ${
+                              className={`mx-auto inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] ${
                                 user.isBlocked
                                   ? "border-rose-300/20 bg-rose-300/10 text-rose-200"
                                   : "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
