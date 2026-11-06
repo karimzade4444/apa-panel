@@ -18,12 +18,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { getUsers } from "@/api/requests/users";
 import { Button } from "@/components/ui/button";
 import { AdminSidebar, adminNavigation } from "@/components/layout/admin-sidebar";
 import type { AdminShellProps } from "@/components/layout/admin-shell.types";
 import {
+  getActorIdentifiers,
+  getClaim,
+  getEffectiveRole,
   getProfileAvatar,
   getProfileEmail,
+  getProfileFirstName,
   getProfileFullName,
   getProfileInitials,
   getProfilePhone,
@@ -59,13 +64,61 @@ export function AdminShell({
     retry: false,
     staleTime: Infinity,
   });
-  const profileFullName = getProfileFullName(profileClaims ?? null);
+  const claims = profileClaims ?? null;
   const visibleNavigation = adminNavigation;
+  const profileIdentifiers = getActorIdentifiers(claims);
+  const profileLookupTerm =
+    getProfileUserName(claims) ||
+    getProfileEmail(claims) ||
+    getClaim(
+      claims,
+      "sub",
+      "id",
+      "userId",
+      "user_id",
+      "uid",
+      "nameid",
+      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+    );
+  const canLookupProfile = Boolean(getEffectiveRole(claims));
+  const { data: profileUsers, isError: isProfileUserError } = useQuery({
+    queryKey: ["auth-profile-user", profileLookupTerm],
+    queryFn: () => getUsers(profileLookupTerm),
+    enabled: canLookupProfile && Boolean(profileLookupTerm),
+    retry: false,
+    staleTime: Infinity,
+  });
+  const profileUser =
+    profileUsers?.items.find((user) =>
+      [user.id, user.userName, user.email, user.fullName]
+        .filter(Boolean)
+        .some((value) => profileIdentifiers.includes(value.trim().toLowerCase())),
+    ) ?? null;
+  const profileFullName =
+    profileUser?.fullName?.trim() ||
+    [
+      profileUser?.firstName,
+      profileUser?.middleName,
+      profileUser?.lastName,
+    ]
+      .filter(Boolean)
+      .join(" ") ||
+    getProfileFullName(claims);
+  const profileFirstName =
+    profileUser?.firstName?.trim() || getProfileFirstName(claims);
   const profileInitials = getProfileInitials(profileFullName);
-  const profileUserName = getProfileUserName(profileClaims ?? null);
-  const profileEmail = getProfileEmail(profileClaims ?? null);
-  const profilePhone = getProfilePhone(profileClaims ?? null);
-  const profileAvatar = getProfileAvatar(profileClaims ?? null);
+  const profileUserName =
+    profileUser?.userName || getProfileUserName(claims);
+  const profileEmail = profileUser?.email || getProfileEmail(claims);
+  const profilePhone =
+    profileUser?.phoneNumber || getProfilePhone(claims);
+  const profileAvatar = profileUser?.photoUrl || getProfileAvatar(claims);
+  const profileRole = getProfileRole(claims);
+  const profileErrorMessage = isProfileError
+    ? "Не удалось прочитать профиль из токена."
+    : isProfileUserError && !profileUser
+      ? "Не удалось загрузить данные профиля."
+      : "";
 
   useEffect(() => {
     const updateDate = () => {
@@ -113,6 +166,7 @@ export function AdminShell({
 
   const handleLogout = () => {
     queryClient.removeQueries({ queryKey: ["auth-profile"] });
+    queryClient.removeQueries({ queryKey: ["auth-profile-user"] });
     queryClient.removeQueries({ queryKey: ["users"] });
     removeToken();
     router.replace("/login");
@@ -175,8 +229,8 @@ export function AdminShell({
                         <h1 className="text-lg font-semibold leading-tight text-white sm:text-2xl">
                           Добро пожаловать,{" "}
                           <span className="text-[#f0c46d]">
-                            {profileFullName !== "Не указано"
-                              ? `${profileFullName}!`
+                            {profileFirstName
+                              ? `${profileFirstName}!`
                               : "Администратор!"}
                           </span>
                         </h1>
@@ -286,7 +340,7 @@ export function AdminShell({
                               {profileFullName}
                             </h2>
                             <p className="mt-0.5 text-xs text-white/60">
-                              {getProfileRole(profileClaims ?? null)}
+                              {profileRole}
                             </p>
                           </div>
                         </div>
@@ -311,7 +365,7 @@ export function AdminShell({
                             },
                             {
                               label: "Роль",
-                              value: getProfileRole(profileClaims ?? null),
+                              value: profileRole,
                               icon: ShieldCheck,
                             },
                           ].map(({ label, value, icon: Icon }) => (
@@ -328,9 +382,9 @@ export function AdminShell({
                             </div>
                           ))}
                         </dl>
-                        {isProfileError && (
+                        {profileErrorMessage && (
                           <p role="alert" className="mt-3 text-xs text-rose-200">
-                            Не удалось прочитать профиль из токена.
+                            {profileErrorMessage}
                           </p>
                         )}
                       </motion.section>

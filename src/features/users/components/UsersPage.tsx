@@ -157,7 +157,7 @@ export default function UsersPage() {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      middleName: user.middleName,
+      middleName: user.middleName ?? "",
       role: editableRoles.some((role) => role.value === user.role)
         ? (user.role as UserRole)
         : (editableRoles[editableRoles.length - 1]?.value ?? "Editor"),

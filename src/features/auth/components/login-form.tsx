@@ -76,6 +76,7 @@ export default function LoginForm() {
       }
 
       queryClient.removeQueries({ queryKey: ["auth-profile"] });
+      queryClient.removeQueries({ queryKey: ["auth-profile-user"] });
       queryClient.removeQueries({ queryKey: ["users"] });
       saveToken(token);
       toast.success("Вход выполнен", {

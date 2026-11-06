@@ -69,32 +69,17 @@ export function getEffectiveRole(
 }
 
 export function getProfileFullName(claims: AccessTokenClaims | null): string {
-  const firstName = getClaim(
-    claims,
-    "firstName",
-    "FirstName",
-    "first_name",
-    "given_name",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
-  );
-  const middleName = getClaim(
-    claims,
-    "middleName",
-    "MiddleName",
-    "middle_name",
-    "patronymic",
-  );
+  const firstName = getProfileFirstName(claims);
+  const middleName = getClaim(claims, "middleName", "middle_name", "patronymic");
   const lastName = getClaim(
     claims,
     "lastName",
-    "LastName",
     "last_name",
     "family_name",
     "surname",
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
   );
-  const fullName = [firstName, middleName, lastName].filter(Boolean).join(" ");
-  const explicitFullName = getClaim(claims, "fullName", "FullName", "full_name");
+  const explicitFullName = getClaim(claims, "fullName", "full_name");
   const userName = getClaim(
     claims,
     "userName",
@@ -106,6 +91,7 @@ export function getProfileFullName(claims: AccessTokenClaims | null): string {
   const nameClaim = getClaim(
     claims,
     "name",
+    "displayName",
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
   );
   const isRoleName = getRoleClaims(claims).some(
@@ -113,16 +99,29 @@ export function getProfileFullName(claims: AccessTokenClaims | null): string {
       role.toLowerCase().replace(/[^a-z]/g, "") ===
       nameClaim.toLowerCase().replace(/[^a-z]/g, ""),
   );
+  const composedName = [firstName, middleName, lastName]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     explicitFullName ||
-    fullName ||
+    composedName ||
     (nameClaim &&
     !isRoleName &&
     nameClaim.toLowerCase() !== userName.toLowerCase()
       ? nameClaim
       : "") ||
     "Не указано"
+  );
+}
+
+export function getProfileFirstName(claims: AccessTokenClaims | null): string {
+  return getClaim(
+    claims,
+    "firstName",
+    "first_name",
+    "given_name",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
   );
 }
 
@@ -155,6 +154,9 @@ export function getActorIdentifiers(
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
     "username",
     "preferred_username",
+    "unique_name",
+    "name",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
     "email",
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
   ]);
@@ -184,6 +186,8 @@ export function getProfileUserName(claims: AccessTokenClaims | null): string {
     "username",
     "preferred_username",
     "unique_name",
+    "name",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
   );
 }
 
@@ -203,6 +207,10 @@ export function getProfilePhone(claims: AccessTokenClaims | null): string {
     "phoneNumber",
     "PhoneNumber",
     "phone_number",
+    "telephoneNumber",
+    "telephone_number",
+    "mobilePhone",
+    "mobile_phone",
     "phone",
     "mobile",
     "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone",

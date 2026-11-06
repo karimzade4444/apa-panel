@@ -2,9 +2,10 @@ export interface User {
   id: string;
   userName: string;
   email: string;
+  phoneNumber?: string | null;
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName: string | null;
   fullName: string;
   role: string;
   photoUrl: string | null;
