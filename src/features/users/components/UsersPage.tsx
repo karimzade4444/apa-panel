@@ -22,7 +22,8 @@ import {
 } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import { isAxiosError } from "axios";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import {
@@ -35,6 +36,7 @@ import {
 } from "@/api/requests/users";
 import { AdminShell } from "@/components/layout/admin-shell";
 import { Button } from "@/components/ui/button";
+import FormInput from "@/components/ui/forminput";
 import { Input } from "@/components/ui/input";
 import { getAccessToken } from "@/lib/cookies";
 import type { User } from "@/types/userstypes";
@@ -100,11 +102,43 @@ function getApiErrorMessage(error: unknown) {
     if (
       responseData &&
       typeof responseData === "object" &&
+      "errors" in responseData &&
+      responseData.errors &&
+      typeof responseData.errors === "object"
+    ) {
+      const validationMessages = Object.values(responseData.errors)
+        .flatMap((fieldErrors) =>
+          Array.isArray(fieldErrors)
+            ? fieldErrors.flatMap((fieldError) =>
+                fieldError &&
+                typeof fieldError === "object" &&
+                "message" in fieldError &&
+                typeof fieldError.message === "string"
+                  ? [fieldError.message]
+                  : [],
+              )
+            : [],
+        )
+        .filter((message, index, messages) => messages.indexOf(message) === index);
+      if (validationMessages.length) return validationMessages.join(" ");
+    }
+    if (
+      responseData &&
+      typeof responseData === "object" &&
       "message" in responseData &&
       typeof responseData.message === "string" &&
       responseData.message.trim()
     ) {
       return responseData.message;
+    }
+    if (
+      responseData &&
+      typeof responseData === "object" &&
+      "detail" in responseData &&
+      typeof responseData.detail === "string" &&
+      responseData.detail.trim()
+    ) {
+      return responseData.detail;
     }
     if (!error.response) return "Не удалось связаться с сервером.";
     return `Ошибка сервера (${error.response.status}).`;
@@ -314,7 +348,10 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
-  const [formValues, setFormValues] = useState<UserFormValues>(emptyForm);
+  const { control, handleSubmit, reset, setValue } = useForm<UserFormValues>({
+    defaultValues: emptyForm,
+  });
+  const formRole = useWatch({ control, name: "role" });
 
   const { data: profileClaims } = useQuery({
     queryKey: ["auth-profile"],
@@ -381,7 +418,7 @@ export default function UsersPage() {
     deleteMutation.isPending;
 
   const openCreateForm = () => {
-    setFormValues({
+    reset({
       ...emptyForm,
       role: assignableRoles[assignableRoles.length - 1]?.value ?? "Editor",
     });
@@ -391,7 +428,7 @@ export default function UsersPage() {
     const editableRoles = roleOptions.filter(
       (role) => role.level < actorLevel || role.value === user.role,
     );
-    setFormValues({
+    reset({
       userName: user.userName,
       email: user.email,
       firstName: user.firstName,
@@ -404,9 +441,8 @@ export default function UsersPage() {
     });
     setFormMode("edit");
   };
-  const handleUserFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const roleLevel = getRoleLevel(formValues.role);
+  const handleUserFormSubmit = (values: UserFormValues) => {
+    const roleLevel = getRoleLevel(values.role);
     if (
       !canManageUsers ||
       (formMode === "create" && roleLevel >= actorLevel) ||
@@ -415,13 +451,13 @@ export default function UsersPage() {
       toast.error("Недостаточно прав для назначения этой роли.");
       return;
     }
-    const { password, ...userData } = formValues;
+    const { password, ...userData } = values;
     const data: UserWriteData = {
       ...userData,
       fullName: [
-        formValues.firstName.trim(),
-        formValues.middleName.trim(),
-        formValues.lastName.trim(),
+        values.firstName.trim(),
+        values.middleName.trim(),
+        values.lastName.trim(),
       ]
         .filter(Boolean)
         .join(" "),
@@ -466,7 +502,7 @@ export default function UsersPage() {
   const canManageSelectedUser =
     !!selectedUser &&
     canManageUsers &&
-    getRoleLevel(selectedUser.role) <= actorLevel;
+    getRoleLevel(selectedUser.role) < actorLevel;
   const formRoleOptions =
     formMode === "create"
       ? assignableRoles
@@ -832,90 +868,73 @@ export default function UsersPage() {
                   <X className="size-4" />
                 </Button>
               </div>
-              <form onSubmit={handleUserFormSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(handleUserFormSubmit)} className="space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="space-y-1.5 text-xs text-white/65">
                     Имя пользователя
-                    <Input
+                    <FormInput
+                      name="userName"
+                      control={control}
                       required
+                      minLength={3}
+                      maxLength={50}
+                      pattern="[A-Za-z0-9._-]{3,50}"
+                      title="От 3 до 50 латинских букв, цифр, точек, дефисов или подчёркиваний"
                       autoComplete="username"
-                      value={formValues.userName}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          userName: event.target.value,
-                        }))
-                      }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                      placeholder="Логин (латиница, цифры, . _ -)"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65">
                     Email
-                    <Input
+                    <FormInput
+                      name="email"
+                      control={control}
                       required
                       type="email"
                       autoComplete="email"
-                      value={formValues.email}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          email: event.target.value,
-                        }))
-                      }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                      placeholder="Введите email"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65">
                     Имя
-                    <Input
+                    <FormInput
+                      name="firstName"
+                      control={control}
                       required
-                      value={formValues.firstName}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          firstName: event.target.value,
-                        }))
-                      }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                      placeholder="Введите имя"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65">
-                    Отчество
-                    <Input
-                      value={formValues.middleName}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          middleName: event.target.value,
-                        }))
-                      }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                    Отчество (необязательно)
+                    <FormInput
+                      name="middleName"
+                      control={control}
+                      placeholder="Введите отчество"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65">
                     Фамилия
-                    <Input
+                    <FormInput
+                      name="lastName"
+                      control={control}
                       required
-                      value={formValues.lastName}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          lastName: event.target.value,
-                        }))
-                      }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                      placeholder="Введите фамилию"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65">
                     Роль
                     <select
                       required
-                      value={formValues.role}
+                      value={formRole}
                       onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          role: event.target.value,
-                        }))
+                        setValue("role", event.target.value, {
+                          shouldDirty: true,
+                        })
                       }
                       className="h-9 w-full rounded-lg border border-white/10 bg-[#102b46] px-3 text-sm text-white outline-none focus:border-[#d4af62]/50"
                     >
@@ -928,21 +947,21 @@ export default function UsersPage() {
                   </label>
                   <label className="space-y-1.5 text-xs text-white/65 sm:col-span-2">
                     Пароль{formMode === "edit" ? " (оставьте пустым, чтобы не менять)" : ""}
-                    <Input
+                    <FormInput
+                      name="password"
+                      control={control}
                       required={formMode === "create"}
                       type="password"
                       autoComplete={
                         formMode === "create" ? "new-password" : "off"
                       }
-                      minLength={6}
-                      value={formValues.password}
-                      onChange={(event) =>
-                        setFormValues((current) => ({
-                          ...current,
-                          password: event.target.value,
-                        }))
+                      minLength={8}
+                      placeholder={
+                        formMode === "create"
+                          ? "Придумайте пароль"
+                          : "Введите новый пароль"
                       }
-                      className="border-white/10 bg-white/[0.05] text-white"
+                      className="border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
                     />
                   </label>
                 </div>
