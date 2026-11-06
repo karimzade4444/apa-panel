@@ -28,7 +28,10 @@ export interface UserFormDialogProps {
   formRoleOptions: (typeof roleOptions)[number][];
   control: Control<UserFormValues>;
   isMutating: boolean;
+  photoFile: File | null;
+  existingPhotoUrl: string | null;
   onClose: () => void;
+  onPhotoChange: (file: File | null) => void;
   onRoleChange: (role: UserRole) => void;
   onSubmit: FormEventHandler<HTMLFormElement>;
 }

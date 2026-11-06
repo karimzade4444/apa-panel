@@ -66,6 +66,7 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const { control, handleSubmit, reset, setValue } = useForm<UserFormValues>({
     defaultValues: emptyUserForm,
   });
@@ -97,6 +98,7 @@ export default function UsersPage() {
     onSuccess: async () => {
       await refreshUsers();
       setFormMode(null);
+      setPhotoFile(null);
       toast.success("Пользователь создан");
     },
     onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
@@ -107,6 +109,7 @@ export default function UsersPage() {
     onSuccess: async () => {
       await refreshUsers();
       setFormMode(null);
+      setPhotoFile(null);
       toast.success("Данные пользователя обновлены");
     },
     onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
@@ -138,6 +141,7 @@ export default function UsersPage() {
     deleteMutation.isPending;
 
   const openCreateForm = () => {
+    setPhotoFile(null);
     reset({
       ...emptyUserForm,
       role: assignableRoles[assignableRoles.length - 1]?.value ?? "Editor",
@@ -152,6 +156,7 @@ export default function UsersPage() {
     const editableRoles = roleOptions.filter(
       (role) => role.level < actorLevel || role.value === user.role,
     );
+    setPhotoFile(null);
     reset({
       userName: user.userName,
       email: user.email,
@@ -165,7 +170,10 @@ export default function UsersPage() {
     });
     setFormMode("edit");
   };
-  const handleUserFormSubmit = (values: UserFormValues) => {
+  const handleUserFormSubmit = (
+    values: UserFormValues,
+    selectedPhoto: File | null,
+  ) => {
     const roleLevel = getRoleLevel(values.role);
     if (
       !canManageUsers ||
@@ -190,6 +198,7 @@ export default function UsersPage() {
       ...userData,
       fullName,
       ...(password ? { password } : {}),
+      ...(selectedPhoto ? { photo: selectedPhoto } : {}),
     };
     if (formMode === "create") {
       if (!password) {
@@ -204,6 +213,7 @@ export default function UsersPage() {
         middleName: data.middleName,
         role: data.role,
         password,
+        ...(selectedPhoto ? { photo: selectedPhoto } : {}),
       };
       createMutation.mutate(createData);
     } else if (formMode === "edit" && selectedUser) {
@@ -584,9 +594,16 @@ export default function UsersPage() {
             formRoleOptions={formRoleOptions}
             control={control}
             isMutating={isMutating}
+            photoFile={photoFile}
+            existingPhotoUrl={
+              formMode === "edit" ? selectedUser?.photoUrl ?? null : null
+            }
             onClose={() => setFormMode(null)}
+            onPhotoChange={setPhotoFile}
             onRoleChange={(role) => setValue("role", role, { shouldDirty: true })}
-            onSubmit={handleSubmit(handleUserFormSubmit)}
+            onSubmit={handleSubmit((values) =>
+              handleUserFormSubmit(values, photoFile),
+            )}
           />
         )}
       </AnimatePresence>

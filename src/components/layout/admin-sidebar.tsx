@@ -36,7 +36,7 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
 
   return (
     <aside
-      className={`glass-panel scrollbar-none hidden w-[204px] shrink-0 flex-col overflow-y-auto rounded-[26px] p-3 lg:flex xl:w-[212px] ${
+      className={`glass-panel scrollbar-none hidden w-51 shrink-0 flex-col overflow-y-auto rounded-[26px] p-3 lg:flex xl:w-53 ${
         fitViewport ? "lg:min-h-0" : ""
       }`}
     >
@@ -50,12 +50,12 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
           width={168}
           height={126}
           priority
-          className="h-[116px] w-full max-w-[168px] object-contain drop-shadow-[0_4px_14px_rgba(242,193,78,0.25)]"
+          className="h-29 w-full max-w-42 object-contain drop-shadow-[0_4px_14px_rgba(242,193,78,0.25)]"
         />
         <span className="mt-2 block text-sm font-semibold tracking-wide text-[#f2d99b]">
           APA Administration
         </span>
-        <span className="mt-1 block max-w-[155px] text-[0.65rem] leading-relaxed text-white/55">
+        <span className="mt-1 block max-w-38.75 text-[0.65rem] leading-relaxed text-white/55">
           Академия государственного управления
         </span>
       </Link>
@@ -72,12 +72,12 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
               aria-current={isActive ? "page" : undefined}
               className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-xs transition-all ${
                 isActive
-                  ? "border border-[#e4c477]/45 bg-gradient-to-r from-[#d4af62]/35 to-[#d4af62]/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_24px_rgba(0,0,0,0.12)]"
+                  ? "border border-[#e4c477]/45 bg-linear-to-r from-gold-light/35 to-gold-light/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_24px_rgba(0,0,0,0.12)]"
                   : "border border-transparent text-white/65 hover:bg-white/[0.07] hover:text-white"
               }`}
             >
               <Icon
-                className={`size-[18px] ${
+                className={`size-4.5 ${
                   isActive
                     ? "text-[#e4c477]"
                     : "text-white/50 group-hover:text-white/80"
@@ -95,7 +95,7 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
             onClick={() => setPublicationsOpen((open) => !open)}
             className="group flex w-full items-center gap-2.5 rounded-xl border border-transparent px-2.5 py-2.5 text-left text-xs text-white/65 transition hover:bg-white/[0.07] hover:text-white"
           >
-            <FolderKanban className="size-[17px] text-[#e4c477]" />
+            <FolderKanban className="size-4.25 text-[#e4c477]" />
             <span>Публикации</span>
             <ChevronRight
               className={`ml-auto size-3.5 transition-transform ${
@@ -104,7 +104,7 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
             />
           </button>
           {publicationsOpen && (
-            <div className="ml-[18px] mt-0.5 space-y-0.5 border-l border-white/15 pl-3">
+            <div className="ml-4.5 mt-0.5 space-y-0.5 border-l border-white/15 pl-3">
               {publicationLinks.map(({ label, icon: Icon }) => (
                 <span
                   key={label}
@@ -130,18 +130,18 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
             key={label}
             className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65"
           >
-            <Icon className="size-[17px] text-[#e4c477]" />
+            <Icon className="size-4.25 text-[#e4c477]" />
             {label}
           </div>
         ))}
 
         <div className="my-2 h-px bg-white/10" />
         <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65">
-          <ScrollText className="size-[17px] text-[#e4c477]" />
+          <ScrollText className="size-4.25 text-[#e4c477]" />
           Журнал действий
         </div>
         <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65">
-          <Settings className="size-[17px] text-[#e4c477]" />
+          <Settings className="size-4.25 text-[#e4c477]" />
           Настройки
         </div>
       </nav>

@@ -19,6 +19,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { getUsers } from "@/api/requests/users";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { AdminSidebar, adminNavigation } from "@/components/layout/admin-sidebar";
 import type { AdminShellProps } from "@/components/layout/admin-shell.types";
@@ -37,6 +45,7 @@ import {
   type AccessTokenClaims,
 } from "@/lib/auth/claims";
 import { getAccessToken, removeToken } from "@/lib/cookies";
+import { resolveApiAssetUrl } from "@/lib/api-assets";
 
 export function AdminShell({
   title,
@@ -50,6 +59,7 @@ export function AdminShell({
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [date, setDate] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
   const {
@@ -112,7 +122,9 @@ export function AdminShell({
   const profileEmail = profileUser?.email || getProfileEmail(claims);
   const profilePhone =
     profileUser?.phoneNumber || getProfilePhone(claims);
-  const profileAvatar = profileUser?.photoUrl || getProfileAvatar(claims);
+  const profileAvatar = resolveApiAssetUrl(
+    profileUser?.photoUrl || getProfileAvatar(claims),
+  );
   const profileRole = getProfileRole(claims);
   const profileErrorMessage = isProfileError
     ? "Не удалось прочитать профиль из токена."
@@ -213,13 +225,13 @@ export function AdminShell({
           <header
             className={`relative z-50 rounded-2xl px-3 py-3 sm:px-5 sm:py-4 ${
               pathname === "/"
-                ? "flex min-h-[92px] items-center border border-white/10 bg-[#092745]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
+                ? "flex min-h-23 items-center border border-white/10 bg-[#092745]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
                 : "glass-panel"
             }`}
           >
             <div className="flex w-full items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#d4af62]/30 bg-[#d4af62]/10 text-[#e4c477] lg:hidden">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-[#e4c477] lg:hidden">
                   <Landmark className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -270,7 +282,7 @@ export function AdminShell({
                   aria-label="Уведомления"
                   className="relative text-white/70 hover:bg-white/10 hover:text-white"
                 >
-                  <Bell className="size-[18px]" />
+                  <Bell className="size-4.5" />
                   <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#e4c477] ring-2 ring-[#17324d]" />
                 </Button>
                 <div ref={profileRef} className="relative">
@@ -294,7 +306,7 @@ export function AdminShell({
                         className="size-10 rounded-full border-2 border-[#f2d18a]/80 object-cover shadow-[0_0_20px_rgba(242,209,138,0.3)]"
                       />
                     ) : (
-                      <span className="flex size-10 aspect-square items-center justify-center rounded-full border-2 border-[#f2d18a]/80 bg-gradient-to-br from-[#f2d18a]/45 via-[#d4af62]/30 to-[#173c5d] text-xs font-semibold text-[#fff1c9] shadow-[0_0_20px_rgba(242,209,138,0.3)]">
+                      <span className="flex size-10 aspect-square items-center justify-center rounded-full border-2 border-[#f2d18a]/80 bg-linear-to-br from-[#f2d18a]/45 via-gold-light/30 to-[#173c5d] text-xs font-semibold text-[#fff1c9] shadow-[0_0_20px_rgba(242,209,138,0.3)]">
                         {profileInitials}
                       </span>
                     )}
@@ -318,7 +330,7 @@ export function AdminShell({
                             : { opacity: 0, y: -5, scale: 0.98 }
                         }
                         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                        className="absolute right-0 top-full z-[9999] mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.995),rgba(8,29,51,0.995))] p-4 text-white shadow-[0_24px_65px_rgba(0,0,0,0.7),0_0_26px_rgba(242,209,138,0.16)] backdrop-blur-2xl"
+                        className="absolute right-0 top-full z-9999 mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.995),rgba(8,29,51,0.995))] p-4 text-white shadow-[0_24px_65px_rgba(0,0,0,0.7),0_0_26px_rgba(242,209,138,0.16)] backdrop-blur-2xl"
                       >
                         <div className="flex items-center gap-3 border-b border-white/15 pb-3">
                           {profileAvatar ? (
@@ -331,7 +343,7 @@ export function AdminShell({
                               className="size-11 shrink-0 rounded-full border-2 border-[#f2d18a]/70 object-cover"
                             />
                           ) : (
-                            <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-[#d4af62]/20 text-xs font-semibold text-[#fff1c9]">
+                            <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-gold-light/20 text-xs font-semibold text-[#fff1c9]">
                               {profileInitials}
                             </span>
                           )}
@@ -375,7 +387,7 @@ export function AdminShell({
                                 <dt className="text-[0.68rem] text-white/55">
                                   {label}
                                 </dt>
-                                <dd className="mt-0.5 break-words text-xs font-medium text-white/90">
+                                <dd className="mt-0.5 wrap-break-word text-xs font-medium text-white/90">
                                   {value}
                                 </dd>
                               </div>
@@ -396,10 +408,10 @@ export function AdminShell({
                   variant="ghost"
                   size="icon"
                   aria-label="Выйти из аккаунта"
-                  onClick={handleLogout}
+                  onClick={() => setLogoutConfirmOpen(true)}
                   className="text-white/70 hover:bg-white/10 hover:text-[#f2d18a]"
                 >
-                  <LogOut className="size-[18px]" />
+                  <LogOut className="size-4.5" />
                 </Button>
               </div>
             </div>
@@ -417,7 +429,7 @@ export function AdminShell({
                     aria-current={isActive ? "page" : undefined}
                     className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
                       isActive
-                        ? "bg-[#d4af62]/20 text-[#f2d99b]"
+                        ? "bg-gold-light/20 text-[#f2d99b]"
                         : "text-white/60 hover:bg-white/[0.07] hover:text-white"
                     }`}
                   >
@@ -454,6 +466,45 @@ export function AdminShell({
           </footer>
         </div>
       </div>
+      <AlertDialog
+        open={logoutConfirmOpen}
+        onOpenChange={(open) => setLogoutConfirmOpen(open)}
+      >
+        <AlertDialogContent className="rounded-3xl p-6 text-white">
+          <AlertDialogHeader>
+            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-300/10 text-[#f2d18a]">
+              <LogOut className="size-5" />
+            </span>
+            <AlertDialogTitle className="text-lg text-white">
+              Выйти из аккаунта?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-sm leading-relaxed text-white/60">
+              Вы действительно хотите завершить текущий сеанс?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setLogoutConfirmOpen(false)}
+              className="border-white/15 bg-white/4 text-white/75 hover:bg-white/10 hover:text-white"
+            >
+              Остаться
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setLogoutConfirmOpen(false);
+                window.setTimeout(handleLogout, 300);
+              }}
+              className="gap-2 bg-[#e1bb6e] font-semibold text-[#10243a] hover:bg-[#f2d18a]"
+            >
+              <LogOut className="size-4" />
+              Выйти
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
