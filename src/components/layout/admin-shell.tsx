@@ -5,197 +5,33 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import {
-  BellRing,
   Bell,
-  BookOpenText,
   ChevronRight,
-  FileText,
-  FolderKanban,
-  GraduationCap,
   Landmark,
-  LayoutDashboard,
   LogOut,
   Mail,
-  Megaphone,
   Phone,
-  Settings,
-  ScrollText,
   UsersRound,
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { AdminSidebar, adminNavigation } from "@/components/layout/admin-sidebar";
+import type { AdminShellProps } from "@/components/layout/admin-shell.types";
+import {
+  getProfileAvatar,
+  getProfileEmail,
+  getProfileFullName,
+  getProfileInitials,
+  getProfilePhone,
+  getProfileRole,
+  getProfileUserName,
+  type AccessTokenClaims,
+} from "@/lib/auth/claims";
 import { getAccessToken, removeToken } from "@/lib/cookies";
-
-const navigation = [
-  { href: "/", label: "Панель управления", icon: LayoutDashboard },
-  { href: "/users", label: "Пользователи", icon: UsersRound },
-];
-
-const publicationLinks = [
-  { label: "Новости", icon: BellRing },
-  { label: "Статьи", icon: BookOpenText },
-  { label: "Объявления", icon: Megaphone },
-];
-
-interface AccessTokenClaims {
-  [claim: string]: unknown;
-}
-
-function getClaim(claims: AccessTokenClaims | null, ...keys: string[]) {
-  if (!claims) return "";
-  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
-    (value): value is AccessTokenClaims =>
-      !!value && typeof value === "object" && !Array.isArray(value),
-  );
-  const sources = [claims, ...nestedClaims];
-  for (const key of keys) {
-    for (const source of sources) {
-      const value =
-        source[key] ??
-        Object.entries(source).find(
-          ([claimName]) => claimName.toLowerCase() === key.toLowerCase(),
-        )?.[1];
-      if (typeof value === "string" && value.trim()) return value.trim();
-    }
-  }
-  return "";
-}
-
-function getRoleClaims(claims: AccessTokenClaims | null) {
-  if (!claims) return [];
-  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
-    (value): value is AccessTokenClaims =>
-      !!value && typeof value === "object" && !Array.isArray(value),
-  );
-  return [claims, ...nestedClaims]
-    .flatMap((source) =>
-      Object.entries(source)
-        .filter(([key]) => {
-          const normalized = key.toLowerCase();
-          return (
-            normalized === "role" ||
-            normalized === "roles" ||
-            normalized.endsWith("/role") ||
-            normalized.endsWith(":role")
-          );
-        })
-        .flatMap(([, value]) => (Array.isArray(value) ? value : [value])),
-    )
-    .filter((value): value is string => typeof value === "string");
-}
-
-const knownRoles = [
-  { value: "Editor", level: 1 },
-  { value: "Admin", level: 2 },
-  { value: "SuperAdmin", level: 3 },
-] as const;
-
-function getEffectiveRole(claims: AccessTokenClaims | null) {
-  const roles = getRoleClaims(claims)
-    .map((role) => role.toLowerCase().replace(/[^a-z]/g, ""))
-    .flatMap((normalized) =>
-      knownRoles.filter(
-        (role) => role.value.toLowerCase() === normalized,
-      ),
-    )
-    .sort((left, right) => left.level - right.level);
-  return roles[0]?.value ?? null;
-}
-
-function getProfileName(claims: AccessTokenClaims | null) {
-  const firstName = getClaim(
-    claims,
-    "firstName",
-    "FirstName",
-    "first_name",
-    "given_name",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
-  );
-  const middleName = getClaim(
-    claims,
-    "middleName",
-    "MiddleName",
-    "middle_name",
-    "patronymic",
-  );
-  const lastName = getClaim(
-    claims,
-    "lastName",
-    "LastName",
-    "last_name",
-    "family_name",
-    "surname",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
-  );
-  const fullName = [firstName, middleName, lastName].filter(Boolean).join(" ");
-  const explicitFullName = getClaim(
-    claims,
-    "fullName",
-    "FullName",
-    "full_name",
-  );
-  const userName = getClaim(
-    claims,
-    "userName",
-    "UserName",
-    "username",
-    "preferred_username",
-    "unique_name",
-  );
-  const nameClaim = getClaim(
-    claims,
-    "name",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-  );
-  const isRoleName = (value: string) =>
-    getRoleClaims(claims).some(
-      (role) =>
-        typeof role === "string" &&
-        role.toLowerCase().replace(/[^a-z]/g, "") ===
-          value.toLowerCase().replace(/[^a-z]/g, ""),
-    );
-
-  return (
-    explicitFullName ||
-    fullName ||
-    (nameClaim &&
-    !isRoleName(nameClaim) &&
-    nameClaim.toLowerCase() !== userName.toLowerCase()
-      ? nameClaim
-      : "") ||
-    "Не указано"
-  );
-}
-
-function getProfileInitials(name: string) {
-  if (name === "Не указано") return "АП";
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toLocaleUpperCase("ru-RU") ?? "")
-    .join("");
-}
-
-function getProfileRole(claims: AccessTokenClaims | null) {
-  const role = getEffectiveRole(claims) ?? getRoleClaims(claims)[0] ?? "";
-  return role ? role.replace(/[_-]+/g, " ") : "Не указана";
-}
-
-function hasRole(claims: AccessTokenClaims | null, expectedRole: string) {
-  return getEffectiveRole(claims) === expectedRole;
-}
-
-interface AdminShellProps {
-  title: string;
-  description: string;
-  children: ReactNode;
-  showPageHeading?: boolean;
-  fitViewport?: boolean;
-}
 
 export function AdminShell({
   title,
@@ -208,7 +44,6 @@ export function AdminShell({
   const router = useRouter();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
-  const [publicationsOpen, setPublicationsOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const [date, setDate] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
@@ -224,49 +59,13 @@ export function AdminShell({
     retry: false,
     staleTime: Infinity,
   });
-  const profileName = getProfileName(profileClaims ?? null);
-  const canSeeUsers =
-    hasRole(profileClaims ?? null, "Editor") ||
-    hasRole(profileClaims ?? null, "Admin") ||
-    hasRole(profileClaims ?? null, "SuperAdmin");
-  const visibleNavigation = canSeeUsers
-    ? navigation
-    : navigation.filter(({ href }) => href !== "/users");
-  const profileInitials = getProfileInitials(profileName);
-  const profileUserName = getClaim(
-    profileClaims ?? null,
-    "userName",
-    "UserName",
-    "username",
-    "preferred_username",
-    "unique_name",
-  );
-  const profileEmail = getClaim(
-    profileClaims ?? null,
-    "email",
-    "Email",
-    "email_address",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-  );
-  const profilePhone = getClaim(
-    profileClaims ?? null,
-    "phoneNumber",
-    "PhoneNumber",
-    "phone_number",
-    "phone",
-    "mobile",
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone",
-  );
-  const profileAvatar = getClaim(
-    profileClaims ?? null,
-    "photoUrl",
-    "PhotoUrl",
-    "photo_url",
-    "avatarUrl",
-    "AvatarUrl",
-    "avatar_url",
-    "picture",
-  );
+  const profileFullName = getProfileFullName(profileClaims ?? null);
+  const visibleNavigation = adminNavigation;
+  const profileInitials = getProfileInitials(profileFullName);
+  const profileUserName = getProfileUserName(profileClaims ?? null);
+  const profileEmail = getProfileEmail(profileClaims ?? null);
+  const profilePhone = getProfilePhone(profileClaims ?? null);
+  const profileAvatar = getProfileAvatar(profileClaims ?? null);
 
   useEffect(() => {
     const updateDate = () => {
@@ -350,125 +149,7 @@ export function AdminShell({
           fitViewport ? "lg:h-full lg:min-h-0" : ""
         }`}
       >
-        <aside
-          className={`glass-panel scrollbar-none hidden w-[204px] shrink-0 flex-col overflow-y-auto rounded-[26px] p-3 lg:flex xl:w-[212px] ${
-            fitViewport ? "lg:min-h-0" : ""
-          }`}
-        >
-          <Link
-            href="/"
-            className="flex flex-col items-center px-2 py-2 text-center"
-          >
-            <Image
-              src="/images/academy-logo.png"
-              alt="Логотип Академии государственного управления"
-              width={168}
-              height={126}
-              priority
-              className="h-[116px] w-full max-w-[168px] object-contain drop-shadow-[0_4px_14px_rgba(242,193,78,0.25)]"
-            />
-            <span className="mt-2 block text-sm font-semibold tracking-wide text-[#f2d99b]">
-              APA Administration
-            </span>
-            <span className="mt-1 block max-w-[155px] text-[0.65rem] leading-relaxed text-white/55">
-              Академия государственного управления
-            </span>
-          </Link>
-
-          <div className="my-3 h-px bg-white/10" />
-
-          <nav aria-label="Главная навигация" className="space-y-1">
-            {visibleNavigation.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 text-xs transition-all ${
-                    isActive
-                      ? "border border-[#e4c477]/45 bg-gradient-to-r from-[#d4af62]/35 to-[#d4af62]/10 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_24px_rgba(0,0,0,0.12)]"
-                      : "border border-transparent text-white/65 hover:bg-white/[0.07] hover:text-white"
-                  }`}
-                >
-                  <Icon
-                    className={`size-[18px] ${
-                      isActive
-                        ? "text-[#e4c477]"
-                        : "text-white/50 group-hover:text-white/80"
-                    }`}
-                  />
-                  <span>{label}</span>
-                </Link>
-              );
-            })}
-
-            <div className="pt-0.5">
-              <button
-                type="button"
-                aria-expanded={publicationsOpen}
-                onClick={() => setPublicationsOpen((open) => !open)}
-                className="group flex w-full items-center gap-2.5 rounded-xl border border-transparent px-2.5 py-2.5 text-left text-xs text-white/65 transition hover:bg-white/[0.07] hover:text-white"
-              >
-                <FolderKanban className="size-[17px] text-[#e4c477]" />
-                <span>Публикации</span>
-                <ChevronRight
-                  className={`ml-auto size-3.5 transition-transform ${
-                    publicationsOpen ? "rotate-90" : ""
-                  }`}
-                />
-              </button>
-              {publicationsOpen && (
-                <div className="ml-[18px] mt-0.5 space-y-0.5 border-l border-white/15 pl-3">
-                  {publicationLinks.map(({ label, icon: Icon }) => (
-                    <span
-                      key={label}
-                      className="flex items-center gap-2 py-1.5 text-[0.68rem] text-white/50"
-                    >
-                      <Icon className="size-3.5 text-white/40" />
-                      {label}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="my-2 h-px bg-white/10" />
-            {[
-              { label: "Академия", icon: GraduationCap },
-              { label: "Обращения", icon: Bell },
-              { label: "Структура сайта", icon: FolderKanban },
-              { label: "Медиафайлы", icon: FileText },
-              { label: "Документы", icon: ScrollText },
-            ].map(({ label, icon: Icon }) => (
-              <div
-                key={label}
-                className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65"
-              >
-                <Icon className="size-[17px] text-[#e4c477]" />
-                {label}
-              </div>
-            ))}
-
-            <div className="my-2 h-px bg-white/10" />
-            <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65">
-              <ScrollText className="size-[17px] text-[#e4c477]" />
-              Журнал действий
-            </div>
-            <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs text-white/65">
-              <Settings className="size-[17px] text-[#e4c477]" />
-              Настройки
-            </div>
-          </nav>
-
-          <div className="mt-auto px-1 pb-1 pt-3">
-            <div className="h-px bg-white/10" />
-            <div className="mt-3 flex items-center justify-center gap-1.5 text-[0.65rem] text-white/65">
-              <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.75)]" />
-              Система работает
-            </div>
-          </div>
-        </aside>
+        <AdminSidebar pathname={pathname} fitViewport={fitViewport} />
 
         <div
           className={`flex min-w-0 flex-1 flex-col gap-3 sm:gap-4 ${
@@ -494,8 +175,8 @@ export function AdminShell({
                         <h1 className="text-lg font-semibold leading-tight text-white sm:text-2xl">
                           Добро пожаловать,{" "}
                           <span className="text-[#f0c46d]">
-                            {profileName !== "Не указано"
-                              ? `${profileName}!`
+                            {profileFullName !== "Не указано"
+                              ? `${profileFullName}!`
                               : "Администратор!"}
                           </span>
                         </h1>
@@ -602,7 +283,7 @@ export function AdminShell({
                           )}
                           <div className="min-w-0">
                             <h2 className="truncate text-sm font-semibold text-[#fff1c9]">
-                              {profileName}
+                              {profileFullName}
                             </h2>
                             <p className="mt-0.5 text-xs text-white/60">
                               {getProfileRole(profileClaims ?? null)}
@@ -612,7 +293,7 @@ export function AdminShell({
 
                         <dl className="mt-3 space-y-3">
                           {[
-                            { label: "ФИО", value: profileName, icon: UsersRound },
+                            { label: "ФИО", value: profileFullName, icon: UsersRound },
                             {
                               label: "Имя пользователя",
                               value: profileUserName || "Не указано в токене",
