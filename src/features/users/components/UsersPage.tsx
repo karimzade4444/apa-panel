@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   CalendarDays,
   ChevronDown,
@@ -96,7 +96,15 @@ function UserStat({
   );
 }
 
-function UserDetails({ user, onClose }: { user: User; onClose: () => void }) {
+function UserDetails({
+  user,
+  onClose,
+  reduceMotion,
+}: {
+  user: User;
+  onClose: () => void;
+  reduceMotion: boolean;
+}) {
   const details = [
     { icon: ShieldCheck, label: "Роль", value: formatRole(user.role) },
     {
@@ -112,7 +120,13 @@ function UserDetails({ user, onClose }: { user: User; onClose: () => void }) {
   ];
 
   return (
-    <aside className="glass-panel h-fit rounded-2xl p-5 xl:sticky xl:top-6">
+    <motion.aside
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16, scale: 0.98 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16, scale: 0.98 }}
+      transition={{ duration: reduceMotion ? 0.12 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="glass-panel h-fit rounded-2xl p-5 xl:sticky xl:top-6"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <UserAvatar user={user} size="lg" />
@@ -152,7 +166,7 @@ function UserDetails({ user, onClose }: { user: User; onClose: () => void }) {
           </div>
         ))}
       </div>
-    </aside>
+    </motion.aside>
   );
 }
 
@@ -188,11 +202,7 @@ export default function UsersPage() {
     return matchesRole && matchesStatus;
   });
   const selectedUser =
-    selectedId === ""
-      ? null
-      : filteredUsers.find((user) => user.id === selectedId) ??
-        filteredUsers[0] ??
-        null;
+    filteredUsers.find((user) => user.id === selectedId) ?? null;
   const activeCount = users.filter((user) => !user.isBlocked).length;
   const blockedCount = users.length - activeCount;
   const adminCount = users.filter((user) => /admin/i.test(user.role)).length;
@@ -347,7 +357,16 @@ export default function UsersPage() {
                           }`}
                         >
                           <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              aria-expanded={isSelected}
+                              onClick={() =>
+                                setSelectedId((current) =>
+                                  current === user.id ? null : user.id,
+                                )
+                              }
+                              className="flex items-center gap-3 text-left"
+                            >
                               <UserAvatar user={user} />
                               <div className="min-w-0">
                                 <p className="max-w-[190px] truncate font-medium text-white/90">
@@ -357,7 +376,7 @@ export default function UsersPage() {
                                   ID: {user.id}
                                 </p>
                               </div>
-                            </div>
+                            </button>
                           </td>
                           <td className="max-w-[200px] truncate px-4 py-3.5 text-xs text-white/65">
                             {user.email || "—"}
@@ -393,7 +412,12 @@ export default function UsersPage() {
                               size="icon-sm"
                               aria-label={`Подробнее: ${getUserName(user)}`}
                               aria-pressed={isSelected}
-                              onClick={() => setSelectedId(user.id)}
+                              onClick={() =>
+                                setSelectedId((current) =>
+                                  current === user.id ? null : user.id,
+                                )
+                              }
+                              aria-expanded={isSelected}
                               className="text-white/55 hover:bg-white/10 hover:text-[#f2d99b]"
                             >
                               <Eye className="size-4" />
@@ -434,12 +458,16 @@ export default function UsersPage() {
             </div>
           </section>
 
-          {selectedUser && (
-            <UserDetails
-              user={selectedUser}
-              onClose={() => setSelectedId("")}
-            />
-          )}
+          <AnimatePresence>
+            {selectedUser && (
+              <UserDetails
+                key={selectedUser.id}
+                user={selectedUser}
+                onClose={() => setSelectedId(null)}
+                reduceMotion={shouldReduceMotion ?? false}
+              />
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </AdminShell>
