@@ -12,13 +12,26 @@ export interface UserWriteData {
   password?: string;
 }
 
+export type CreateUserData = Omit<UserWriteData, "fullName" | "password"> & {
+  password: string;
+};
+
 export const getUsers = async (search: string): Promise<UserResponse> => {
   const response = await instance.get("/users", { params: { search } });
   return response.data;
 };
 
-export const createUser = async (data: UserWriteData) => {
-  const response = await instance.post("/users", data);
+export const createUser = async (data: CreateUserData) => {
+  const formData = new FormData();
+  formData.append("userName", data.userName);
+  formData.append("email", data.email);
+  formData.append("firstName", data.firstName);
+  formData.append("lastName", data.lastName);
+  formData.append("middleName", data.middleName);
+  formData.append("password", data.password);
+  formData.append("role", data.role);
+
+  const response = await instance.post("/users", formData);
   return response.data;
 };
 

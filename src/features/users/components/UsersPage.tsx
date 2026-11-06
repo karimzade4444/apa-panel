@@ -32,6 +32,7 @@ import {
   getUsers,
   setUserBlocked,
   updateUser,
+  type CreateUserData,
   type UserWriteData,
 } from "@/api/requests/users";
 import { AdminShell } from "@/components/layout/admin-shell";
@@ -373,7 +374,7 @@ export default function UsersPage() {
   const refreshUsers = () =>
     queryClient.invalidateQueries({ queryKey: ["users"] });
   const createMutation = useMutation({
-    mutationFn: createUser,
+    mutationFn: (data: CreateUserData) => createUser(data),
     onSuccess: async () => {
       await refreshUsers();
       setFormMode(null);
@@ -452,19 +453,33 @@ export default function UsersPage() {
       return;
     }
     const { password, ...userData } = values;
+    const fullName = [
+      values.firstName.trim(),
+      values.middleName.trim(),
+      values.lastName.trim(),
+    ]
+      .filter(Boolean)
+      .join(" ");
     const data: UserWriteData = {
       ...userData,
-      fullName: [
-        values.firstName.trim(),
-        values.middleName.trim(),
-        values.lastName.trim(),
-      ]
-        .filter(Boolean)
-        .join(" "),
+      fullName,
       ...(password ? { password } : {}),
     };
     if (formMode === "create") {
-      createMutation.mutate(data);
+      if (!password) {
+        toast.error("Укажите пароль пользователя.");
+        return;
+      }
+      const createData: CreateUserData = {
+        userName: data.userName,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        role: data.role,
+        password,
+      };
+      createMutation.mutate(createData);
     } else if (formMode === "edit" && selectedUser) {
       updateMutation.mutate({ id: selectedUser.id, data });
     }
