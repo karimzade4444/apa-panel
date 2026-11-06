@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   BellRing,
   Bell,
@@ -12,17 +13,22 @@ import {
   Landmark,
   LayoutDashboard,
   LogOut,
+  Mail,
   Megaphone,
+  Phone,
   Settings,
+  ShieldCheck,
   ScrollText,
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { getUsers } from "@/api/requests/users";
 import { removeToken } from "@/lib/cookies";
+import type { User } from "@/types/userstypes";
 
 const navigation = [
   { href: "/", label: "Панель управления", icon: LayoutDashboard },
@@ -34,6 +40,29 @@ const publicationLinks = [
   { label: "Статьи", icon: BookOpenText },
   { label: "Объявления", icon: Megaphone },
 ];
+
+function getProfileName(user: User | undefined) {
+  if (!user) return "Не указано";
+  const name = [user.firstName, user.middleName, user.lastName]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(" ");
+
+  return name || user.fullName?.trim() || user.userName || "Не указано";
+}
+
+function getProfileInitials(name: string) {
+  if (name === "Не указано") return "АП";
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toLocaleUpperCase("ru-RU") ?? "")
+    .join("");
+}
+
+function getProfileRole(user: User | undefined) {
+  return user?.role.replace(/[_-]+/g, " ").trim() || "Не указана";
+}
 
 interface AdminShellProps {
   title: string;
@@ -52,7 +81,16 @@ export function AdminShell({
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [publicationsOpen, setPublicationsOpen] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [date, setDate] = useState("");
+  const profileRef = useRef<HTMLDivElement>(null);
+  const { data: profileData } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUsers(""),
+  });
+  const profileUser = profileData?.items.find((user) => /admin/i.test(user.role));
+  const profileName = getProfileName(profileUser);
+  const profileInitials = getProfileInitials(profileName);
 
   useEffect(() => {
     const updateDate = () => {
@@ -76,6 +114,27 @@ export function AdminShell({
       window.clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!profileRef.current?.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setProfileOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [profileOpen]);
 
   const handleLogout = () => {
     removeToken();
@@ -227,7 +286,9 @@ export function AdminShell({
                     <>
                       <h1 className="text-lg font-semibold leading-tight text-white sm:text-2xl">
                         Добро пожаловать,{" "}
-                        <span className="text-[#f0c46d]">Администратор!</span>
+                        <span className="text-[#f0c46d]">
+                          {profileUser ? `${profileName}!` : "Администратор!"}
+                        </span>
                       </h1>
                       <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
                         Панель управления сайтом Академии
@@ -250,7 +311,7 @@ export function AdminShell({
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+              <div className="ml-auto flex shrink-0 items-center justify-end gap-1.5 sm:gap-3">
                 <div className="hidden text-right sm:block">
                   <p className="text-xs capitalize text-white/70">{date}</p>
                 </div>
@@ -264,19 +325,91 @@ export function AdminShell({
                   <Bell className="size-[18px]" />
                   <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#e4c477] ring-2 ring-[#17324d]" />
                 </Button>
-                <span className="hidden h-8 w-px bg-white/15 sm:block" />
-                <div className="flex size-9 items-center justify-center rounded-full border border-[#e4c477]/50 bg-gradient-to-br from-[#d4af62]/35 to-[#173c5d] text-xs font-semibold text-[#f2d99b] shadow-[0_0_18px_rgba(212,175,98,0.15)]">
-                  АП
+                <div ref={profileRef} className="relative">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Открыть профиль администратора"
+                    aria-haspopup="dialog"
+                    aria-expanded={profileOpen}
+                    onClick={() => setProfileOpen((open) => !open)}
+                    className="size-10 rounded-full p-0 hover:bg-white/10"
+                  >
+                    <span className="flex size-10 aspect-square items-center justify-center rounded-[50%] border-2 border-[#f2d18a]/80 bg-gradient-to-br from-[#f2d18a]/45 via-[#d4af62]/30 to-[#173c5d] text-xs font-semibold text-[#fff1c9] shadow-[0_0_20px_rgba(242,209,138,0.3)]">
+                      {profileInitials}
+                    </span>
+                  </Button>
+
+                  {profileOpen && (
+                    <motion.section
+                      role="dialog"
+                      aria-label="Профиль администратора"
+                      initial={shouldReduceMotion ? false : { opacity: 0, y: -6, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.16 }}
+                      className="absolute right-0 top-full z-50 mt-3 w-[min(19rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.98),rgba(12,37,63,0.98))] p-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.55),0_0_28px_rgba(242,209,138,0.14)] backdrop-blur-2xl"
+                    >
+                      <div className="flex items-center gap-3 border-b border-[#f2d18a]/20 pb-3">
+                        <span className="flex size-12 aspect-square shrink-0 items-center justify-center rounded-[50%] border-2 border-[#f2d18a]/75 bg-gradient-to-br from-[#f2d18a]/40 to-[#d4af62]/15 text-sm font-semibold text-[#fff1c9] shadow-[0_0_18px_rgba(242,209,138,0.18)]">
+                          {profileInitials}
+                        </span>
+                        <div className="min-w-0">
+                          <h2 className="truncate text-sm font-semibold text-[#fff1c9]">
+                            {profileName}
+                          </h2>
+                          <p className="mt-0.5 text-xs text-white/70">
+                            Данные учётной записи
+                          </p>
+                        </div>
+                      </div>
+
+                      <dl className="mt-3 space-y-3">
+                        {[
+                          {
+                            label: "ФИО",
+                            value: profileName,
+                            icon: UsersRound,
+                          },
+                          {
+                            label: "Почта",
+                            value: profileUser?.email || "Не указана",
+                            icon: Mail,
+                          },
+                          {
+                            label: "Номер телефона",
+                            value: "Не указан в данных пользователя",
+                            icon: Phone,
+                          },
+                          {
+                            label: "Роль",
+                            value: getProfileRole(profileUser),
+                            icon: ShieldCheck,
+                          },
+                        ].map(({ label, value, icon: Icon }) => (
+                          <div key={label} className="flex items-start gap-2.5">
+                            <Icon className="mt-0.5 size-4 shrink-0 text-[#f2d18a]" />
+                            <div className="min-w-0">
+                              <dt className="text-[0.68rem] font-medium text-white/60">{label}</dt>
+                              <dd className="mt-0.5 break-words text-xs font-medium text-white">
+                                {value}
+                              </dd>
+                            </div>
+                          </div>
+                        ))}
+                      </dl>
+                    </motion.section>
+                  )}
                 </div>
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon-sm"
+                  size="icon"
                   aria-label="Выйти из аккаунта"
                   onClick={handleLogout}
-                  className="text-white/50 hover:bg-white/10 hover:text-white"
+                  className="text-white/70 hover:bg-white/10 hover:text-[#f2d18a]"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut className="size-[18px]" />
                 </Button>
               </div>
             </div>
