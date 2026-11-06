@@ -186,20 +186,18 @@ export function AdminShell({
 
   return (
     <div
-      className={`relative w-full overflow-hidden bg-[#061a30] text-white ${
+      className={`relative w-full overflow-hidden text-white ${
         fitViewport ? "min-h-screen lg:h-dvh lg:min-h-0" : "min-h-screen"
       }`}
     >
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/images/login/academy-background.jpg')",
-        }}
+        
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 bg-[linear-gradient(115deg,rgba(3,18,35,0.88),rgba(7,33,60,0.74)_50%,rgba(3,18,35,0.9)),radial-gradient(ellipse_at_top_right,rgba(67,139,201,0.24),transparent_45%)]"
+        className="pointer-events-none fixed inset-0"
       />
       <div
         aria-hidden="true"

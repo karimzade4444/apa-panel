@@ -237,7 +237,7 @@ function AcademyCard() {
   return (
     <section
       className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden rounded-[16px] border-[#e4c477]/30 bg-cover bg-center p-3.5"
-      style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
+      
     >
       <div className="absolute inset-0 bg-gradient-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#061a30]/70 via-transparent to-white/[0.04]" />

@@ -98,14 +98,7 @@ export function UserFormDialog({
     );
   }, [dialogOpen, isBusy, onClose, shouldReduceMotion]);
 
-  useEffect(
-    () => () => {
-      if (closeTimerRef.current !== null) {
-        window.clearTimeout(closeTimerRef.current);
-      }
-    },
-    [],
-  );
+
 
   return (
     <Dialog
