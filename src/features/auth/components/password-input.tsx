@@ -52,7 +52,7 @@ export default function PasswordInput<T extends FieldValues>({
             value={field.value ?? ""}
             placeholder={placeholder}
             className={[
-              "h-12 rounded-xl border border-white/10 bg-white/[0.06] text-sm text-white placeholder:text-white/35 focus-visible:border-[#d4af62] focus-visible:ring-[#d4af62]/20",
+              "h-12 rounded-xl border border-white/10 bg-white/6 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20",
               className,
               inputClassName,
             ]
