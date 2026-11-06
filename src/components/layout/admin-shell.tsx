@@ -226,6 +226,7 @@ export function AdminShell({
   });
   const profileName = getProfileName(profileClaims ?? null);
   const canSeeUsers =
+    hasRole(profileClaims ?? null, "Editor") ||
     hasRole(profileClaims ?? null, "Admin") ||
     hasRole(profileClaims ?? null, "SuperAdmin");
   const visibleNavigation = canSeeUsers
