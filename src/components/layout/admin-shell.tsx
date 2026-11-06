@@ -262,9 +262,14 @@ export function AdminShell({
             href="/"
             className="flex flex-col items-center px-2 py-2 text-center"
           >
-            <span className="flex size-14 items-center justify-center rounded-2xl border border-[#d4af62]/35 bg-gradient-to-br from-[#d4af62]/20 to-[#0b2d4d]/80 text-[#e4c477] shadow-[0_0_24px_rgba(212,175,98,0.12)]">
-              <Landmark className="size-8" strokeWidth={1.35} />
-            </span>
+            <Image
+              src="/images/academy-logo.png"
+              alt="Логотип Академии государственного управления"
+              width={168}
+              height={126}
+              priority
+              className="h-[116px] w-full max-w-[168px] object-contain drop-shadow-[0_4px_14px_rgba(242,193,78,0.25)]"
+            />
             <span className="mt-2 block text-sm font-semibold tracking-wide text-[#f2d99b]">
               APA Administration
             </span>
