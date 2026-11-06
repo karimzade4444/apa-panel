@@ -203,61 +203,63 @@ export default function UsersPage() {
       description="Управление пользователями системы"
       fitViewport
     >
-      <div className="space-y-5 lg:grid lg:h-full lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
-        <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4"
-        >
-          <UserStat
-            label="Всего пользователей"
-            value={data ? data.total.toLocaleString("ru-RU") : isLoading ? "—" : "0"}
-            icon={UsersRound}
-            tone="bg-sky-300/10 text-sky-200"
-          />
-          <UserStat
-            label="Активны в списке"
-            value={isLoading ? "—" : activeCount.toLocaleString("ru-RU")}
-            icon={UserRoundCheck}
-            tone="bg-emerald-300/10 text-emerald-200"
-          />
-          <UserStat
-            label="Администраторы в списке"
-            value={isLoading ? "—" : adminCount.toLocaleString("ru-RU")}
-            icon={ShieldCheck}
-            tone="bg-amber-300/10 text-[#f2d99b]"
-          />
-          <UserStat
-            label="Заблокированы в списке"
-            value={isLoading ? "—" : blockedCount.toLocaleString("ru-RU")}
-            icon={UserRoundX}
-            tone="bg-rose-300/10 text-rose-200"
-          />
-        </motion.div>
-
-        {isError && (
-          <div
-            role="alert"
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100"
+      <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
+        <div className="space-y-3">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4"
           >
-            <span className="flex items-center gap-2">
-              <CircleAlert className="size-4" />
-              Не удалось загрузить список пользователей.
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isRefetching}
-              onClick={() => void refetch()}
-              className="border-rose-200/20 bg-white/5 text-white hover:bg-white/10"
-            >
-              {isRefetching ? "Загрузка..." : "Повторить"}
-            </Button>
-          </div>
-        )}
+            <UserStat
+              label="Всего пользователей"
+              value={data ? data.total.toLocaleString("ru-RU") : isLoading ? "—" : "0"}
+              icon={UsersRound}
+              tone="bg-sky-300/10 text-sky-200"
+            />
+            <UserStat
+              label="Активны в списке"
+              value={isLoading ? "—" : activeCount.toLocaleString("ru-RU")}
+              icon={UserRoundCheck}
+              tone="bg-emerald-300/10 text-emerald-200"
+            />
+            <UserStat
+              label="Администраторы в списке"
+              value={isLoading ? "—" : adminCount.toLocaleString("ru-RU")}
+              icon={ShieldCheck}
+              tone="bg-amber-300/10 text-[#f2d99b]"
+            />
+            <UserStat
+              label="Заблокированы в списке"
+              value={isLoading ? "—" : blockedCount.toLocaleString("ru-RU")}
+              icon={UserRoundX}
+              tone="bg-rose-300/10 text-rose-200"
+            />
+          </motion.div>
 
-        <div className="grid min-h-0 gap-5 lg:h-full 2xl:grid-cols-[minmax(0,1fr)_320px]">
+          {isError && (
+            <div
+              role="alert"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100"
+            >
+              <span className="flex items-center gap-2">
+                <CircleAlert className="size-4" />
+                Не удалось загрузить список пользователей.
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isRefetching}
+                onClick={() => void refetch()}
+                className="border-rose-200/20 bg-white/5 text-white hover:bg-white/10"
+              >
+                {isRefetching ? "Загрузка..." : "Повторить"}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        <div className="grid min-h-0 gap-5 lg:grid-rows-[minmax(0,1fr)] 2xl:grid-cols-[minmax(0,1fr)_320px]">
           <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl">
             <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:p-5 xl:flex-row xl:items-center">
               <label className="relative min-w-0 flex-1">
