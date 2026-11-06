@@ -129,6 +129,7 @@ interface AdminShellProps {
   description: string;
   children: ReactNode;
   showPageHeading?: boolean;
+  fitViewport?: boolean;
 }
 
 export function AdminShell({
@@ -136,6 +137,7 @@ export function AdminShell({
   description,
   children,
   showPageHeading = true,
+  fitViewport = false,
 }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -235,7 +237,11 @@ export function AdminShell({
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#061a30] text-white">
+    <div
+      className={`relative w-full overflow-hidden bg-[#061a30] text-white ${
+        fitViewport ? "min-h-screen lg:h-dvh lg:min-h-0" : "min-h-screen"
+      }`}
+    >
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 bg-cover bg-center"
@@ -256,8 +262,16 @@ export function AdminShell({
         className="pointer-events-none fixed -right-40 bottom-0 h-96 w-96 rounded-full bg-amber-300/10 blur-[120px]"
       />
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1800px] gap-3 p-2 sm:gap-4 sm:p-3 lg:gap-5 lg:p-4">
-        <aside className="glass-panel hidden w-[204px] shrink-0 flex-col rounded-[26px] p-3 lg:flex xl:w-[212px]">
+      <div
+        className={`relative z-10 mx-auto flex min-h-screen w-full max-w-[1800px] gap-3 p-2 sm:gap-4 sm:p-3 lg:gap-5 lg:p-4 ${
+          fitViewport ? "lg:h-full lg:min-h-0" : ""
+        }`}
+      >
+        <aside
+          className={`glass-panel scrollbar-none hidden w-[204px] shrink-0 flex-col overflow-y-auto rounded-[26px] p-3 lg:flex xl:w-[212px] ${
+            fitViewport ? "lg:min-h-0" : ""
+          }`}
+        >
           <Link
             href="/"
             className="flex flex-col items-center px-2 py-2 text-center"
@@ -373,7 +387,11 @@ export function AdminShell({
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4">
+        <div
+          className={`flex min-w-0 flex-1 flex-col gap-3 sm:gap-4 ${
+            fitViewport ? "lg:min-h-0" : ""
+          }`}
+        >
           <header
             className={`relative z-50 rounded-2xl px-3 py-3 sm:px-5 sm:py-4 ${
               pathname === "/"
@@ -592,7 +610,9 @@ export function AdminShell({
             initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="min-w-0 flex-1"
+            className={`min-w-0 flex-1 ${
+              fitViewport ? "lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden" : ""
+            }`}
           >
             {showPageHeading && (
               <div className="mb-4 px-1 sm:px-2">
@@ -605,7 +625,7 @@ export function AdminShell({
             {children}
           </motion.main>
 
-          <footer className="px-2 pb-1 text-center text-xs text-white/35 sm:text-left">
+          <footer className={`px-2 pb-1 text-center text-xs text-white/35 sm:text-left ${fitViewport ? "lg:hidden" : ""}`}>
             APA Administration <span className="mx-1.5 text-white/20">·</span>
             Академия государственного управления
           </footer>

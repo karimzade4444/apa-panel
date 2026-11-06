@@ -6,10 +6,7 @@ import {
   Activity,
   ArrowRight,
   BookOpenText,
-  CalendarDays,
   Check,
-  ChevronRight,
-  Clock3,
   Mail,
   Megaphone,
   MessageCircle,
@@ -78,20 +75,20 @@ function StatCard({
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : index * 0.06, duration: 0.38 }}
-      className="glass-panel relative min-h-[112px] overflow-hidden rounded-[18px] p-3.5 sm:min-h-[120px] sm:p-4"
+      className="glass-panel relative min-h-[88px] overflow-hidden rounded-[16px] p-3 sm:min-h-[96px] sm:p-3.5"
     >
       <div className="flex items-center gap-3">
-        <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] border border-white/10 bg-[#09223e]/85 text-[#e7c477] shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
-          <Icon className="size-6" strokeWidth={1.8} />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#09223e]/85 text-[#e7c477] shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
+          <Icon className="size-5" strokeWidth={1.8} />
         </span>
         <div className="min-w-0">
-          <p className="text-[1.65rem] font-semibold leading-none tracking-tight text-white sm:text-[1.8rem]">
+          <p className="text-2xl font-semibold leading-none tracking-tight text-white">
             {value}
           </p>
-          <p className="mt-1.5 truncate text-xs text-white/85">{title}</p>
+          <p className="mt-1 truncate text-xs text-white/85">{title}</p>
         </div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-8 overflow-hidden opacity-80">
+      <div className="absolute inset-x-0 bottom-0 h-6 overflow-hidden opacity-70">
         <svg
           aria-hidden="true"
           viewBox="0 0 240 34"
@@ -127,7 +124,7 @@ function PublicationChart({ users }: { users: User[] }) {
   const max = Math.max(...metrics.map((metric) => metric.value), 1);
 
   return (
-    <section className="glass-panel flex min-h-[250px] flex-col rounded-[18px] p-4 sm:min-h-[270px] sm:p-5">
+    <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
           <Activity className="size-[18px] text-sky-200" />
@@ -138,7 +135,7 @@ function PublicationChart({ users }: { users: User[] }) {
         </span>
       </div>
 
-      <div className="mt-5 grid flex-1 grid-cols-3 gap-3 sm:gap-5">
+      <div className="mt-3 grid min-h-0 flex-1 grid-cols-3 gap-3 sm:gap-5">
         {metrics.map((metric, index) => (
           <div
             key={metric.label}
@@ -147,7 +144,7 @@ function PublicationChart({ users }: { users: User[] }) {
             <span className="mb-2 text-xs font-medium tabular-nums text-white/80">
               {metric.value}
             </span>
-            <div className="relative flex h-[112px] w-full items-end justify-center border-b border-l border-white/20 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_27px,rgba(255,255,255,0.08)_28px)] sm:h-[135px]">
+            <div className="relative flex h-[76px] w-full items-end justify-center border-b border-l border-white/20 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-[96px]">
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: users.length ? `${Math.max((metric.value / max) * 88, 5)}%` : "4%" }}
@@ -162,7 +159,7 @@ function PublicationChart({ users }: { users: User[] }) {
         ))}
       </div>
 
-      <p className="mt-3 border-t border-white/10 pt-2.5 text-[0.65rem] text-white/40">
+      <p className="mt-2 border-t border-white/10 pt-2 text-[0.62rem] text-white/40">
         Показатели рассчитаны по записям, полученным от API.
       </p>
     </section>
@@ -171,7 +168,7 @@ function PublicationChart({ users }: { users: User[] }) {
 
 function LatestPublication() {
   return (
-    <section className="glass-panel flex min-h-[250px] flex-col rounded-[18px] p-4 sm:min-h-[270px] sm:p-5">
+    <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
           <Megaphone className="size-[18px] text-sky-200" />
@@ -180,10 +177,10 @@ function LatestPublication() {
         <span className="text-xs font-medium text-sky-200">Всего 1</span>
       </div>
 
-      <article className="mt-4 flex min-w-0 flex-1 items-start gap-3 border-b border-white/10 pb-4">
+      <article className="mt-3 flex min-w-0 flex-1 items-start gap-3 border-b border-white/10 pb-3">
         <div
           aria-hidden="true"
-          className="relative flex h-[68px] w-[92px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-[78px] sm:w-[104px]"
+          className="relative flex h-[56px] w-[76px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-[64px] sm:w-[88px]"
           style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
         >
           <span className="absolute inset-0 bg-[#0b2b4d]/35" />
@@ -203,10 +200,10 @@ function LatestPublication() {
         </span>
       </article>
 
-      <div className="mt-auto flex items-center justify-between pt-3 text-xs">
-        <span className="text-white/45">В блоке отображается одна запись</span>
-        <span className="flex items-center gap-1 font-medium text-sky-200">
-          <Check className="size-3.5" />
+      <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[0.65rem]">
+        <span className="truncate text-white/45">В главном блоке отображается одна запись</span>
+        <span className="flex shrink-0 items-center gap-1 font-medium text-sky-200">
+          <Check className="size-3" />
           1 публикация
         </span>
       </div>
@@ -224,16 +221,13 @@ function EmptyPanel({
   icon: typeof Mail;
 }) {
   return (
-    <section className="glass-panel min-h-[160px] rounded-[18px] p-4 sm:p-5">
-      <h2 className="flex items-center gap-2 text-sm font-semibold text-white">
+    <section className="glass-panel flex min-h-0 items-center gap-3 overflow-hidden rounded-[16px] p-3 sm:p-3.5">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10">
         <Icon className="size-[18px] text-sky-200" />
-        {title}
-      </h2>
-      <div className="mt-5 flex items-center gap-3 rounded-xl border border-white/[0.08] bg-white/[0.035] p-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-white/45">
-          <Clock3 className="size-4" />
-        </span>
-        <p className="text-xs leading-relaxed text-white/50">{subtitle}</p>
+      </span>
+      <div className="min-w-0">
+        <h2 className="truncate text-xs font-semibold text-white/90">{title}</h2>
+        <p className="mt-0.5 truncate text-[0.65rem] text-white/50">{subtitle}</p>
       </div>
     </section>
   );
@@ -242,19 +236,19 @@ function EmptyPanel({
 function AcademyCard() {
   return (
     <section
-      className="glass-panel relative flex min-h-[160px] flex-col justify-end overflow-hidden rounded-[18px] border-[#e4c477]/30 bg-cover bg-center p-4 sm:p-5"
+      className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden rounded-[16px] border-[#e4c477]/30 bg-cover bg-center p-3.5"
       style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#061a30]/70 via-transparent to-white/[0.04]" />
       <div className="relative z-10 max-w-[290px]">
-        <p className="text-xs leading-relaxed text-white/90 sm:text-sm">
+        <p className="text-xs leading-relaxed text-white/90">
           Академия государственного управления при Президенте Республики
           Таджикистан
         </p>
         <Link
           href="/users"
-          className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#f2d18a]/40 bg-[#e1bb6e] px-3.5 py-2 text-xs font-semibold text-[#10243a] shadow-lg transition hover:bg-[#f2d18a]"
+          className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#f2d18a]/40 bg-[#e1bb6e] px-3 py-1.5 text-[0.68rem] font-semibold text-[#10243a] shadow-lg transition hover:bg-[#f2d18a]"
         >
           Пользователи
           <ArrowRight className="size-3.5" />
@@ -284,47 +278,50 @@ export default function DashboardPage() {
       title="Панель управления"
       description="Обзор системы управления Академией"
       showPageHeading={false}
+      fitViewport
     >
-      <div className="space-y-3 sm:space-y-4">
-        <div className="grid grid-cols-2 gap-2.5 xl:grid-cols-4">
-          {stats.map((stat, index) => (
-            <StatCard
-              key={stat.key}
-              title={stat.title}
-              value={statValues[stat.key]}
-              icon={stat.icon}
-              color={stat.color}
-              glow={stat.glow}
-              index={index}
-              reduceMotion={shouldReduceMotion}
-            />
-          ))}
+      <div className="scrollbar-none space-y-3 overflow-y-auto sm:space-y-4 lg:grid lg:h-full lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)_minmax(0,0.48fr)] lg:gap-3 lg:space-y-0 lg:overflow-hidden">
+        <div className="space-y-2.5">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {stats.map((stat, index) => (
+              <StatCard
+                key={stat.key}
+                title={stat.title}
+                value={statValues[stat.key]}
+                icon={stat.icon}
+                color={stat.color}
+                glow={stat.glow}
+                index={index}
+                reduceMotion={shouldReduceMotion}
+              />
+            ))}
+          </div>
+
+          {isError && (
+            <div
+              role="alert"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-2 text-xs text-rose-100"
+            >
+              <span>Не удалось получить статистику пользователей.</span>
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={isRefetching}
+                onClick={() => void refetch()}
+                className="h-auto rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10"
+              >
+                {isRefetching ? "Загрузка..." : "Повторить"}
+              </Button>
+            </div>
+          )}
         </div>
 
-        {isError && (
-          <div
-            role="alert"
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-2.5 text-xs text-rose-100"
-          >
-            <span>Не удалось получить статистику пользователей.</span>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={isRefetching}
-              onClick={() => void refetch()}
-              className="h-auto rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10"
-            >
-              {isRefetching ? "Загрузка..." : "Повторить"}
-            </Button>
-          </div>
-        )}
-
-        <div className="grid gap-3 xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="grid min-h-[220px] gap-3 lg:min-h-0 xl:grid-cols-[1.08fr_0.92fr]">
           <PublicationChart users={users} />
           <LatestPublication />
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-[0.95fr_1.2fr_1fr]">
+        <div className="grid min-h-[100px] gap-3 sm:grid-cols-2 xl:grid-cols-[0.95fr_1.2fr_1fr] lg:min-h-0">
           <EmptyPanel
             title="Обращения граждан"
             subtitle="Модуль обращений пока не подключён к панели."
@@ -338,19 +335,6 @@ export default function DashboardPage() {
           <AcademyCard />
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-[0.65rem] text-white/40">
-          <span className="flex items-center gap-1.5">
-            <CalendarDays className="size-3.5" />
-            Данные пользователей обновляются из системы
-          </span>
-          <Link
-            href="/users"
-            className="inline-flex items-center gap-1 text-white/65 transition hover:text-[#f2d18a]"
-          >
-            Управление пользователями
-            <ChevronRight className="size-3.5" />
-          </Link>
-        </div>
       </div>
     </AdminShell>
   );

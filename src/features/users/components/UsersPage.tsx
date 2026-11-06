@@ -201,8 +201,9 @@ export default function UsersPage() {
     <AdminShell
       title="Пользователи"
       description="Управление пользователями системы"
+      fitViewport
     >
-      <div className="space-y-5">
+      <div className="space-y-5 lg:grid lg:h-full lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -256,8 +257,8 @@ export default function UsersPage() {
           </div>
         )}
 
-        <div className="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="glass-panel min-w-0 overflow-hidden rounded-2xl">
+        <div className="grid min-h-0 gap-5 lg:h-full 2xl:grid-cols-[minmax(0,1fr)_320px]">
+          <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl">
             <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:p-5 xl:flex-row xl:items-center">
               <label className="relative min-w-0 flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
@@ -310,7 +311,7 @@ export default function UsersPage() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="scrollbar-none min-h-0 flex-1 overflow-auto">
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-xs text-white/45">
