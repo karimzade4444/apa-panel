@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
 import { Check, LockKeyhole, Mail, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -50,6 +50,7 @@ function getLoginErrorMessage(error: unknown) {
 export default function LoginForm() {
   const [error, setError] = useState("");
   const router = useRouter();
+  const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
 
   const { control, handleSubmit, setValue } = useForm<LoginFormValues>({
@@ -74,6 +75,8 @@ export default function LoginForm() {
         return;
       }
 
+      queryClient.removeQueries({ queryKey: ["auth-profile"] });
+      queryClient.removeQueries({ queryKey: ["users"] });
       saveToken(token);
       toast.success("Вход выполнен", {
         description: "Добро пожаловать в панель управления",

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -47,11 +47,63 @@ interface AccessTokenClaims {
 
 function getClaim(claims: AccessTokenClaims | null, ...keys: string[]) {
   if (!claims) return "";
+  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
+    (value): value is AccessTokenClaims =>
+      !!value && typeof value === "object" && !Array.isArray(value),
+  );
+  const sources = [claims, ...nestedClaims];
   for (const key of keys) {
-    const value = claims[key];
-    if (typeof value === "string" && value.trim()) return value.trim();
+    for (const source of sources) {
+      const value =
+        source[key] ??
+        Object.entries(source).find(
+          ([claimName]) => claimName.toLowerCase() === key.toLowerCase(),
+        )?.[1];
+      if (typeof value === "string" && value.trim()) return value.trim();
+    }
   }
   return "";
+}
+
+function getRoleClaims(claims: AccessTokenClaims | null) {
+  if (!claims) return [];
+  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
+    (value): value is AccessTokenClaims =>
+      !!value && typeof value === "object" && !Array.isArray(value),
+  );
+  return [claims, ...nestedClaims]
+    .flatMap((source) =>
+      Object.entries(source)
+        .filter(([key]) => {
+          const normalized = key.toLowerCase();
+          return (
+            normalized === "role" ||
+            normalized === "roles" ||
+            normalized.endsWith("/role") ||
+            normalized.endsWith(":role")
+          );
+        })
+        .flatMap(([, value]) => (Array.isArray(value) ? value : [value])),
+    )
+    .filter((value): value is string => typeof value === "string");
+}
+
+const knownRoles = [
+  { value: "Editor", level: 1 },
+  { value: "Admin", level: 2 },
+  { value: "SuperAdmin", level: 3 },
+] as const;
+
+function getEffectiveRole(claims: AccessTokenClaims | null) {
+  const roles = getRoleClaims(claims)
+    .map((role) => role.toLowerCase().replace(/[^a-z]/g, ""))
+    .flatMap((normalized) =>
+      knownRoles.filter(
+        (role) => role.value.toLowerCase() === normalized,
+      ),
+    )
+    .sort((left, right) => left.level - right.level);
+  return roles[0]?.value ?? null;
 }
 
 function getProfileName(claims: AccessTokenClaims | null) {
@@ -61,6 +113,7 @@ function getProfileName(claims: AccessTokenClaims | null) {
     "FirstName",
     "first_name",
     "given_name",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
   );
   const middleName = getClaim(
     claims,
@@ -76,27 +129,44 @@ function getProfileName(claims: AccessTokenClaims | null) {
     "last_name",
     "family_name",
     "surname",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname",
   );
   const fullName = [firstName, middleName, lastName].filter(Boolean).join(" ");
+  const explicitFullName = getClaim(
+    claims,
+    "fullName",
+    "FullName",
+    "full_name",
+  );
+  const userName = getClaim(
+    claims,
+    "userName",
+    "UserName",
+    "username",
+    "preferred_username",
+    "unique_name",
+  );
+  const nameClaim = getClaim(
+    claims,
+    "name",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
+  );
+  const isRoleName = (value: string) =>
+    getRoleClaims(claims).some(
+      (role) =>
+        typeof role === "string" &&
+        role.toLowerCase().replace(/[^a-z]/g, "") ===
+          value.toLowerCase().replace(/[^a-z]/g, ""),
+    );
 
   return (
+    explicitFullName ||
     fullName ||
-    getClaim(
-      claims,
-      "fullName",
-      "FullName",
-      "full_name",
-      "name",
-      "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
-    ) ||
-    getClaim(
-      claims,
-      "userName",
-      "UserName",
-      "username",
-      "preferred_username",
-      "unique_name",
-    ) ||
+    (nameClaim &&
+    !isRoleName(nameClaim) &&
+    nameClaim.toLowerCase() !== userName.toLowerCase()
+      ? nameClaim
+      : "") ||
     "Не указано"
   );
 }
@@ -111,32 +181,12 @@ function getProfileInitials(name: string) {
 }
 
 function getProfileRole(claims: AccessTokenClaims | null) {
-  const roleClaim =
-    claims?.role ??
-    claims?.Role ??
-    claims?.roles ??
-    claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-  const role = Array.isArray(roleClaim)
-    ? roleClaim.filter((value): value is string => typeof value === "string").join(", ")
-    : typeof roleClaim === "string"
-      ? roleClaim
-      : "";
+  const role = getEffectiveRole(claims) ?? getRoleClaims(claims)[0] ?? "";
   return role ? role.replace(/[_-]+/g, " ") : "Не указана";
 }
 
 function hasRole(claims: AccessTokenClaims | null, expectedRole: string) {
-  const roleClaim =
-    claims?.role ??
-    claims?.Role ??
-    claims?.roles ??
-    claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-  const roles = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
-  return roles.some(
-    (role) =>
-      typeof role === "string" &&
-      role.toLowerCase().replace(/[^a-z]/g, "") ===
-        expectedRole.toLowerCase().replace(/[^a-z]/g, ""),
-  );
+  return getEffectiveRole(claims) === expectedRole;
 }
 
 interface AdminShellProps {
@@ -156,6 +206,7 @@ export function AdminShell({
 }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();
   const [publicationsOpen, setPublicationsOpen] = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -174,11 +225,21 @@ export function AdminShell({
     staleTime: Infinity,
   });
   const profileName = getProfileName(profileClaims ?? null);
-  const isEditor = hasRole(profileClaims ?? null, "Editor");
-  const visibleNavigation = isEditor
-    ? navigation.filter(({ href }) => href !== "/users")
-    : navigation;
+  const canSeeUsers =
+    hasRole(profileClaims ?? null, "Admin") ||
+    hasRole(profileClaims ?? null, "SuperAdmin");
+  const visibleNavigation = canSeeUsers
+    ? navigation
+    : navigation.filter(({ href }) => href !== "/users");
   const profileInitials = getProfileInitials(profileName);
+  const profileUserName = getClaim(
+    profileClaims ?? null,
+    "userName",
+    "UserName",
+    "username",
+    "preferred_username",
+    "unique_name",
+  );
   const profileEmail = getClaim(
     profileClaims ?? null,
     "email",
@@ -251,6 +312,8 @@ export function AdminShell({
   }, [profileOpen]);
 
   const handleLogout = () => {
+    queryClient.removeQueries({ queryKey: ["auth-profile"] });
+    queryClient.removeQueries({ queryKey: ["users"] });
     removeToken();
     router.replace("/login");
   };
@@ -549,6 +612,11 @@ export function AdminShell({
                         <dl className="mt-3 space-y-3">
                           {[
                             { label: "ФИО", value: profileName, icon: UsersRound },
+                            {
+                              label: "Имя пользователя",
+                              value: profileUserName || "Не указано в токене",
+                              icon: UsersRound,
+                            },
                             {
                               label: "Почта",
                               value: profileEmail || "Не указана в токене",

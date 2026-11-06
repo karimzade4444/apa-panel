@@ -65,28 +65,32 @@ const emptyForm: UserFormValues = {
 };
 
 function getActorRole(claims: Record<string, unknown> | null): UserRole | null {
-  const roleClaim =
-    claims?.role ??
-    claims?.Role ??
-    claims?.roles ??
-    claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-  const claimsList = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
-  let actorRole: UserRole | null = null;
-  for (const claim of claimsList) {
-    if (typeof claim !== "string") continue;
+  if (!claims) return null;
+  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
+    (value): value is Record<string, unknown> =>
+      !!value && typeof value === "object" && !Array.isArray(value),
+  );
+  const roleClaims = [claims, ...nestedClaims].flatMap((source) =>
+    Object.entries(source)
+      .filter(([key]) => {
+        const normalized = key.toLowerCase();
+        return (
+          normalized === "role" ||
+          normalized === "roles" ||
+          normalized.endsWith("/role") ||
+          normalized.endsWith(":role")
+        );
+      })
+      .flatMap(([, value]) => (Array.isArray(value) ? value : [value])),
+  );
+  const roles = roleClaims.flatMap((claim) => {
+    if (typeof claim !== "string") return [];
     const normalized = claim.toLowerCase().replace(/[^a-z]/g, "");
-    const role = roleOptions.find(
-      (option) => option.value.toLowerCase() === normalized,
+    return roleOptions.filter(
+      (role) => role.value.toLowerCase() === normalized,
     );
-    if (
-      role &&
-      role.level >
-        (roleOptions.find((option) => option.value === actorRole)?.level ?? 0)
-    ) {
-      actorRole = role.value;
-    }
-  }
-  return actorRole;
+  });
+  return roles.sort((left, right) => left.level - right.level)[0]?.value ?? null;
 }
 
 function getRoleLevel(roleValue: string) {
@@ -95,6 +99,49 @@ function getRoleLevel(roleValue: string) {
     roleOptions.find((role) => role.value.toLowerCase() === normalized)?.level ??
     0
   );
+}
+
+function getActorIdentifiers(claims: Record<string, unknown> | null) {
+  if (!claims) return [];
+  const nestedClaims = [claims.user, claims.profile, claims.account].filter(
+    (value): value is Record<string, unknown> =>
+      !!value && typeof value === "object" && !Array.isArray(value),
+  );
+  const identityKeys = new Set([
+    "sub",
+    "id",
+    "userid",
+    "user_id",
+    "uid",
+    "nameid",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+    "username",
+    "preferred_username",
+    "email",
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+  ]);
+  return [claims, ...nestedClaims]
+    .flatMap((source) =>
+      Object.entries(source)
+        .filter(([key]) => {
+          const normalizedKey = key.toLowerCase();
+          return (
+            identityKeys.has(normalizedKey) ||
+            normalizedKey.endsWith("/nameidentifier") ||
+            normalizedKey.endsWith("/emailaddress")
+          );
+        })
+        .map(([, value]) => value),
+    )
+    .filter((value): value is string => typeof value === "string" && !!value)
+    .map((value) => value.trim().toLowerCase());
+}
+
+function isCurrentUser(user: User, identifiers: string[]) {
+  const userIdentifiers = [user.id, user.userName, user.email]
+    .filter(Boolean)
+    .map((value) => value.trim().toLowerCase());
+  return userIdentifiers.some((value) => identifiers.includes(value));
 }
 
 function getApiErrorMessage(error: unknown) {
@@ -372,6 +419,8 @@ export default function UsersPage() {
     (role) => role.level < actorLevel,
   );
   const canManageUsers = actorRole === "SuperAdmin" || actorRole === "Admin";
+  const canViewUsers = canManageUsers || actorRole === "Editor";
+  const actorIdentifiers = getActorIdentifiers(profileClaims ?? null);
 
   const refreshUsers = () =>
     queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -428,6 +477,10 @@ export default function UsersPage() {
     setFormMode("create");
   };
   const openEditForm = (user: User) => {
+    if (isCurrentUser(user, actorIdentifiers)) {
+      toast.error("Нельзя изменять собственную учетную запись.");
+      return;
+    }
     const editableRoles = roleOptions.filter(
       (role) => role.level < actorLevel || role.value === user.role,
     );
@@ -448,6 +501,9 @@ export default function UsersPage() {
     const roleLevel = getRoleLevel(values.role);
     if (
       !canManageUsers ||
+      (formMode === "edit" &&
+        !!selectedUser &&
+        isCurrentUser(selectedUser, actorIdentifiers)) ||
       (formMode === "create" && roleLevel >= actorLevel) ||
       (formMode === "edit" && roleLevel > actorLevel)
     ) {
@@ -495,7 +551,7 @@ export default function UsersPage() {
   const { data, isLoading, isError, refetch, isRefetching } = useQuery({
     queryKey: ["users", debouncedSearch],
     queryFn: () => getUsers(debouncedSearch),
-    enabled: canManageUsers,
+    enabled: canViewUsers,
   });
 
   const users = data?.items ?? emptyUsers;
@@ -519,6 +575,7 @@ export default function UsersPage() {
   const canManageSelectedUser =
     !!selectedUser &&
     canManageUsers &&
+    !isCurrentUser(selectedUser, actorIdentifiers) &&
     getRoleLevel(selectedUser.role) < actorLevel;
   const formRoleOptions =
     formMode === "create"
@@ -535,7 +592,7 @@ export default function UsersPage() {
     }
   };
 
-  if (!canManageUsers) {
+  if (!canViewUsers) {
     return (
       <AdminShell
         title="Пользователи"
@@ -550,7 +607,7 @@ export default function UsersPage() {
             <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
             <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
             <p className="mt-1 text-sm text-white/55">
-              Раздел пользователей доступен только администраторам.
+              Нет доступа к просмотру пользователей.
             </p>
           </div>
         </section>
