@@ -109,8 +109,8 @@ export default function LoginPage() {
         aria-hidden
         className={`absolute inset-0 transition-colors duration-700 ${
           dark
-            ? "bg-gradient-to-br from-slate-950/70 via-slate-900/30 to-slate-950/70"
-            : "bg-gradient-to-br from-white/50 via-white/10 to-sky-100/40"
+            ? "bg-linear-to-br from-slate-950/70 via-slate-900/30 to-slate-950/70"
+            : "bg-linear-to-br from-white/50 via-white/10 to-sky-100/40"
         }`}
       />
 
@@ -118,7 +118,7 @@ export default function LoginPage() {
       <motion.svg
         aria-hidden
         viewBox="0 0 400 400"
-        className="pointer-events-none absolute -left-10 -top-10 h-[420px] w-[420px]"
+        className="pointer-events-none absolute -left-10 -top-10 h-105 w-105"
         style={{ x: leftX, y: leftY }}
       >
         <motion.path
@@ -174,9 +174,9 @@ export default function LoginPage() {
             </motion.h1>
 
             <motion.div variants={item} className="my-6 flex w-full max-w-md items-center gap-3">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[#e8c46a]" />
+              <span className="h-px flex-1 bg-linear-to-r from-transparent to-[#e8c46a]" />
               <span className="h-2.5 w-2.5 rotate-45 border" style={{ borderColor: GOLD }} />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#e8c46a]" />
+              <span className="h-px flex-1 bg-linear-to-l from-transparent to-[#e8c46a]" />
             </motion.div>
 
             <motion.p variants={item} className="max-w-xs text-xl text-white/80">
@@ -196,7 +196,7 @@ export default function LoginPage() {
             ] as const).map(([Icon, label]) => (
               <li key={label} className="flex items-center gap-3 px-5">
                 <Icon className="h-6 w-6 shrink-0" style={{ color: GOLD }} />
-                <span className="max-w-[9rem] leading-snug">{label}</span>
+                <span className="max-w-36 leading-snug">{label}</span>
               </li>
             ))}
           </motion.ul>
@@ -209,7 +209,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 60, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: "spring", stiffness: 70, damping: 16, delay: 0.2 }}
-            className={`relative w-full max-w-[480px] overflow-hidden rounded-[32px] border p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-colors duration-700 sm:p-10 ${glass}`}
+            className={`relative w-full max-w-120 overflow-hidden rounded-[32px] border p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-colors duration-700 sm:p-10 ${glass}`}
           >
             {/* блик, следующий за курсором */}
             <motion.div
@@ -221,7 +221,7 @@ export default function LoginPage() {
               }}
             />
             {/* золотая кромка сверху */}
-            <div className="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#e8c46a] to-transparent" />
+            <div className="absolute inset-x-10 top-0 h-px bg-linear-to-r from-transparent via-[#e8c46a] to-transparent" />
 
             <motion.form
               onSubmit={submit}

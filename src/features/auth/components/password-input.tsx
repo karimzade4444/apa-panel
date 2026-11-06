@@ -39,7 +39,7 @@ export default function PasswordInput<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <div className="relative">
           <span
-            className={`pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[#d4af62]/80 ${
+            className={`pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-gold-light/80 ${
               iconClassName ?? ""
             }`}
           >

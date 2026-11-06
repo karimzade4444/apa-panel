@@ -1,18 +1,25 @@
+"use client";
+
+import { Eye, EyeOff } from "lucide-react";
+import { useState, type ComponentProps, type ReactNode } from "react";
 import {
   Controller,
   type Control,
   type FieldValues,
   type Path,
 } from "react-hook-form";
-import { Input } from "./input";
-import type { ComponentProps } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
 
-interface IFormInput<T extends FieldValues> extends ComponentProps<"input"> {
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Input } from "./input";
+
+interface IFormInput<T extends FieldValues>
+  extends Omit<ComponentProps<"input">, "name" | "type" | "value" | "defaultValue"> {
   name: Path<T>;
   control: Control<T>;
-  placeholder?: string;
+  type?: ComponentProps<"input">["type"];
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
 }
 
 const FormInput = <T extends FieldValues>({
@@ -21,49 +28,72 @@ const FormInput = <T extends FieldValues>({
   placeholder,
   type,
   className,
+  startIcon,
+  endIcon,
   ...props
 }: IFormInput<T>) => {
   const [showPassword, setShowPassword] = useState(false);
-
   const isPassword = type === "password";
+  const hasEndContent = endIcon != null || isPassword;
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <>
+        <div>
           <div className="relative">
             <Input
-              {...field}
               {...props}
+              {...field}
               type={isPassword ? (showPassword ? "text" : "password") : type}
+              value={field.value ?? ""}
               placeholder={placeholder}
-              aria-invalid={!!fieldState.error}
-              className={`border border-black/30 ${
-                isPassword ? "pr-10" : ""
-              } ${className ?? ""}`}
+              aria-invalid={Boolean(fieldState.error)}
+              className={cn(
+                "border border-black/30",
+                startIcon && "pl-10",
+                hasEndContent && (endIcon && isPassword ? "pr-20" : "pr-10"),
+                className,
+              )}
             />
 
-            {isPassword && (
-              <button
-                type="button"
-                onPointerDown={() => setShowPassword(true)}
-                onPointerUp={() => setShowPassword(false)}
-                onPointerLeave={() => setShowPassword(false)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
+            {startIcon && (
+              <span className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2">
+                {startIcon}
+              </span>
+            )}
+
+            {hasEndContent && (
+              <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 items-center gap-0.5">
+                {endIcon}
+                {isPassword && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                    aria-pressed={showPassword}
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
                 )}
-              </button>
+              </div>
             )}
           </div>
 
-          <p className="text-sm text-red-500">{fieldState.error?.message}</p>
-        </>
+          {fieldState.error && (
+            <p className="mt-1 text-sm text-red-500" role="alert">
+              {fieldState.error.message}
+            </p>
+          )}
+        </div>
       )}
     />
   );

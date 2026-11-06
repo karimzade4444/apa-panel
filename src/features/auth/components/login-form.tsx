@@ -20,8 +20,6 @@ import {
   type LoginFormValues,
 } from "@/features/auth/schemas/login-schema";
 
-import PasswordInput from "./password-input";
-
 function getLoginErrorMessage(error: unknown) {
   if (!isAxiosError(error)) {
     return "Не удалось выполнить вход. Попробуйте позже.";
@@ -100,38 +98,38 @@ export default function LoginForm() {
         <LoginSkeleton />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="relative">
-            <Mail className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-gold-light/80" />
-            <FormInput
-              name="login"
-              control={control}
-              placeholder="Логин или email"
-              autoComplete="username"
-              className="h-12 rounded-xl border border-white/10 bg-white/6 pl-10 pr-10 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
-            />
-            {loginValue && (
-              <button
-                type="button"
-                aria-label="Очистить поле"
-                onClick={() => setValue("login", "", { shouldDirty: true })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-white/40 transition hover:bg-white/10 hover:text-white"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
+          <FormInput
+            name="login"
+            control={control}
+            placeholder="Логин или email"
+            autoComplete="username"
+            startIcon={<Mail className="h-4 w-4 text-gold-light/80" />}
+            endIcon={
+              loginValue ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Очистить поле"
+                  onClick={() => setValue("login", "", { shouldDirty: true })}
+                  className="text-white/40 hover:bg-white/10 hover:text-white"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </Button>
+              ) : null
+            }
+            className="h-12 rounded-xl border border-white/10 bg-white/6 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
+          />
 
-          <div className="relative">
-            <LockKeyhole className="absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-gold-light/80" />
-            <PasswordInput
-              control={control}
-              name="password"
-              placeholder="Пароль"
-              className="h-12 rounded-xl border border-white/10 bg-white/6 pl-10 pr-10 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
-              inputClassName="pl-10"
-              iconClassName="hidden"
-            />
-          </div>
+          <FormInput
+            name="password"
+            control={control}
+            type="password"
+            placeholder="Пароль"
+            autoComplete="current-password"
+            startIcon={<LockKeyhole className="h-4 w-4 text-gold-light/80" />}
+            className="h-12 rounded-xl border border-white/10 bg-white/6 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
+          />
 
           <div className="flex items-center justify-between pt-1 text-[0.72rem] text-white/75">
             <label className="inline-flex cursor-pointer items-center gap-2">
@@ -141,9 +139,13 @@ export default function LoginForm() {
               />
               <span>Запомнить меня</span>
             </label>
-            <button type="button" className="text-gold-light transition hover:text-[#f2d792]">
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-auto p-0 text-gold-light transition hover:bg-transparent hover:text-[#f2d792]"
+            >
               Забыли пароль?
-            </button>
+            </Button>
           </div>
 
           {error && (
