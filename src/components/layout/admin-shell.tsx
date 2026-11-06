@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
@@ -19,9 +19,9 @@ import {
   Megaphone,
   Phone,
   Settings,
-  ShieldCheck,
   ScrollText,
   UsersRound,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -239,7 +239,9 @@ export function AdminShell({
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
+        style={{
+          backgroundImage: "url('/images/login/academy-background.jpg')",
+        }}
       />
       <div
         aria-hidden="true"
@@ -256,7 +258,10 @@ export function AdminShell({
 
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1800px] gap-3 p-2 sm:gap-4 sm:p-3 lg:gap-5 lg:p-4">
         <aside className="glass-panel hidden w-[204px] shrink-0 flex-col rounded-[26px] p-3 lg:flex xl:w-[212px]">
-          <Link href="/" className="flex flex-col items-center px-2 py-2 text-center">
+          <Link
+            href="/"
+            className="flex flex-col items-center px-2 py-2 text-center"
+          >
             <span className="flex size-14 items-center justify-center rounded-2xl border border-[#d4af62]/35 bg-gradient-to-br from-[#d4af62]/20 to-[#0b2d4d]/80 text-[#e4c477] shadow-[0_0_24px_rgba(212,175,98,0.12)]">
               <Landmark className="size-8" strokeWidth={1.35} />
             </span>
@@ -286,7 +291,9 @@ export function AdminShell({
                 >
                   <Icon
                     className={`size-[18px] ${
-                      isActive ? "text-[#e4c477]" : "text-white/50 group-hover:text-white/80"
+                      isActive
+                        ? "text-[#e4c477]"
+                        : "text-white/50 group-hover:text-white/80"
                     }`}
                   />
                   <span>{label}</span>
@@ -363,44 +370,51 @@ export function AdminShell({
 
         <div className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4">
           <header
-            className={`rounded-2xl px-3 py-3 sm:px-5 sm:py-4 ${
+            className={`relative z-50 rounded-2xl px-3 py-3 sm:px-5 sm:py-4 ${
               pathname === "/"
                 ? "flex min-h-[92px] items-center border border-white/10 bg-[#092745]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
                 : "glass-panel"
             }`}
           >
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex w-full items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#d4af62]/30 bg-[#d4af62]/10 text-[#e4c477] lg:hidden">
                   <Landmark className="size-5" />
                 </span>
-                <div className="min-w-0">
-                  {pathname === "/" ? (
-                    <>
-                      <h1 className="text-lg font-semibold leading-tight text-white sm:text-2xl">
-                        Добро пожаловать,{" "}
-                        <span className="text-[#f0c46d]">
-                          {profileName !== "Не указано" ? `${profileName}!` : "Администратор!"}
-                        </span>
-                      </h1>
-                      <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
-                        Панель управления сайтом Академии
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <div className="hidden items-center gap-2 text-xs text-white/45 sm:flex">
-                        <Link href="/" className="transition hover:text-white/80">
-                          Главная
-                        </Link>
-                        <ChevronRight className="size-3" />
-                        <span className="text-white/70">{title}</span>
-                      </div>
-                      <p className="truncate text-sm font-medium text-white/75 sm:mt-1">
-                        {description}
-                      </p>
-                    </>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <div>
+                    {pathname === "/" ? (
+                      <>
+                        <h1 className="text-lg font-semibold leading-tight text-white sm:text-2xl">
+                          Добро пожаловать,{" "}
+                          <span className="text-[#f0c46d]">
+                            {profileName !== "Не указано"
+                              ? `${profileName}!`
+                              : "Администратор!"}
+                          </span>
+                        </h1>
+                        <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
+                          Панель управления сайтом Академии
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="hidden items-center gap-2 text-xs text-white/45 sm:flex">
+                          <Link
+                            href="/"
+                            className="transition hover:text-white/80"
+                          >
+                            Главная
+                          </Link>
+                          <ChevronRight className="size-3" />
+                          <span className="text-white/70">{title}</span>
+                        </div>
+                        <p className="truncate text-sm font-medium text-white/75 sm:mt-1">
+                          {description}
+                        </p>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -424,8 +438,8 @@ export function AdminShell({
                     variant="ghost"
                     size="icon"
                     aria-label="Открыть профиль администратора"
-                    aria-haspopup="dialog"
                     aria-expanded={profileOpen}
+                    aria-controls="admin-profile-popover"
                     onClick={() => setProfileOpen((open) => !open)}
                     className="size-10 rounded-full p-0 hover:bg-white/10"
                   >
@@ -445,81 +459,91 @@ export function AdminShell({
                     )}
                   </Button>
 
-                  {profileOpen && (
-                    <motion.section
-                      role="dialog"
-                      aria-label="Профиль администратора"
-                      initial={shouldReduceMotion ? false : { opacity: 0, y: -6, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.16 }}
-                      className="absolute right-0 top-full z-50 mt-3 w-[min(19rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.98),rgba(12,37,63,0.98))] p-4 text-white shadow-[0_22px_60px_rgba(0,0,0,0.55),0_0_28px_rgba(242,209,138,0.14)] backdrop-blur-2xl"
-                    >
-                      <div className="flex items-center gap-3 border-b border-[#f2d18a]/20 pb-3">
-                        {profileAvatar ? (
-                          <Image
-                            src={profileAvatar}
-                            alt=""
-                            width={48}
-                            height={48}
-                            unoptimized
-                            className="size-12 shrink-0 rounded-full border-2 border-[#f2d18a]/75 object-cover shadow-[0_0_18px_rgba(242,209,138,0.18)]"
-                          />
-                        ) : (
-                          <span className="flex size-12 aspect-square shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/75 bg-gradient-to-br from-[#f2d18a]/40 to-[#d4af62]/15 text-sm font-semibold text-[#fff1c9] shadow-[0_0_18px_rgba(242,209,138,0.18)]">
-                            {profileInitials}
-                          </span>
-                        )}
-                        <div className="min-w-0">
-                          <h2 className="truncate text-sm font-semibold text-[#fff1c9]">
-                            {profileName}
-                          </h2>
-                          <p className="mt-0.5 text-xs text-white/70">
-                            Данные учётной записи
-                          </p>
-                        </div>
-                      </div>
-
-                      <dl className="mt-3 space-y-3">
-                        {[
-                          {
-                            label: "ФИО",
-                            value: profileName,
-                            icon: UsersRound,
-                          },
-                          {
-                            label: "Почта",
-                            value: profileEmail || "Не указана в токене",
-                            icon: Mail,
-                          },
-                          {
-                            label: "Номер телефона",
-                            value: profilePhone || "Не указан в токене",
-                            icon: Phone,
-                          },
-                          {
-                            label: "Роль",
-                            value: getProfileRole(profileClaims ?? null),
-                            icon: ShieldCheck,
-                          },
-                        ].map(({ label, value, icon: Icon }) => (
-                          <div key={label} className="flex items-start gap-2.5">
-                            <Icon className="mt-0.5 size-4 shrink-0 text-[#f2d18a]" />
-                            <div className="min-w-0">
-                              <dt className="text-[0.68rem] font-medium text-white/60">{label}</dt>
-                              <dd className="mt-0.5 break-words text-xs font-medium text-white">
-                                {value}
-                              </dd>
-                            </div>
+                  <AnimatePresence>
+                    {profileOpen && (
+                      <motion.section
+                        id="admin-profile-popover"
+                        role="region"
+                        aria-label="Профиль администратора"
+                        initial={
+                          shouldReduceMotion
+                            ? { opacity: 1 }
+                            : { opacity: 0, y: -8, scale: 0.97 }
+                        }
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={
+                          shouldReduceMotion
+                            ? { opacity: 0 }
+                            : { opacity: 0, y: -5, scale: 0.98 }
+                        }
+                        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute right-0 top-full z-[9999] mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.995),rgba(8,29,51,0.995))] p-4 text-white shadow-[0_24px_65px_rgba(0,0,0,0.7),0_0_26px_rgba(242,209,138,0.16)] backdrop-blur-2xl"
+                      >
+                        <div className="flex items-center gap-3 border-b border-white/15 pb-3">
+                          {profileAvatar ? (
+                            <Image
+                              src={profileAvatar}
+                              alt=""
+                              width={44}
+                              height={44}
+                              unoptimized
+                              className="size-11 shrink-0 rounded-full border-2 border-[#f2d18a]/70 object-cover"
+                            />
+                          ) : (
+                            <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-[#d4af62]/20 text-xs font-semibold text-[#fff1c9]">
+                              {profileInitials}
+                            </span>
+                          )}
+                          <div className="min-w-0">
+                            <h2 className="truncate text-sm font-semibold text-[#fff1c9]">
+                              {profileName}
+                            </h2>
+                            <p className="mt-0.5 text-xs text-white/60">
+                              {getProfileRole(profileClaims ?? null)}
+                            </p>
                           </div>
-                        ))}
-                      </dl>
-                      {isProfileError && (
-                        <p role="alert" className="mt-3 text-xs text-rose-200">
-                          Не удалось прочитать данные профиля из токена.
-                        </p>
-                      )}
-                    </motion.section>
-                  )}
+                        </div>
+
+                        <dl className="mt-3 space-y-3">
+                          {[
+                            { label: "ФИО", value: profileName, icon: UsersRound },
+                            {
+                              label: "Почта",
+                              value: profileEmail || "Не указана в токене",
+                              icon: Mail,
+                            },
+                            {
+                              label: "Номер телефона",
+                              value: profilePhone || "Не указан в токене",
+                              icon: Phone,
+                            },
+                            {
+                              label: "Роль",
+                              value: getProfileRole(profileClaims ?? null),
+                              icon: ShieldCheck,
+                            },
+                          ].map(({ label, value, icon: Icon }) => (
+                            <div key={label} className="flex items-start gap-2.5">
+                              <Icon className="mt-0.5 size-4 shrink-0 text-[#f2d18a]" />
+                              <div className="min-w-0">
+                                <dt className="text-[0.68rem] text-white/55">
+                                  {label}
+                                </dt>
+                                <dd className="mt-0.5 break-words text-xs font-medium text-white/90">
+                                  {value}
+                                </dd>
+                              </div>
+                            </div>
+                          ))}
+                        </dl>
+                        {isProfileError && (
+                          <p role="alert" className="mt-3 text-xs text-rose-200">
+                            Не удалось прочитать профиль из токена.
+                          </p>
+                        )}
+                      </motion.section>
+                    )}
+                  </AnimatePresence>
                 </div>
                 <Button
                   type="button"
