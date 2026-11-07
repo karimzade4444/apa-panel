@@ -4,7 +4,7 @@
  * Установка:  npm i framer-motion lucide-react
  * Tailwind CSS уже должен быть в проекте.
  * Фон положите в /public/login-bg.jpg
- * Использование: app/login/page.tsx -> export { default } from "@/components/LoginPage";
+ * Использование: app/(auth)/login/page.tsx -> компонент LoginPage из features/auth.
  */
 
 import { useEffect, useState } from "react";

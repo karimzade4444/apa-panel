@@ -1,5 +1,15 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Project structure
+
+- `src/app` contains routes and layouts. `(auth)` and `(dashboard)` are route groups and do not change public URLs.
+- `src/features` contains business functionality, split into `api`, `model`, `ui`, and `lib`.
+- `src/entities` contains core domain types and entity-level UI.
+- `src/widgets` contains composed page sections and the dashboard shell.
+- `src/shared` contains reusable API clients, UI primitives, and utilities.
+
+Keep route files in `src/app` focused on composing feature and widget modules. Import shared code from `src/shared` and entity types from `src/entities`.
+
 ## Getting Started
 
 First, run the development server:
