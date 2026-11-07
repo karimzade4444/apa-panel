@@ -1,17 +1,13 @@
-import { getAccessToken } from "@/lib/cookies";
-import axios, { CreateAxiosDefaults } from "axios";
+import { getAccessToken } from "@/shared/lib/cookies";
+import { createApiClient } from "./client";
 
-const option: CreateAxiosDefaults = {
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true,
-};
-
-export const api = axios.create(option);
-export const instance = axios.create(option);
+export const api = createApiClient();
+export const instance = createApiClient();
 
 instance.interceptors.request.use((config) => {
   const accessToken = getAccessToken();
-  if (config.headers && accessToken)
+  if (config.headers && accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
+  }
   return config;
 });

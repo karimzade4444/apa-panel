@@ -26,16 +26,15 @@ import {
   updateUser,
   type CreateUserData,
   type UserWriteData,
-} from "@/api/requests/users";
-import { AdminShell } from "@/components/layout/admin-shell";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@/features/users/api/users";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   getActorIdentifiers,
   getEffectiveRole,
   type AccessTokenClaims,
-} from "@/lib/auth/claims";
-import { getAccessToken } from "@/lib/cookies";
+} from "@/shared/lib/auth/claims";
+import { getAccessToken } from "@/shared/lib/cookies";
 import {
   formatDate,
   formatRole,
@@ -44,16 +43,16 @@ import {
   getUserName,
   isCurrentUser,
 } from "@/features/users/lib/user-utils";
-import { UserAvatar } from "@/features/users/components/UserAvatar";
-import { UserDetailsPanel } from "@/features/users/components/UserDetailsPanel";
-import { UserFormDialog } from "@/features/users/components/UserFormDialog";
-import { UserStatCard } from "@/features/users/components/UserStatCard";
-import { emptyUserForm, roleOptions } from "@/features/users/types/user-management";
+import { UserAvatar } from "@/features/users/ui/UserAvatar";
+import { UserDetailsPanel } from "@/features/users/ui/UserDetailsPanel";
+import { UserFormDialog } from "@/features/users/ui/UserFormDialog";
+import { UserStatCard } from "@/features/users/ui/UserStatCard";
+import { emptyUserForm, roleOptions } from "@/features/users/model/user-management";
 import type {
   UserFormValues,
   UserRole,
-} from "@/features/users/types/user-management";
-import type { User } from "@/types/userstypes";
+} from "@/features/users/model/user-management";
+import type { User } from "@/entities/user";
 
 const emptyUsers: User[] = [];
 
@@ -272,33 +271,22 @@ export default function UsersPage() {
 
   if (!canViewUsers) {
     return (
-      <AdminShell
-        title="Пользователи"
-        description="Управление пользователями системы"
-        fitViewport
+      <section
+        role="alert"
+        className="glass-panel flex min-h-48 items-center justify-center rounded-2xl p-6 text-center"
       >
-        <section
-          role="alert"
-          className="glass-panel flex min-h-48 items-center justify-center rounded-2xl p-6 text-center"
-        >
-          <div>
-            <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
-            <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
-            <p className="mt-1 text-sm text-white/55">
-              Нет доступа к просмотру пользователей.
-            </p>
-          </div>
-        </section>
-      </AdminShell>
+        <div>
+          <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
+          <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
+          <p className="mt-1 text-sm text-white/55">
+            Нет доступа к просмотру пользователей.
+          </p>
+        </div>
+      </section>
     );
   }
 
   return (
-    <AdminShell
-      title="Пользователи"
-      description="Управление пользователями системы"
-      fitViewport
-    >
       <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
         <div className="space-y-3">
           <motion.div
@@ -607,6 +595,5 @@ export default function UsersPage() {
           />
         )}
       </AnimatePresence>
-    </AdminShell>
   );
 }

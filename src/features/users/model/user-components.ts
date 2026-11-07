@@ -2,7 +2,7 @@ import type { FormEventHandler } from "react";
 import type { Control } from "react-hook-form";
 
 import type { UserFormValues, UserRole, roleOptions } from "./user-management";
-import type { User } from "@/types/userstypes";
+import type { User } from "@/entities/user";
 
 export interface UserDetailsPanelProps {
   user: User;

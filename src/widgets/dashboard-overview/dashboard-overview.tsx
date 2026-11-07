@@ -15,10 +15,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { getUsers } from "@/api/requests/users";
-import { AdminShell } from "@/components/layout/admin-shell";
-import { Button } from "@/components/ui/button";
-import type { User } from "@/types/userstypes";
+import { getUsers } from "@/features/users/api/users";
+import { Button } from "@/shared/ui/button";
+import type { User } from "@/entities/user";
 
 const publicationTitle = "Главное объявление Академии";
 
@@ -274,12 +273,6 @@ export default function DashboardPage() {
   };
 
   return (
-    <AdminShell
-      title="Панель управления"
-      description="Обзор системы управления Академией"
-      showPageHeading={false}
-      fitViewport
-    >
       <div className="scrollbar-none space-y-3 overflow-y-auto sm:space-y-4 lg:grid lg:h-full lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)_minmax(0,0.48fr)] lg:gap-3 lg:space-y-0 lg:overflow-hidden">
         <div className="space-y-2.5">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -336,6 +329,5 @@ export default function DashboardPage() {
         </div>
 
       </div>
-    </AdminShell>
   );
 }

@@ -18,7 +18,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { getUsers } from "@/api/requests/users";
+import { getUsers } from "@/features/users/api/users";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -26,10 +26,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { AdminSidebar, adminNavigation } from "@/components/layout/admin-sidebar";
-import type { AdminShellProps } from "@/components/layout/admin-shell.types";
+} from "@/shared/ui/alert-dialog";
+import { Button } from "@/shared/ui/button";
+import { AdminSidebar, adminNavigation } from "@/widgets/sidebar/admin-sidebar";
+import type { AdminShellProps } from "@/widgets/header/admin-shell.types";
 import {
   getActorIdentifiers,
   getClaim,
@@ -43,9 +43,9 @@ import {
   getProfileRole,
   getProfileUserName,
   type AccessTokenClaims,
-} from "@/lib/auth/claims";
-import { getAccessToken, removeToken } from "@/lib/cookies";
-import { resolveApiAssetUrl } from "@/lib/api-assets";
+} from "@/shared/lib/auth/claims";
+import { getAccessToken, removeToken } from "@/shared/lib/cookies";
+import { resolveApiAssetUrl } from "@/shared/lib/api-assets";
 
 export function AdminShell({
   title,

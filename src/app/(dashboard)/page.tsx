@@ -1,6 +1,6 @@
 
-import DashboardPage from "@/features/dashboard/components/DashboardPage";
+import DashboardOverview from "@/widgets/dashboard-overview/dashboard-overview";
 
 export default function Home() {
-  return <DashboardPage />;
+  return <DashboardOverview />;
 }
