@@ -26,9 +26,9 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The dashboard route is defined in `src/app/(dashboard)/page.tsx`; the login route is in `src/app/(auth)/login/page.tsx`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The root layout and global styles are in `src/app/layout.tsx` and `src/app/globals.css`.
 
 ## Learn More
 
