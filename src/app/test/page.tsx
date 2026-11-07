@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@base-ui/react";
 import Image from "next/image";
-import React, { useEffect useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const TestPage = () => {
   const [file, setFile] = useState("");
