@@ -287,6 +287,7 @@ export default function UsersPage() {
   }
 
   return (
+    <>
     <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
         <div className="space-y-3">
           <motion.div
@@ -595,6 +596,6 @@ export default function UsersPage() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
