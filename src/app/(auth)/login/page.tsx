@@ -1,9 +1,9 @@
-import LoginScene from "@/features/auth/ui/login-scene";
+import LoginScene from "@/components/ui/login-scene";
 
-import AcademyBranding from "@/features/auth/ui/academy-branding";
-import LoginForm from "@/features/auth/ui/login-form";
-import LoginHeader from "@/features/auth/ui/login-header";
-import LoginCard from "@/features/auth/ui/login-card";
+import AcademyBranding from "@/components/ui/academy-branding";
+import LoginForm from "@/components/ui/login-form";
+import LoginHeader from "@/components/ui/login-header";
+import LoginCard from "@/components/ui/login-card";
 
 export default function LoginPage() {
   return (

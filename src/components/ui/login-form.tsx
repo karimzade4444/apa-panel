@@ -14,7 +14,7 @@ import { login } from "@/features/auth/api/auth";
 import { Button } from "@/shared/ui/button";
 import FormInput from "@/shared/ui/forminput";
 import { saveToken } from "@/shared/lib/cookies";
-import { LoginSkeleton } from "@/features/auth/ui/login-skeletion";
+import { LoginSkeleton } from "@/components/ui/login-skeletion";
 import {
   loginSchema,
   type LoginFormValues,
