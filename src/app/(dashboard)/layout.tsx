@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { AdminShell } from "@/widgets/header/admin-shell";
+import { AdminShell } from "@/widgets/header";
 
 const routeDetails: Record<string, { title: string; description: string }> = {
   "/": {

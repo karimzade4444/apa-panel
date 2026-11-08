@@ -1,4 +1,4 @@
-import { UsersPage } from "@/features/users";
+import { UsersPage } from "@/views/users";
 
 export default function UsersRoute() {
   return <UsersPage />;

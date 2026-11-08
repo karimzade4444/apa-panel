@@ -1,6 +1,3 @@
+import { DashboardPage } from "@/views/dashboard";
 
-import { DashboardOverview } from "@/widgets/dashboard-overview";
-
-export default function Home() {
-  return <DashboardOverview />;
-}
+export default DashboardPage;

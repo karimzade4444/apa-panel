@@ -18,7 +18,7 @@ import {
   UsersRound,
 } from "lucide-react";
 
-import type { AdminSidebarProps } from "@/widgets/header/admin-shell.types";
+import type { AdminSidebarProps } from "./admin-sidebar.types";
 
 export const adminNavigation = [
   { href: "/", label: "Панель управления", icon: LayoutDashboard },
