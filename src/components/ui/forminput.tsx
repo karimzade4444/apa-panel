@@ -9,7 +9,7 @@ import {
   type Path,
 } from "react-hook-form";
 
-import { Button } from ".";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
