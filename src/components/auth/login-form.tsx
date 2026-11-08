@@ -13,7 +13,7 @@ import { isAxiosError } from "axios";
 import { login } from "../api/auth";
 import { Button, FormInput } from "@/shared/ui";
 import { saveToken } from "@/shared/lib";
-import { LoginSkeleton } from "./login-skeletion";
+import { LoginSkeleton } from "./login-skeleton";
 import {
   loginSchema,
   type LoginFormValues,
