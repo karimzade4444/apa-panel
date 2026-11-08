@@ -9,8 +9,8 @@ import {
   type Path,
 } from "react-hook-form";
 
-import { Button } from "@/shared/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from ".";
+import { cn } from "../lib";
 import { Input } from "./input";
 
 interface IFormInput<T extends FieldValues> extends Omit<

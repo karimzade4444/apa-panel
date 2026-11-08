@@ -1,5 +1,5 @@
-import type { UserWriteData } from "@/features/users/api/users";
-import type { AccessRole } from "@/lib/auth/claims";
+import type { UserWriteData } from "../api/users";
+import type { AccessRole } from "@/entities/user";
 
 export const roleOptions = [
   { value: "SuperAdmin", label: "Суперадминистратор", level: 3 },

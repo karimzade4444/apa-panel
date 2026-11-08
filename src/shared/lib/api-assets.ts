@@ -1,4 +1,4 @@
-import { instance } from "@/shared/api/instance";
+import { instance } from "@/shared/api";
 
 export function resolveApiAssetUrl(path: string | null | undefined): string {
   if (!path) return "";

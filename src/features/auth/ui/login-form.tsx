@@ -10,15 +10,14 @@ import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
-import { login } from "@/features/auth/api/auth";
-import { Button } from "@/shared/ui/button";
-import FormInput from "@/shared/ui/forminput";
-import { saveToken } from "@/lib/cookies";
-import { LoginSkeleton } from "@/components/ui/login-skeletion";
+import { login } from "../api/auth";
+import { Button, FormInput } from "@/shared/ui";
+import { saveToken } from "@/shared/lib";
+import { LoginSkeleton } from "./login-skeletion";
 import {
   loginSchema,
   type LoginFormValues,
-} from "@/features/auth/model/login-schema";
+} from "../schemas/login-schema";
 
 function getLoginErrorMessage(error: unknown) {
   if (!isAxiosError(error)) {

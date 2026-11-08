@@ -11,9 +11,9 @@ import {
   X,
 } from "lucide-react";
 
-import { Button } from "@/shared/ui/button";
-import { formatDate, formatRole, getUserName } from "@/features/users/lib/user-utils";
-import type { UserDetailsPanelProps } from "@/features/users/model/user-components";
+import { Button } from "@/shared/ui";
+import { formatDate, formatRole, getUserName } from "../lib/user-utils";
+import type { UserDetailsPanelProps } from "../types/user-components";
 import { UserAvatar } from "./UserAvatar";
 
 export function UserDetailsPanel({
