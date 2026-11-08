@@ -25,7 +25,7 @@ import {
 } from "@/shared/ui/dialog";
 import FormInput from "@/shared/ui/forminput";
 import type { UserFormDialogProps } from "@/features/users/model/user-components";
-import { getProfileInitials } from "@/shared/lib/auth/claims";
+import { getProfileInitials } from "@/lib/auth/claims";
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
 
@@ -55,8 +55,7 @@ export function UserFormDialog({
     url: string;
   } | null>(null);
   const previewName =
-    [firstName, lastName].filter(Boolean).join(" ") ||
-    "Новый пользователь";
+    [firstName, lastName].filter(Boolean).join(" ") || "Новый пользователь";
 
   useEffect(() => {
     if (!photoFile) return;
@@ -84,8 +83,7 @@ export function UserFormDialog({
     onPhotoChange(file);
   };
 
-  const previewUrl =
-    photoPreview?.file === photoFile ? photoPreview.url : null;
+  const previewUrl = photoPreview?.file === photoFile ? photoPreview.url : null;
   const photoSource = previewUrl || existingPhotoUrl;
   const isBusy = isMutating;
 
@@ -97,8 +95,6 @@ export function UserFormDialog({
       shouldReduceMotion ? 0 : 340,
     );
   }, [dialogOpen, isBusy, onClose, shouldReduceMotion]);
-
-
 
   return (
     <Dialog
@@ -148,7 +144,9 @@ export function UserFormDialog({
             <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[230px_minmax(0,1fr)]">
               <section className="space-y-3">
                 <div>
-                  <h3 className="text-sm font-medium text-white">Фото профиля</h3>
+                  <h3 className="text-sm font-medium text-white">
+                    Фото профиля
+                  </h3>
                   <p className="mt-1 text-xs leading-relaxed text-white/45">
                     Перетащите изображение или выберите его на устройстве.
                   </p>
@@ -160,7 +158,9 @@ export function UserFormDialog({
                     setIsDragging(true);
                   }}
                   onDragLeave={(event) => {
-                    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                    if (
+                      !event.currentTarget.contains(event.relatedTarget as Node)
+                    ) {
                       setIsDragging(false);
                     }
                   }}
@@ -265,7 +265,10 @@ export function UserFormDialog({
                   {photoSource ? "Изменить фото" : "Выбрать файл"}
                 </Button>
                 {photoError && (
-                  <p role="alert" className="text-xs leading-relaxed text-rose-200">
+                  <p
+                    role="alert"
+                    className="text-xs leading-relaxed text-rose-200"
+                  >
                     {photoError}
                   </p>
                 )}
@@ -358,7 +361,9 @@ export function UserFormDialog({
                       control={control}
                       required={formMode === "create"}
                       type="password"
-                      autoComplete={formMode === "create" ? "new-password" : "off"}
+                      autoComplete={
+                        formMode === "create" ? "new-password" : "off"
+                      }
                       minLength={8}
                       placeholder={
                         formMode === "create"

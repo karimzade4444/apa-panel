@@ -10,11 +10,13 @@ import {
 } from "react-hook-form";
 
 import { Button } from "@/shared/ui/button";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 import { Input } from "./input";
 
-interface IFormInput<T extends FieldValues>
-  extends Omit<ComponentProps<"input">, "name" | "type" | "value" | "defaultValue"> {
+interface IFormInput<T extends FieldValues> extends Omit<
+  ComponentProps<"input">,
+  "name" | "type" | "value" | "defaultValue"
+> {
   name: Path<T>;
   control: Control<T>;
   type?: ComponentProps<"input">["type"];
@@ -72,7 +74,9 @@ const FormInput = <T extends FieldValues>({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                    aria-label={
+                      showPassword ? "Скрыть пароль" : "Показать пароль"
+                    }
                     aria-pressed={showPassword}
                     onClick={() => setShowPassword((visible) => !visible)}
                     className="text-muted-foreground hover:text-foreground"

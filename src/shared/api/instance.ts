@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/shared/lib/cookies";
+import { getAccessToken } from "@/lib/cookies";
 import { createApiClient } from "./client";
 
 export const api = createApiClient();

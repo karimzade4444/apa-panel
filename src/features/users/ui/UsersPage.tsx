@@ -33,8 +33,8 @@ import {
   getActorIdentifiers,
   getEffectiveRole,
   type AccessTokenClaims,
-} from "@/shared/lib/auth/claims";
-import { getAccessToken } from "@/shared/lib/cookies";
+} from "@/lib/auth/claims";
+import { getAccessToken } from "@/lib/cookies";
 import {
   formatDate,
   formatRole,
@@ -47,7 +47,10 @@ import { UserAvatar } from "@/features/users/ui/UserAvatar";
 import { UserDetailsPanel } from "@/features/users/ui/UserDetailsPanel";
 import { UserFormDialog } from "@/features/users/ui/UserFormDialog";
 import { UserStatCard } from "@/features/users/ui/UserStatCard";
-import { emptyUserForm, roleOptions } from "@/features/users/model/user-management";
+import {
+  emptyUserForm,
+  roleOptions,
+} from "@/features/users/model/user-management";
 import type {
   UserFormValues,
   UserRole,
@@ -83,9 +86,7 @@ export default function UsersPage() {
   const actorRole = getEffectiveRole(profileClaims ?? null);
   const actorLevel =
     roleOptions.find((role) => role.value === actorRole)?.level ?? 0;
-  const assignableRoles = roleOptions.filter(
-    (role) => role.level < actorLevel,
-  );
+  const assignableRoles = roleOptions.filter((role) => role.level < actorLevel);
   const canManageUsers = actorRole === "SuperAdmin" || actorRole === "Admin";
   const canViewUsers = canManageUsers || actorRole === "Editor";
   const actorIdentifiers = getActorIdentifiers(profileClaims ?? null);
@@ -119,7 +120,9 @@ export default function UsersPage() {
     onSuccess: async (_, variables) => {
       await refreshUsers();
       toast.success(
-        variables.isBlocked ? "Пользователь заблокирован" : "Пользователь разблокирован",
+        variables.isBlocked
+          ? "Пользователь заблокирован"
+          : "Пользователь разблокирован",
       );
     },
     onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
@@ -221,7 +224,10 @@ export default function UsersPage() {
   };
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    const timeout = window.setTimeout(
+      () => setDebouncedSearch(search.trim()),
+      300,
+    );
     return () => window.clearTimeout(timeout);
   }, [search]);
 
@@ -264,7 +270,9 @@ export default function UsersPage() {
 
   const handleDeleteSelectedUser = () => {
     if (!selectedUser) return;
-    if (window.confirm(`Удалить пользователя «${getUserName(selectedUser)}»?`)) {
+    if (
+      window.confirm(`Удалить пользователя «${getUserName(selectedUser)}»?`)
+    ) {
       deleteMutation.mutate(selectedUser.id);
     }
   };
@@ -288,7 +296,7 @@ export default function UsersPage() {
 
   return (
     <>
-    <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
+      <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
         <div className="space-y-3">
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
@@ -298,7 +306,13 @@ export default function UsersPage() {
           >
             <UserStatCard
               label="Всего пользователей"
-              value={data ? data.total.toLocaleString("ru-RU") : isLoading ? "—" : "0"}
+              value={
+                data
+                  ? data.total.toLocaleString("ru-RU")
+                  : isLoading
+                    ? "—"
+                    : "0"
+              }
               icon={UsersRound}
               tone="bg-sky-300/10 text-sky-200"
             />
@@ -421,12 +435,33 @@ export default function UsersPage() {
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-xs text-white/45">
-                    <th scope="col" className="px-5 py-3 font-medium">Пользователь</th>
-                    <th scope="col" className="px-4 py-3 font-medium">Email</th>
-                    <th scope="col" className="px-4 py-3 text-center font-medium">Роль</th>
-                    <th scope="col" className="px-4 py-3 text-center font-medium">Статус</th>
-                    <th scope="col" className="px-4 py-3 font-medium">Регистрация</th>
-                    <th scope="col" className="px-4 py-3 text-right font-medium">Детали</th>
+                    <th scope="col" className="px-5 py-3 font-medium">
+                      Пользователь
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Email
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-center font-medium"
+                    >
+                      Роль
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-center font-medium"
+                    >
+                      Статус
+                    </th>
+                    <th scope="col" className="px-4 py-3 font-medium">
+                      Регистрация
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-right font-medium"
+                    >
+                      Детали
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.07]">
@@ -490,7 +525,9 @@ export default function UsersPage() {
                             >
                               <span
                                 className={`size-1.5 rounded-full ${
-                                  user.isBlocked ? "bg-rose-300" : "bg-emerald-300"
+                                  user.isBlocked
+                                    ? "bg-rose-300"
+                                    : "bg-emerald-300"
                                 }`}
                               />
                               {user.isBlocked ? "Заблокирован" : "Активен"}
@@ -585,11 +622,13 @@ export default function UsersPage() {
             isMutating={isMutating}
             photoFile={photoFile}
             existingPhotoUrl={
-              formMode === "edit" ? selectedUser?.photoUrl ?? null : null
+              formMode === "edit" ? (selectedUser?.photoUrl ?? null) : null
             }
             onClose={() => setFormMode(null)}
             onPhotoChange={setPhotoFile}
-            onRoleChange={(role) => setValue("role", role, { shouldDirty: true })}
+            onRoleChange={(role) =>
+              setValue("role", role, { shouldDirty: true })
+            }
             onSubmit={handleSubmit((values) =>
               handleUserFormSubmit(values, photoFile),
             )}

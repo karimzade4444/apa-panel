@@ -3,7 +3,7 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
 import type { ComponentProps } from "react";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 function AlertDialog(props: ComponentProps<typeof AlertDialogPrimitive.Root>) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
@@ -33,10 +33,7 @@ function AlertDialogContent({
   );
 }
 
-function AlertDialogHeader({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+function AlertDialogHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-dialog-header"
@@ -70,14 +67,14 @@ function AlertDialogDescription(
   );
 }
 
-function AlertDialogFooter({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+function AlertDialogFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       {...props}
     />
   );

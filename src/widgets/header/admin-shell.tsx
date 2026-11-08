@@ -43,9 +43,9 @@ import {
   getProfileRole,
   getProfileUserName,
   type AccessTokenClaims,
-} from "@/shared/lib/auth/claims";
-import { getAccessToken, removeToken } from "@/shared/lib/cookies";
-import { resolveApiAssetUrl } from "@/shared/lib/api-assets";
+} from "@/lib/auth/claims";
+import { getAccessToken, removeToken } from "@/lib/cookies";
+import { resolveApiAssetUrl } from "@/lib/api-assets";
 
 export function AdminShell({
   title,
@@ -62,10 +62,7 @@ export function AdminShell({
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [date, setDate] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
-  const {
-    data: profileClaims,
-    isError: isProfileError,
-  } = useQuery({
+  const { data: profileClaims, isError: isProfileError } = useQuery({
     queryKey: ["auth-profile"],
     queryFn: () => {
       const token = getAccessToken();
@@ -102,26 +99,22 @@ export function AdminShell({
     profileUsers?.items.find((user) =>
       [user.id, user.userName, user.email, user.fullName]
         .filter(Boolean)
-        .some((value) => profileIdentifiers.includes(value.trim().toLowerCase())),
+        .some((value) =>
+          profileIdentifiers.includes(value.trim().toLowerCase()),
+        ),
     ) ?? null;
   const profileFullName =
     profileUser?.fullName?.trim() ||
-    [
-      profileUser?.firstName,
-      profileUser?.middleName,
-      profileUser?.lastName,
-    ]
+    [profileUser?.firstName, profileUser?.middleName, profileUser?.lastName]
       .filter(Boolean)
       .join(" ") ||
     getProfileFullName(claims);
   const profileFirstName =
     profileUser?.firstName?.trim() || getProfileFirstName(claims);
   const profileInitials = getProfileInitials(profileFullName);
-  const profileUserName =
-    profileUser?.userName || getProfileUserName(claims);
+  const profileUserName = profileUser?.userName || getProfileUserName(claims);
   const profileEmail = profileUser?.email || getProfileEmail(claims);
-  const profilePhone =
-    profileUser?.phoneNumber || getProfilePhone(claims);
+  const profilePhone = profileUser?.phoneNumber || getProfilePhone(claims);
   const profileAvatar = resolveApiAssetUrl(
     profileUser?.photoUrl || getProfileAvatar(claims),
   );
@@ -193,12 +186,8 @@ export function AdminShell({
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 bg-cover bg-center"
-        
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0"
-      />
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0" />
       <div
         aria-hidden="true"
         className="pointer-events-none fixed -left-40 top-1/3 h-96 w-96 rounded-full bg-sky-400/10 blur-[120px]"
@@ -357,7 +346,11 @@ export function AdminShell({
 
                         <dl className="mt-3 space-y-3">
                           {[
-                            { label: "ФИО", value: profileFullName, icon: UsersRound },
+                            {
+                              label: "ФИО",
+                              value: profileFullName,
+                              icon: UsersRound,
+                            },
                             {
                               label: "Имя пользователя",
                               value: profileUserName || "Не указано в токене",
@@ -379,7 +372,10 @@ export function AdminShell({
                               icon: ShieldCheck,
                             },
                           ].map(({ label, value, icon: Icon }) => (
-                            <div key={label} className="flex items-start gap-2.5">
+                            <div
+                              key={label}
+                              className="flex items-start gap-2.5"
+                            >
                               <Icon className="mt-0.5 size-4 shrink-0 text-[#f2d18a]" />
                               <div className="min-w-0">
                                 <dt className="text-[0.68rem] text-white/55">
@@ -393,7 +389,10 @@ export function AdminShell({
                           ))}
                         </dl>
                         {profileErrorMessage && (
-                          <p role="alert" className="mt-3 text-xs text-rose-200">
+                          <p
+                            role="alert"
+                            className="mt-3 text-xs text-rose-200"
+                          >
                             {profileErrorMessage}
                           </p>
                         )}
@@ -444,7 +443,9 @@ export function AdminShell({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className={`min-w-0 flex-1 ${
-              fitViewport ? "lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden" : ""
+              fitViewport
+                ? "lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden"
+                : ""
             }`}
           >
             {showPageHeading && (
@@ -458,7 +459,9 @@ export function AdminShell({
             {children}
           </motion.main>
 
-          <footer className={`px-2 pb-1 text-center text-xs text-white/35 sm:text-left ${fitViewport ? "lg:hidden" : ""}`}>
+          <footer
+            className={`px-2 pb-1 text-center text-xs text-white/35 sm:text-left ${fitViewport ? "lg:hidden" : ""}`}
+          >
             APA Administration <span className="mx-1.5 text-white/20">·</span>
             Академия государственного управления
           </footer>

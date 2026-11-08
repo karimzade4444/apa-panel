@@ -3,7 +3,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import type { ComponentProps } from "react";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 function Dialog(props: ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -37,10 +37,7 @@ function DialogContent({
   );
 }
 
-function DialogHeader({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+function DialogHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
@@ -72,14 +69,14 @@ function DialogDescription(
   );
 }
 
-function DialogFooter({
-  className,
-  ...props
-}: ComponentProps<"div">) {
+function DialogFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       {...props}
     />
   );
