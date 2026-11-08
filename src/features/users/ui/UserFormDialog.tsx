@@ -14,8 +14,15 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormInput } from "@/shared/ui";
 import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  FormInput,
 } from "@/shared/ui";
 import type { UserFormDialogProps } from "../types/user-components";
 import { getProfileInitials } from "@/entities/user";

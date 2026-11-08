@@ -26,8 +26,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Button,
 } from "@/shared/ui";
-import { Button } from "@/shared/ui";
 import { AdminSidebar, adminNavigation } from "@/widgets/sidebar";
 import type { AdminShellProps } from "./admin-shell.types";
 import {

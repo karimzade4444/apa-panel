@@ -26,15 +26,14 @@ import {
   updateUser,
   type CreateUserData,
   type UserWriteData,
-} from "@/features/users/api/users";
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
+} from "../api/users";
+import { Button, Input } from "@/shared/ui";
 import {
   getActorIdentifiers,
   getEffectiveRole,
   type AccessTokenClaims,
-} from "@/lib/auth/claims";
-import { getAccessToken } from "@/lib/cookies";
+} from "@/entities/user";
+import { getAccessToken } from "@/shared/lib";
 import {
   formatDate,
   formatRole,
@@ -42,19 +41,19 @@ import {
   getRoleLevel,
   getUserName,
   isCurrentUser,
-} from "@/features/users/lib/user-utils";
-import { UserAvatar } from "@/features/users/ui/UserAvatar";
-import { UserDetailsPanel } from "@/features/users/ui/UserDetailsPanel";
-import { UserFormDialog } from "@/features/users/ui/UserFormDialog";
-import { UserStatCard } from "@/features/users/ui/UserStatCard";
+} from "../lib/user-utils";
+import { UserAvatar } from "./UserAvatar";
+import { UserDetailsPanel } from "./UserDetailsPanel";
+import { UserFormDialog } from "./UserFormDialog";
+import { UserStatCard } from "./UserStatCard";
 import {
   emptyUserForm,
   roleOptions,
-} from "@/features/users/model/user-management";
+} from "../model/user-management";
 import type {
   UserFormValues,
   UserRole,
-} from "@/features/users/model/user-management";
+} from "../model/user-management";
 import type { User } from "@/entities/user";
 
 const emptyUsers: User[] = [];
