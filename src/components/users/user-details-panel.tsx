@@ -11,10 +11,10 @@ import {
   X,
 } from "lucide-react";
 
-import { Button } from "@/shared/ui";
-import { formatDate, formatRole, getUserName } from "../lib/user-utils";
-import type { UserDetailsPanelProps } from "../types/user-components";
-import { UserAvatar } from "./UserAvatar";
+import { Button } from "@/components/ui/button";
+import { formatDate, formatRole, getUserName } from "@/lib/user-utils";
+import type { UserDetailsPanelProps } from "@/types/user-components";
+import { UserAvatar } from "./user-avatar";
 
 export function UserDetailsPanel({
   user,

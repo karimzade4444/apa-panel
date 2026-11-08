@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useRef, type MouseEvent, type ReactNode } from "react";
 
-import { useMouseParallax } from "../model/use-mouse-parallax";
+import { useMouseParallax } from "@/hooks/use-mouse-parallax";
 
 interface LoginSceneProps {
   /** Левая часть (брендинг). Скрывается на мобильных. */

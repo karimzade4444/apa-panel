@@ -1,5 +1,5 @@
-import type { UserResponse } from "@/entities/user";
-import { instance } from "@/shared/api";
+import type { UserResponse } from "@/types/user";
+import { instance } from "./instance";
 
 export interface UserWriteData {
   userName: string;

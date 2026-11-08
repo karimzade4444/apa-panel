@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { UserRound } from "lucide-react";
 
-import { getInitials, getUserName } from "../lib/user-utils";
-import { resolveApiAssetUrl } from "@/shared/lib";
-import type { User } from "@/entities/user";
+import { getInitials, getUserName } from "@/lib/user-utils";
+import { resolveApiAssetUrl } from "@/lib/api-assets";
+import type { User } from "@/types/user";
 
 interface UserAvatarProps {
   user: User;

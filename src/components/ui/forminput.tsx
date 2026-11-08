@@ -10,8 +10,8 @@ import {
 } from "react-hook-form";
 
 import { Button } from ".";
-import { cn } from "../lib";
-import { Input } from "./input";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface IFormInput<T extends FieldValues> extends Omit<
   ComponentProps<"input">,

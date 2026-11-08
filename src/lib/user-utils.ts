@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 
-import type { User } from "@/entities/user";
-import { roleOptions } from "../model/user-management";
+import type { User } from "@/types/user";
+import { roleOptions } from "@/types/user-management";
 
 export function getRoleLevel(roleValue: string): number {
   const normalized = roleValue.toLowerCase().replace(/[^a-z]/g, "");

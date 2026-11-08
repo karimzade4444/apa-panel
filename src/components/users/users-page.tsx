@@ -26,14 +26,15 @@ import {
   updateUser,
   type CreateUserData,
   type UserWriteData,
-} from "../api/users";
-import { Button, Input } from "@/shared/ui";
+} from "@/api/users";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   getActorIdentifiers,
   getEffectiveRole,
   type AccessTokenClaims,
-} from "@/entities/user";
-import { getAccessToken } from "@/shared/lib";
+} from "@/lib/auth";
+import { getAccessToken } from "@/lib/cookies";
 import {
   formatDate,
   formatRole,
@@ -41,20 +42,20 @@ import {
   getRoleLevel,
   getUserName,
   isCurrentUser,
-} from "../lib/user-utils";
-import { UserAvatar } from "./UserAvatar";
-import { UserDetailsPanel } from "./UserDetailsPanel";
-import { UserFormDialog } from "./UserFormDialog";
-import { UserStatCard } from "./UserStatCard";
+} from "@/lib/user-utils";
+import { UserAvatar } from "./user-avatar";
+import { UserDetailsPanel } from "./user-details-panel";
+import { UserFormDialog } from "./user-form-dialog";
+import { UserStatCard } from "./user-stat-card";
 import {
   emptyUserForm,
   roleOptions,
-} from "../model/user-management";
+} from "@/types/user-management";
 import type {
   UserFormValues,
   UserRole,
-} from "../model/user-management";
-import type { User } from "@/entities/user";
+} from "@/types/user-management";
+import type { User } from "@/types/user";
 
 const emptyUsers: User[] = [];
 

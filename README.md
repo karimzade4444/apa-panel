@@ -2,14 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Project structure
 
-- `src/app` contains Next.js routes, layouts, providers, and global styles. Route pages delegate to a view; `(auth)` and `(dashboard)` do not change public URLs.
-- `src/views` composes full pages from widgets and features.
-- `src/widgets` contains large interface sections such as the dashboard overview, header, and sidebar.
-- `src/features` contains user actions and their UI, API, model, and types. Each feature exposes its public API through `index.ts`.
-- `src/entities` contains domain data and behavior, such as user types and identity claims.
-- `src/shared` contains reusable UI primitives, API clients, and domain-independent utilities.
+- `src/app` contains only Next.js routes, layouts, providers, and global styles; route pages delegate to components.
+- `src/api` contains the HTTP client and backend requests.
+- `src/components` groups UI by purpose: reusable primitives in `ui`, and application sections in `auth`, `users`, `dashboard`, and `layout`.
+- `src/hooks` contains reusable React hooks.
+- `src/lib` contains utilities and browser helpers.
+- `src/types` contains shared TypeScript types.
+- `src/validations` contains request and form schemas.
 
-Keep dependencies flowing downward: `app → views → widgets → features → entities → shared`. Features do not import other features. Import a slice through its `index.ts`; keep implementation-level imports inside that slice.
+Use the `@/` alias for imports from `src`; keep route files small and avoid duplicate routes outside `(auth)` and `(dashboard)`.
 
 ## Getting Started
 

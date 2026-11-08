@@ -14,18 +14,18 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 
+import { Button } from "@/components/ui/button";
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  FormInput,
-} from "@/shared/ui";
-import type { UserFormDialogProps } from "../types/user-components";
-import { getProfileInitials } from "@/entities/user";
+} from "@/components/ui/dialog";
+import FormInput from "@/components/ui/forminput";
+import type { UserFormDialogProps } from "@/types/user-components";
+import { getProfileInitials } from "@/lib/auth";
 
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
 

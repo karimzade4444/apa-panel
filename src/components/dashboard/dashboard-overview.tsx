@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { getUsers } from "@/features/users";
-import { Button } from "@/shared/ui";
-import type { User } from "@/entities/user";
+import { getUsers } from "@/api/users";
+import { Button } from "@/components/ui/button";
+import type { User } from "@/types/user";
 
 const publicationTitle = "Главное объявление Академии";
 

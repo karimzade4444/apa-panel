@@ -5,8 +5,8 @@ import type {
   UserFormValues,
   UserRole,
   roleOptions,
-} from "../model/user-management";
-import type { User } from "@/entities/user";
+} from "@/types/user-management";
+import type { User } from "@/types/user";
 
 export interface UserDetailsPanelProps {
   user: User;

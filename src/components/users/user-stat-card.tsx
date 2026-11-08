@@ -1,4 +1,4 @@
-import type { UserStatCardProps } from "../types/user-components";
+import type { UserStatCardProps } from "@/types/user-components";
 
 export function UserStatCard({
   label,

@@ -1,3 +1,3 @@
-import { DashboardPage } from "@/views/dashboard";
+import DashboardOverview from "@/components/dashboard/dashboard-overview";
 
-export default DashboardPage;
+export default DashboardOverview;
