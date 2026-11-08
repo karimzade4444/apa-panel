@@ -42,8 +42,13 @@ type ViewTimelineConstructor = new (options: {
   subject: Element;
 }) => ViewTimelineLike;
 
+function isViewTimelineConstructor(value: unknown): value is ViewTimelineConstructor {
+  return typeof value === 'function';
+}
+
 function getViewTimelineConstructor() {
-  return (window as Window & { ViewTimeline?: ViewTimelineConstructor }).ViewTimeline;
+  const constructor: unknown = Reflect.get(window, 'ViewTimeline');
+  return isViewTimelineConstructor(constructor) ? constructor : undefined;
 }
 
 function isProductionRuntime() {
