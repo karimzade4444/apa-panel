@@ -31,6 +31,21 @@ type RefractionFilterState = {
   metrics: RefractionMapMetrics | null;
 };
 
+type ViewTimelineLike = AnimationTimeline & {
+  source: Element | null;
+  startOffset: { to: (unit: 'px') => { value: number } };
+  endOffset: { to: (unit: 'px') => { value: number } };
+};
+
+type ViewTimelineConstructor = new (options: {
+  axis: 'block';
+  subject: Element;
+}) => ViewTimelineLike;
+
+function getViewTimelineConstructor() {
+  return (window as Window & { ViewTimeline?: ViewTimelineConstructor }).ViewTimeline;
+}
+
 function isProductionRuntime() {
   // SAFETY: only Node and bundler shims define `process`, so every step of the probe stays optional.
   const runtime = globalThis as typeof globalThis & {
@@ -88,7 +103,8 @@ function readCornerRadii(style: CSSStyleDeclaration, width: number, height: numb
  */
 function supportsCompositedSceneScroll() {
   return (
-    typeof ViewTimeline !== 'undefined' &&
+    typeof window !== 'undefined' &&
+    typeof getViewTimelineConstructor() !== 'undefined' &&
     typeof navigator !== 'undefined' &&
     'userAgentData' in navigator
   );
@@ -158,7 +174,10 @@ export function useRefractionFilter(
     // every scroll frame, so it waits until the surface is within a quarter screen of the viewport.
     let nearViewport = true;
 
-    const timeline = supportsCompositedSceneScroll()
+    const ViewTimeline = supportsCompositedSceneScroll()
+      ? getViewTimelineConstructor()
+      : undefined;
+    const timeline = ViewTimeline
       ? new ViewTimeline({ axis: 'block', subject: el })
       : null;
 
