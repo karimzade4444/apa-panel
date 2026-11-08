@@ -24,8 +24,6 @@ import {
   getUsers,
   setUserBlocked,
   updateUser,
-  type CreateUserData,
-  type UserWriteData,
 } from "@/api/users";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,7 +53,7 @@ import type {
   UserFormValues,
   UserRole,
 } from "@/types/user-management";
-import type { User } from "@/types/user";
+import type { CreateUserData, User, UserWriteData } from "@/types/user";
 
 const emptyUsers: User[] = [];
 

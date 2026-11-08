@@ -1,7 +1,5 @@
 import { api } from "./instance";
+import type { LoginPayload, LoginResponse } from "@/types/auth";
 
-export const login = async (data: { login: string; password: string }) => {
-  const myData = await api.post("/auth/login", data);
-
-  return myData;
-};
+export const login = (data: LoginPayload) =>
+  api.post<LoginResponse>("/auth/login", data);

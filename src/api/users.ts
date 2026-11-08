@@ -1,21 +1,9 @@
-import type { UserResponse } from "@/types/user";
+import type {
+  CreateUserData,
+  UserResponse,
+  UserWriteData,
+} from "@/types/user";
 import { instance } from "./instance";
-
-export interface UserWriteData {
-  userName: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  fullName: string;
-  role: string;
-  password?: string;
-  photo?: File;
-}
-
-export type CreateUserData = Omit<UserWriteData, "fullName" | "password"> & {
-  password: string;
-};
 
 function getUserFormData(data: UserWriteData) {
   const formData = new FormData();

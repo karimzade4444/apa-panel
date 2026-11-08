@@ -20,3 +20,19 @@ export interface UserResponse {
   page: number;
   pageSize: number;
 }
+
+export interface UserWriteData {
+  userName: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  fullName: string;
+  role: string;
+  password?: string;
+  photo?: File;
+}
+
+export type CreateUserData = Omit<UserWriteData, "fullName" | "password"> & {
+  password: string;
+};

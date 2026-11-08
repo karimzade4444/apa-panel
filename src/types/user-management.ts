@@ -1,4 +1,4 @@
-import type { UserWriteData } from "@/api/users";
+import type { UserWriteData } from "@/types/user";
 import type { AccessRole } from "@/lib/auth";
 
 export const roleOptions = [
