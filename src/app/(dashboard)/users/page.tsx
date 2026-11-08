@@ -16,7 +16,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
+import { useGlassToast } from "@/components/glassyui/glass-toaster";
 
 import {
   createUser,
@@ -58,6 +58,7 @@ import type { CreateUserData, User, UserWriteData } from "@/types/user";
 const emptyUsers: User[] = [];
 
 export default function UsersPage() {
+  const toast = useGlassToast();
   const shouldReduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");

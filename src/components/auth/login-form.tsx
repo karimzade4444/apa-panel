@@ -7,12 +7,12 @@ import { Check, LockKeyhole, Mail, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { toast } from "sonner";
 import { isAxiosError } from "axios";
 
 import { login } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/forminput";
+import { useGlassToast } from "@/components/glassyui/glass-toaster";
 import { saveToken } from "@/lib/cookies";
 import { LoginSkeleton } from "./login-skeleton";
 import {
@@ -49,6 +49,7 @@ function getLoginErrorMessage(error: unknown) {
 
 export default function LoginForm() {
   const [error, setError] = useState("");
+  const toast = useGlassToast();
   const router = useRouter();
   const queryClient = useQueryClient();
   const shouldReduceMotion = useReducedMotion();

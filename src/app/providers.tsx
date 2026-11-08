@@ -2,7 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { Toaster } from "@/components/ui/sonner";
+import { GlassProvider } from "@/components/glassyui/glass-provider";
+import { GlassToaster } from "@/components/glassyui/glass-toaster";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -20,8 +21,9 @@ export function Providers({ children }: ProvidersProps) {
   );
   return (
     <QueryClientProvider client={client}>
-      {children}
-      <Toaster />
+      <GlassProvider defaultTheme="dark">
+        <GlassToaster>{children}</GlassToaster>
+      </GlassProvider>
     </QueryClientProvider>
   );
 }
