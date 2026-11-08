@@ -33,6 +33,8 @@ interface GlassToastContextValue {
 }
 
 const GlassToastContext = createContext<GlassToastContextValue | null>(null);
+const TOAST_DURATION = 5000;
+const TOAST_EXIT_DURATION = 250;
 
 export function useGlassToast() {
   const context = useContext(GlassToastContext);
@@ -47,21 +49,44 @@ export function useGlassToast() {
 export function GlassToaster({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const nextId = useRef(0);
-  const removalTimers = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const timers = useRef(new Map<number, ReturnType<typeof setTimeout>>());
 
   useEffect(
     () => () => {
-      removalTimers.current.forEach(clearTimeout);
+      timers.current.forEach(clearTimeout);
     },
     [],
   );
+
+  const dismissToast = useCallback((id: number) => {
+    const timer = timers.current.get(id);
+    if (timer) clearTimeout(timer);
+
+    setToasts((current) =>
+      current.map((toast) =>
+        toast.id === id ? { ...toast, open: false } : toast,
+      ),
+    );
+
+    timers.current.set(
+      id,
+      setTimeout(() => {
+        timers.current.delete(id);
+        setToasts((current) => current.filter((toast) => toast.id !== id));
+      }, TOAST_EXIT_DURATION),
+    );
+  }, []);
 
   const addToast = useCallback(
     (toast: Omit<ToastItem, "id" | "open">) => {
       const id = ++nextId.current;
       setToasts((current) => [...current, { ...toast, id, open: true }]);
+      timers.current.set(
+        id,
+        setTimeout(() => dismissToast(id), TOAST_DURATION),
+      );
     },
-    [],
+    [dismissToast],
   );
 
   const value = {
@@ -72,7 +97,7 @@ export function GlassToaster({ children }: { children: ReactNode }) {
 
   return (
     <GlassToastContext.Provider value={value}>
-      <ToastProvider duration={5000} swipeDirection="right">
+      <ToastProvider duration={Infinity} swipeDirection="right">
         {children}
         {toasts.length > 0 && (
           <GlassToastViewport aria-label="Уведомления" />
@@ -82,20 +107,7 @@ export function GlassToaster({ children }: { children: ReactNode }) {
             key={toast.id}
             open={toast.open}
             onOpenChange={(open) => {
-              if (open) return;
-
-              setToasts((current) =>
-                current.map((item) =>
-                  item.id === toast.id ? { ...item, open: false } : item,
-                ),
-              );
-              const timer = setTimeout(() => {
-                removalTimers.current.delete(timer);
-                setToasts((current) =>
-                  current.filter((item) => item.id !== toast.id),
-                );
-              }, 250);
-              removalTimers.current.add(timer);
+              if (!open) dismissToast(toast.id);
             }}
           >
             <span
