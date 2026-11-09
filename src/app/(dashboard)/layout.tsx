@@ -14,6 +14,10 @@ const routeDetails: Record<string, { title: string; description: string }> = {
     title: "Пользователи",
     description: "Управление пользователями системы",
   },
+  "/users/create": {
+    title: "Создание пользователя",
+    description: "Добавление новой учетной записи в систему",
+  },
 };
 
 export default function DashboardLayout({
@@ -22,7 +26,14 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const details = routeDetails[pathname] ?? routeDetails["/"];
+  const details =
+    routeDetails[pathname] ??
+    (pathname.endsWith("/edit")
+      ? {
+          title: "Редактирование пользователя",
+          description: "Изменение данных учетной записи",
+        }
+      : routeDetails["/"]);
 
   return (
     <AdminShell

@@ -2,11 +2,11 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   CircleAlert,
   Eye,
-  Plus,
   Search,
   ShieldCheck,
   UserRoundCheck,
@@ -14,15 +14,12 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { useForm, useWatch } from "react-hook-form";
 import { useGlassToast } from "@/components/ui/glassyui/glass-toaster";
 
 import {
-  createUser,
   deleteUser,
   getUsers,
   setUserBlocked,
-  updateUser,
 } from "@/api/users";
 import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
 import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
@@ -40,6 +37,7 @@ import {
   GlassAlert,
   GlassBadge,
   GlassPanel,
+  GlassPagination,
   GlassScrollArea,
   GlassSelect,
   GlassSelectContent,
@@ -61,15 +59,15 @@ import {
 } from "@/lib/user-utils";
 import { UserAvatar } from "@/components/users/user-avatar";
 import { UserDetailsPanel } from "@/components/users/user-details-panel";
-import { UserFormDialog } from "@/components/users/user-form-dialog";
 import { UserStatCard } from "@/components/users/user-stat-card";
-import { emptyUserForm, roleOptions } from "@/types/user-management";
-import type { UserFormValues, UserRole } from "@/types/user-management";
-import type { CreateUserData, User, UserWriteData } from "@/types/user";
+import { roleOptions } from "@/types/user-management";
+import type { User } from "@/types/user";
 
 const emptyUsers: User[] = [];
+const USER_PAGE_SIZE = 4;
 
 export default function UsersPage() {
+  const router = useRouter();
   const toast = useGlassToast();
   const shouldReduceMotion = useReducedMotion();
   const queryClient = useQueryClient();
@@ -77,17 +75,12 @@ export default function UsersPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [statusConfirmation, setStatusConfirmation] = useState<{
     user: User;
     isBlocked: boolean;
   } | null>(null);
-  const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const { control, handleSubmit, reset, setValue } = useForm<UserFormValues>({
-    defaultValues: emptyUserForm,
-  });
-  const formRole = useWatch({ control, name: "role" });
 
   const {
     can,
@@ -109,27 +102,6 @@ export default function UsersPage() {
 
   const refreshUsers = () =>
     queryClient.invalidateQueries({ queryKey: ["users"] });
-  const createMutation = useMutation({
-    mutationFn: (data: CreateUserData) => createUser(data),
-    onSuccess: async () => {
-      await refreshUsers();
-      setFormMode(null);
-      setPhotoFile(null);
-      toast.success("Пользователь создан");
-    },
-    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
-  });
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UserWriteData }) =>
-      updateUser(id, data),
-    onSuccess: async () => {
-      await refreshUsers();
-      setFormMode(null);
-      setPhotoFile(null);
-      toast.success("Данные пользователя обновлены");
-    },
-    onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
-  });
   const blockMutation = useMutation({
     mutationFn: ({ id, isBlocked }: { id: string; isBlocked: boolean }) =>
       setUserBlocked(id, isBlocked),
@@ -149,112 +121,14 @@ export default function UsersPage() {
     onSuccess: async () => {
       await refreshUsers();
       setSelectedId(null);
+      setPage(1);
       toast.success("Пользователь удалён");
     },
     onError: (error: unknown) => toast.error(getApiErrorMessage(error)),
   });
   const isMutating =
-    createMutation.isPending ||
-    updateMutation.isPending ||
     blockMutation.isPending ||
     deleteMutation.isPending;
-
-  const openCreateForm = () => {
-    if (!canCreateUsers) {
-      toast.error("Недостаточно прав для создания пользователя.");
-      return;
-    }
-    setPhotoFile(null);
-    reset({
-      ...emptyUserForm,
-      role: assignableRoles[assignableRoles.length - 1]?.value ?? "Editor",
-    });
-    setFormMode("create");
-  };
-  const openEditForm = (user: User) => {
-    if (
-      !can(PermissionAction.UpdateUser) ||
-      !can(PermissionAction.AssignUserRole)
-    ) {
-      toast.error("Недостаточно прав для изменения пользователя.");
-      return;
-    }
-    if (isCurrentUser(user, actorIdentifiers)) {
-      toast.error("Нельзя изменять собственную учетную запись.");
-      return;
-    }
-    const editableRoles = roleOptions.filter(
-      (role) => role.level < actorLevel || role.value === user.role,
-    );
-    setPhotoFile(null);
-    reset({
-      userName: user.userName,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      middleName: user.middleName ?? "",
-      role: editableRoles.some((role) => role.value === user.role)
-        ? (user.role as UserRole)
-        : (editableRoles[editableRoles.length - 1]?.value ?? "Editor"),
-      password: "",
-    });
-    setFormMode("edit");
-  };
-  const handleUserFormSubmit = (
-    values: UserFormValues,
-    selectedPhoto: File | null,
-  ) => {
-    const roleLevel = getRoleLevel(values.role);
-    if (
-      !can(
-        formMode === "create"
-          ? PermissionAction.CreateUser
-          : PermissionAction.UpdateUser,
-      ) ||
-      !can(PermissionAction.AssignUserRole) ||
-      (formMode === "edit" &&
-        !!selectedUser &&
-        isCurrentUser(selectedUser, actorIdentifiers)) ||
-      (formMode === "create" && roleLevel >= actorLevel) ||
-      (formMode === "edit" && roleLevel > actorLevel)
-    ) {
-      toast.error("Недостаточно прав для назначения этой роли.");
-      return;
-    }
-    const { password, ...userData } = values;
-    const fullName = [
-      values.firstName.trim(),
-      values.middleName.trim(),
-      values.lastName.trim(),
-    ]
-      .filter(Boolean)
-      .join(" ");
-    const data: UserWriteData = {
-      ...userData,
-      fullName,
-      ...(password ? { password } : {}),
-      ...(selectedPhoto ? { photo: selectedPhoto } : {}),
-    };
-    if (formMode === "create") {
-      if (!password) {
-        toast.error("Укажите пароль пользователя.");
-        return;
-      }
-      const createData: CreateUserData = {
-        userName: data.userName,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        middleName: data.middleName,
-        role: data.role,
-        password,
-        ...(selectedPhoto ? { photo: selectedPhoto } : {}),
-      };
-      createMutation.mutate(createData);
-    } else if (formMode === "edit" && selectedUser) {
-      updateMutation.mutate({ id: selectedUser.id, data });
-    }
-  };
 
   useEffect(() => {
     const timeout = window.setTimeout(
@@ -265,8 +139,8 @@ export default function UsersPage() {
   }, [search]);
 
   const { data, isLoading, isError, refetch, isRefetching } = useQuery({
-    queryKey: ["users", debouncedSearch],
-    queryFn: () => getUsers(debouncedSearch),
+    queryKey: ["users", debouncedSearch, page, USER_PAGE_SIZE],
+    queryFn: () => getUsers(debouncedSearch, page, USER_PAGE_SIZE),
     enabled: canViewUsers,
   });
 
@@ -283,6 +157,11 @@ export default function UsersPage() {
       (statusFilter === "blocked" && user.isBlocked);
     return matchesRole && matchesStatus;
   });
+  const pageSize = data?.pageSize || USER_PAGE_SIZE;
+  const pageCount = Math.max(1, Math.ceil((data?.total ?? 0) / pageSize));
+  const firstUserIndex = data?.total ? (page - 1) * pageSize + 1 : 0;
+  const lastUserIndex = Math.min(page * pageSize, data?.total ?? 0);
+
   const selectedUser =
     filteredUsers.find((user) => user.id === selectedId) ?? null;
   const activeCount = users.filter((user) => !user.isBlocked).length;
@@ -295,14 +174,6 @@ export default function UsersPage() {
     can(PermissionAction.DeleteUser) &&
     !isCurrentUser(selectedUser, actorIdentifiers) &&
     getRoleLevel(selectedUser.role) < actorLevel;
-  const formRoleOptions =
-    formMode === "create"
-      ? assignableRoles
-      : roleOptions.filter(
-          (role) =>
-            role.level < actorLevel || role.value === selectedUser?.role,
-        );
-
   const handleDeleteSelectedUser = () => {
     if (!selectedUser || !can(PermissionAction.DeleteUser)) {
       toast.error("Недостаточно прав для удаления пользователя.");
@@ -474,7 +345,11 @@ export default function UsersPage() {
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setPage(1);
+                    setSelectedId(null);
+                  }}
                   placeholder="Поиск по имени, email или ID..."
                   aria-label="Поиск пользователей"
                   className="h-10 border-border bg-muted pl-10 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
@@ -483,7 +358,11 @@ export default function UsersPage() {
               <div className="grid grid-cols-2 gap-2 xl:w-72.5">
                 <GlassSelect
                   value={roleFilter}
-                  onValueChange={(value) => setRoleFilter(value)}
+                  onValueChange={(value) => {
+                    setRoleFilter(value);
+                    setPage(1);
+                    setSelectedId(null);
+                  }}
                 >
                   <GlassSelectTrigger
                     aria-label="Фильтр по роли"
@@ -502,7 +381,11 @@ export default function UsersPage() {
                 </GlassSelect>
                 <GlassSelect
                   value={statusFilter}
-                  onValueChange={(value) => setStatusFilter(value)}
+                  onValueChange={(value) => {
+                    setStatusFilter(value);
+                    setPage(1);
+                    setSelectedId(null);
+                  }}
                 >
                   <GlassSelectTrigger
                     aria-label="Фильтр по статусу"
@@ -523,10 +406,9 @@ export default function UsersPage() {
                 <Button
                   type="button"
                   disabled={!assignableRoles.length}
-                  onClick={openCreateForm}
+                  onClick={() => router.push("/users/create")}
                   className="h-10 shrink-0 bg-primary text-primary-foreground hover:bg-primary"
                 >
-                  <Plus className="size-4" />
                   Добавить пользователя
                 </Button>
               )}
@@ -534,7 +416,7 @@ export default function UsersPage() {
 
             <GlassScrollArea
               aria-busy={isLoading}
-              scrollbars="horizontal"
+              scrollbars="both"
               className="min-h-0 flex-1"
             >
               <table className="w-full min-w-190 border-separate border-spacing-x-0 border-spacing-y-1.5 px-2 text-left text-sm">
@@ -669,16 +551,24 @@ export default function UsersPage() {
                   </span>
                 ) : (
                   <>
-                    Показано {filteredUsers.length} из{" "}
+                    Показано {firstUserIndex}–{lastUserIndex} из{" "}
                     {data?.total.toLocaleString("ru-RU") ?? "—"} пользователей
                   </>
                 )}
               </span>
-              <span>
-                {data && data.total > users.length
-                  ? `Список API загружен: ${users.length} записей`
-                  : "Все найденные записи"}
-              </span>
+              {pageCount > 1 && (
+                <GlassPagination
+                  aria-label="Страницы пользователей"
+                  page={page}
+                  pageCount={pageCount}
+                  previousLabel="Предыдущая страница пользователей"
+                  nextLabel="Следующая страница пользователей"
+                  onPageChange={(nextPage) => {
+                    setSelectedId(null);
+                    setPage(nextPage);
+                  }}
+                />
+              )}
             </div>
           </GlassPanel>
 
@@ -691,7 +581,11 @@ export default function UsersPage() {
                 reduceMotion={shouldReduceMotion ?? false}
                 canManageActions={canManageSelectedUser}
                 isPending={isMutating}
-                onEdit={() => openEditForm(selectedUser)}
+                onEdit={() =>
+                  router.push(
+                    `/users/${encodeURIComponent(selectedUser.id)}/edit`,
+                  )
+                }
                 onToggleBlocked={() => handleToggleBlocked(selectedUser)}
                 onDelete={handleDeleteSelectedUser}
               />
@@ -699,30 +593,6 @@ export default function UsersPage() {
           </AnimatePresence>
         </div>
       </div>
-
-      <AnimatePresence>
-        {formMode && (
-          <UserFormDialog
-            formMode={formMode}
-            formRole={formRole}
-            formRoleOptions={formRoleOptions}
-            control={control}
-            isMutating={isMutating}
-            photoFile={photoFile}
-            existingPhotoUrl={
-              formMode === "edit" ? (selectedUser?.photoUrl ?? null) : null
-            }
-            onClose={() => setFormMode(null)}
-            onPhotoChange={setPhotoFile}
-            onRoleChange={(role) =>
-              setValue("role", role, { shouldDirty: true })
-            }
-            onSubmit={handleSubmit((values) =>
-              handleUserFormSubmit(values, photoFile),
-            )}
-          />
-        )}
-      </AnimatePresence>
 
       <AlertDialog
         open={statusConfirmation !== null}

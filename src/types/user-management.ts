@@ -11,7 +11,7 @@ export type UserRole = AccessRole;
 
 export type UserFormValues = Omit<
   UserWriteData,
-  "fullName" | "password" | "role"
+  "fullName" | "password" | "role" | "removePhoto"
 > & {
   role: UserRole;
   password: string;

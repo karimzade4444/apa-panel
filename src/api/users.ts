@@ -16,11 +16,25 @@ function getUserFormData(data: UserWriteData) {
   formData.append("role", data.role);
   if (data.password) formData.append("password", data.password);
   if (data.photo) formData.append("photo", data.photo);
+  if (data.removePhoto) formData.append("removePhoto", "true");
   return formData;
 }
 
-export const getUsers = async (search: string): Promise<UserResponse> => {
-  const response = await instance.get("/users", { params: { search } });
+export const getUser = async (id: string): Promise<User> => {
+  const response = await instance.get(
+    `/users/${encodeURIComponent(id)}`,
+  );
+  return response.data;
+};
+
+export const getUsers = async (
+  search: string,
+  page?: number,
+  pageSize?: number,
+): Promise<UserResponse> => {
+  const response = await instance.get("/users", {
+    params: { search, ...(page !== undefined ? { page, pageSize } : {}) },
+  });
   return response.data;
 };
 
@@ -32,11 +46,9 @@ export const createUser = async (data: CreateUserData) => {
 };
 
 export const updateUser = async (id: string, data: UserWriteData) => {
-  const { photo, ...userData } = data;
-  const body = photo ? getUserFormData(data) : userData;
   const response = await instance.put(
     `/users/${encodeURIComponent(id)}`,
-    body,
+    getUserFormData(data),
   );
   return response.data;
 };

@@ -31,8 +31,10 @@ export interface UserWriteData {
   role: string;
   password?: string;
   photo?: File;
+  removePhoto?: boolean;
 }
 
-export type CreateUserData = Omit<UserWriteData, "fullName" | "password"> & {
-  password: string;
-};
+export type CreateUserData = Omit<
+  UserWriteData,
+  "fullName" | "password" | "removePhoto"
+> & { password: string };
