@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import {
   GlassAlert,
   GlassAvatar,
+  GlassButton,
   GlassHeader,
   GlassPopover,
   GlassPopoverContent,
@@ -210,10 +211,10 @@ export default function AdminTopbar() {
             </Button>
             <GlassPopover open={profileOpen} onOpenChange={setProfileOpen}>
               <GlassPopoverTrigger asChild>
-                <Button
+                <GlassButton
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="md"
                   aria-label="Открыть профиль администратора"
                   className="size-10 rounded-full p-0 hover:bg-accent"
                 >
@@ -223,7 +224,7 @@ export default function AdminTopbar() {
                     name={profileFullName || profileUserName || "Администратор"}
                     fallback={profileInitials}
                   />
-                </Button>
+                </GlassButton>
               </GlassPopoverTrigger>
               <GlassPopoverContent
                 align="end"
