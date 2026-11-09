@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 import {
   ArrowLeft,
@@ -43,6 +44,7 @@ const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
 const USERNAME_PATTERN = /^[A-Za-z0-9._-]{3,50}$/;
 
 export default function CreateUserPage() {
+  const shouldReduceMotion = useReducedMotion();
   const router = useRouter();
   const toast = useGlassToast();
   const queryClient = useQueryClient();
@@ -180,8 +182,13 @@ export default function CreateUserPage() {
   }
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className="mx-auto max-w-6xl space-y-4 pb-4">
+    <motion.div
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      className="min-h-0 flex-1 overflow-y-auto"
+    >
+      <div className=" max-w-full max-h-full  pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -204,36 +211,39 @@ export default function CreateUserPage() {
           </Button>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="min-w-0"
-        >
-          <GlassPanel preset="showcase" refraction="soft" className="p-4 sm:p-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="min-w-0">
+          <GlassPanel
+            preset="showcase"
+            refraction="soft"
+            className="p-4 sm:p-6 mt-6"
+          >
             <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)]">
               <section className="space-y-3">
-                <div>
-                  <h2 className="font-semibold text-foreground">Фото профиля</h2>
+                <div className="border-2 ">
+                  <h2 className="font-semibold text-foreground">
+                    Фото профиля
+                  </h2>
                   <p className="mt-1 text-xs text-muted-foreground">
                     JPG, PNG или WebP · до 10 МБ
                   </p>
                 </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="sr-only"
-              aria-label="Выбрать фото пользователя"
-              onChange={(event) => {
-                acceptPhoto(event.target.files?.[0]);
-                event.target.value = "";
-              }}
-            />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  aria-label="Выбрать фото пользователя"
+                  onChange={(event) => {
+                    acceptPhoto(event.target.files?.[0]);
+                    event.target.value = "";
+                  }}
+                />
                 <button
                   type="button"
                   disabled={mutation.isPending}
                   onClick={() => fileInputRef.current?.click()}
                   aria-label="Нажмите, чтобы выбрать фото пользователя"
-                  className="group relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-muted transition hover:border-primary/60 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+                  className="group relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-chart-1  bg-muted transition hover:border-primary/60 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                 >
                   {photoPreviewUrl ? (
                     <Image
@@ -253,7 +263,7 @@ export default function CreateUserPage() {
                       fallback={<UserRound className="size-9" />}
                     />
                   )}
-                  <span className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-background/80 px-2 py-2 text-xs font-medium text-foreground backdrop-blur-sm">
+                  <span className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-background/80 px-2 py-2 text-xs font-medium text-foreground backdrop-blur-sm rounded-full">
                     <Camera className="size-4" />
                     {photoFile ? "Заменить фото" : "Выбрать фото"}
                   </span>
@@ -275,18 +285,20 @@ export default function CreateUserPage() {
               </section>
 
               <div className="min-w-0">
-              <div className="mb-5 flex items-center gap-3 border-b border-border pb-4">
-                <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <UserRound className="size-5" />
-                </span>
-                <div>
-                  <h2 className="font-semibold text-foreground">Данные пользователя</h2>
-                  <p className="text-xs text-muted-foreground">
-                    Учетная запись, личные данные и права доступа
-                  </p>
+                <div className="mb-5 flex items-center gap-3 border-b border-border pb-4">
+                  <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <UserRound className="size-5" />
+                  </span>
+                  <div>
+                    <h2 className="font-semibold text-foreground">
+                      Данные пользователя
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Учетная запись, личные данные и права доступа
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <FormInput<UserFormValues>
                     control={control}
                     name="userName"
@@ -350,7 +362,8 @@ export default function CreateUserPage() {
                       required: "Введите фамилию.",
                       minLength: {
                         value: 2,
-                        message: "Фамилия должна содержать не менее 2 символов.",
+                        message:
+                          "Фамилия должна содержать не менее 2 символов.",
                       },
                     }}
                   />
@@ -367,33 +380,33 @@ export default function CreateUserPage() {
                       Роль пользователя
                     </label>
                     <Controller
-                    control={control}
-                    name="role"
-                    rules={{ required: "Выберите роль пользователя." }}
-                    render={({ field }) => (
-                      <GlassSelect
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <GlassSelectTrigger
-                          aria-label="Роль пользователя"
-                          className="w-full"
+                      control={control}
+                      name="role"
+                      rules={{ required: "Выберите роль пользователя." }}
+                      render={({ field }) => (
+                        <GlassSelect
+                          value={field.value}
+                          onValueChange={field.onChange}
                         >
-                          <GlassSelectValue placeholder="Выберите роль" />
-                        </GlassSelectTrigger>
-                        <GlassSelectContent>
-                          {assignableRoles.map((option) => (
-                            <GlassSelectItem
-                              key={option.value}
-                              value={option.value}
-                            >
-                              {option.label}
-                            </GlassSelectItem>
-                          ))}
-                        </GlassSelectContent>
-                      </GlassSelect>
-                    )}
-                  />
+                          <GlassSelectTrigger
+                            aria-label="Роль пользователя"
+                            className="w-full h-10"
+                          >
+                            <GlassSelectValue placeholder="Выберите роль" />
+                          </GlassSelectTrigger>
+                          <GlassSelectContent>
+                            {assignableRoles.map((option) => (
+                              <GlassSelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </GlassSelectItem>
+                            ))}
+                          </GlassSelectContent>
+                        </GlassSelect>
+                      )}
+                    />
                   </div>
                   <FormInput<UserFormValues>
                     control={control}
@@ -410,40 +423,40 @@ export default function CreateUserPage() {
                       },
                     }}
                   />
-              </div>
-              <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-border pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={mutation.isPending}
-                  onClick={() => router.push("/users")}
-                  className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                >
-                  Отмена
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={mutation.isPending}
-                  className="min-w-44"
-                >
-                  {mutation.isPending ? (
-                    <>
-                      <LoaderCircle className="size-4 animate-spin" />
-                      Создание...
-                    </>
-                  ) : (
-                    <>
-                      <UserRoundPlus className="size-4" />
-                      Создать пользователя
-                    </>
-                  )}
-                </Button>
-              </div>
+                </div>
+                <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-border pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={mutation.isPending}
+                    onClick={() => router.push("/users")}
+                    className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={mutation.isPending}
+                    className="min-w-44 bg-chart-1"
+                  >
+                    {mutation.isPending ? (
+                      <>
+                        <LoaderCircle className="size-4 animate-spin" />
+                        Создание...
+                      </>
+                    ) : (
+                      <>
+                        <UserRoundPlus className="size-4" />
+                        Создать пользователя
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           </GlassPanel>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }
