@@ -230,18 +230,19 @@ export default function AdminTopbar() {
                 aria-label="Профиль администратора"
                 className="w-[min(18rem,calc(100vw-2rem))] p-4 text-popover-foreground"
               >
-                    {isProfileLoading ||
-                    (canLookupProfile && isProfileUserLoading && !profileUser) ? (
-                      <ProfileSkeleton />
-                    ) : (
-                      <>
+                {isProfileLoading ||
+                (canLookupProfile && isProfileUserLoading && !profileUser) ? (
+                  <ProfileSkeleton />
+                ) : (
+                  <>
                     <div className="flex items-center gap-3 border-b border-border pb-3">
                       <GlassAvatar
                         src={profileAvatar ?? undefined}
                         alt={profileFullName}
-                        name={profileFullName || profileUserName || "Администратор"}
+                        name={
+                          profileFullName || profileUserName || "Администратор"
+                        }
                         fallback={profileInitials}
-                       
                       />
                       <div className="min-w-0">
                         <h2 className="truncate text-sm font-semibold text-primary">
@@ -295,15 +296,12 @@ export default function AdminTopbar() {
                       ))}
                     </dl>
                     {profileErrorMessage && (
-                      <GlassAlert
-                        tone="danger"
-                        className="mt-3 text-xs"
-                      >
+                      <GlassAlert tone="danger" className="mt-3 text-xs">
                         {profileErrorMessage}
                       </GlassAlert>
                     )}
-                      </>
-                    )}
+                  </>
+                )}
               </GlassPopoverContent>
             </GlassPopover>
             <Button
