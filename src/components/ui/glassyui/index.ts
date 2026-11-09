@@ -23,6 +23,13 @@ export { GlassPagination } from "./glass-pagination";
 export type { GlassPaginationProps } from "./glass-pagination";
 export { GlassPanel } from "./glass-panel";
 export type { GlassPanelProps } from "./glass-panel";
+export {
+  GlassPopover,
+  GlassPopoverAnchor,
+  GlassPopoverContent,
+  GlassPopoverTrigger,
+} from "./glass-popover";
+export type { GlassPopoverContentProps } from "./glass-popover";
 export { GlassProvider, PreferencesProvider, useOptionalPreferences, usePreferences } from "./glass-provider";
 export { GlassScrollArea } from "./glass-scroll-area";
 export type { GlassScrollAreaProps } from "./glass-scroll-area";

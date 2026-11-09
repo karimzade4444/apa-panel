@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
@@ -13,7 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getUsers } from "@/api/users";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -30,6 +29,9 @@ import {
   GlassAlert,
   GlassAvatar,
   GlassHeader,
+  GlassPopover,
+  GlassPopoverContent,
+  GlassPopoverTrigger,
 } from "@/components/ui/glassyui";
 import {
   getActorIdentifiers,
@@ -54,11 +56,9 @@ export default function AdminTopbar() {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const shouldReduceMotion = useReducedMotion();
   const [profileOpen, setProfileOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [date, setDate] = useState("");
-  const profileRef = useRef<HTMLDivElement>(null);
 
   const {
     can,
@@ -151,27 +151,6 @@ export default function AdminTopbar() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!profileOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!profileRef.current?.contains(event.target as Node)) {
-        setProfileOpen(false);
-      }
-    };
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setProfileOpen(false);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [profileOpen]);
-
   const handleLogout = () => {
     queryClient.removeQueries({ queryKey: ["auth-profile"] });
     queryClient.removeQueries({ queryKey: ["auth-profile-user"] });
@@ -229,46 +208,28 @@ export default function AdminTopbar() {
               <Bell className="size-4.5" />
               <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#e4c477] ring-2 ring-[#17324d]" />
             </Button>
-            <div ref={profileRef} className="relative">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label="Открыть профиль администратора"
-                aria-expanded={profileOpen}
-                aria-controls="admin-profile-popover"
-                onClick={() => setProfileOpen((open) => !open)}
-                className="size-10 rounded-full p-0 hover:bg-accent"
+            <GlassPopover open={profileOpen} onOpenChange={setProfileOpen}>
+              <GlassPopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Открыть профиль администратора"
+                  className="size-10 rounded-full p-0 hover:bg-accent"
+                >
+                  <GlassAvatar
+                    src={profileAvatar ?? undefined}
+                    alt={profileFullName}
+                    name={profileFullName || profileUserName || "Администратор"}
+                    fallback={profileInitials}
+                  />
+                </Button>
+              </GlassPopoverTrigger>
+              <GlassPopoverContent
+                align="end"
+                aria-label="Профиль администратора"
+                className="w-[min(18rem,calc(100vw-2rem))] p-4 text-popover-foreground"
               >
-                <GlassAvatar
-                  src={profileAvatar ?? undefined}
-                  alt={profileFullName}
-                  name={profileFullName || profileUserName || "Администратор"}
-                  fallback={profileInitials}
-                  className="size-10 border-2 border-primary/70 text-xs font-semibold text-primary"
-                />
-              </Button>
-
-              <AnimatePresence>
-                {profileOpen && (
-                  <motion.section
-                    id="admin-profile-popover"
-                    role="region"
-                    aria-label="Профиль администратора"
-                    initial={
-                      shouldReduceMotion
-                        ? { opacity: 1 }
-                        : { opacity: 0, y: -8, scale: 0.97 }
-                    }
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={
-                      shouldReduceMotion
-                        ? { opacity: 0 }
-                        : { opacity: 0, y: -5, scale: 0.98 }
-                    }
-                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute right-0 top-full z-9999 mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-border bg-popover p-4 text-popover-foreground shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[var(--glass-blur)]"
-                  >
                     {isProfileLoading ||
                     (canLookupProfile && isProfileUserLoading && !profileUser) ? (
                       <ProfileSkeleton />
@@ -280,7 +241,7 @@ export default function AdminTopbar() {
                         alt={profileFullName}
                         name={profileFullName || profileUserName || "Администратор"}
                         fallback={profileInitials}
-                        className="size-11 shrink-0 border-2 border-primary/70 text-xs font-semibold text-primary"
+                       
                       />
                       <div className="min-w-0">
                         <h2 className="truncate text-sm font-semibold text-primary">
@@ -343,10 +304,8 @@ export default function AdminTopbar() {
                     )}
                       </>
                     )}
-                  </motion.section>
-                )}
-              </AnimatePresence>
-            </div>
+              </GlassPopoverContent>
+            </GlassPopover>
             <Button
               type="button"
               variant="ghost"
