@@ -83,7 +83,7 @@ function StatCard({
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : index * 0.06, duration: 0.38 }}
-      className="relative isolate min-h-22 overflow-hidden p-3 sm:min-h-24 sm:p-3.5"
+      className="relative isolate min-h-22 overflow-hidden p-3 sm:min-h-24 sm:p-3.5 rounded-2xl"
     >
       <GlassPanel aria-hidden className="absolute inset-0 z-0" />
       <div className="relative z-10 flex items-center gap-3">

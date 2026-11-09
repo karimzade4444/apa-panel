@@ -532,7 +532,7 @@ export default function UsersPage() {
                   ) : filteredUsers.length ? (
                     filteredUsers.map((user) => {
                       const isSelected = selectedUser?.id === user.id;
-                      const rowCellClass = `border-y border-border bg-card/70 transition-colors group-hover:bg-accent ${
+                      const rowCellClass = `border-y-2 border-l-2 border-border bg-card/70 transition-colors group-hover:bg-accent ${
                         isSelected ? "border-primary/50 bg-muted" : ""
                       }`;
                       return (
@@ -541,7 +541,7 @@ export default function UsersPage() {
                           className="group"
                           data-selected={isSelected || undefined}
                         >
-                          <td className={`${rowCellClass} rounded-l-xl border-l px-5 py-3.5`}>
+                          <td className={`${rowCellClass} rounded-l-xl px-5 py-3.5`}>
                             <button
                               type="button"
                               aria-expanded={isSelected}
@@ -582,7 +582,7 @@ export default function UsersPage() {
                           <td className={`${rowCellClass} whitespace-nowrap px-4 py-3.5 text-xs text-muted-foreground`}>
                             {formatDate(user.createdAt)}
                           </td>
-                          <td className={`${rowCellClass} rounded-r-xl border-r px-4 py-3.5 text-right`}>
+                          <td className={`${rowCellClass} rounded-r-xl border-r-2 px-4 py-3.5 text-right`}>
                             <Button
                               type="button"
                               variant="ghost"
