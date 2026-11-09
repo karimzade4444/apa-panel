@@ -39,7 +39,7 @@ import {
 import type { UserFormValues } from "@/types/user-management";
 import type { CreateUserData } from "@/types/user";
 
-const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
+const MAX_PHOTO_SIZE = 10 * 1024 * 1024;
 const USERNAME_PATTERN = /^[A-Za-z0-9._-]{3,50}$/;
 
 export default function CreateUserPage() {
@@ -108,7 +108,7 @@ export default function CreateUserPage() {
       return;
     }
     if (file.size > MAX_PHOTO_SIZE) {
-      toast.error("Размер изображения не должен превышать 5 МБ.");
+      toast.error("Размер изображения не должен превышать 10 МБ.");
       return;
     }
     updatePhoto(file);
@@ -214,7 +214,7 @@ export default function CreateUserPage() {
                 <div>
                   <h2 className="font-semibold text-foreground">Фото профиля</h2>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    JPG, PNG или WebP · до 5 МБ
+                    JPG, PNG или WebP · до 10 МБ
                   </p>
                 </div>
             <input
