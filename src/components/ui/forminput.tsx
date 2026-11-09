@@ -53,7 +53,7 @@ const FormInput = <T extends FieldValues>({
               placeholder={placeholder}
               aria-invalid={Boolean(fieldState.error)}
               className={cn(
-                "border border-black/30",
+                "border border-border",
                 startIcon && "pl-10",
                 hasEndContent && (endIcon && isPassword ? "pr-20" : "pr-10"),
                 className,

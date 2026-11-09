@@ -49,16 +49,16 @@ export function UserDetailsPanel({
         duration: reduceMotion ? 0.12 : 0.22,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="glass-panel h-fit min-w-0 rounded-2xl p-3.5 xl:col-start-2 xl:row-start-1"
+      className="glass-panel h-fit min-w-0 p-3.5 xl:col-start-2 xl:row-start-1"
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
           <UserAvatar user={user} />
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold text-white">
+            <h2 className="truncate text-sm font-semibold text-foreground">
               {getUserName(user)}
             </h2>
-            <p className="truncate text-[0.65rem] text-white/50">
+            <p className="truncate text-[0.65rem] text-muted-foreground">
               ID: {user.id}
             </p>
           </div>
@@ -69,26 +69,26 @@ export function UserDetailsPanel({
           size="icon-sm"
           aria-label="Закрыть сведения о пользователе"
           onClick={onClose}
-          className="shrink-0 text-white/50 hover:bg-white/10 hover:text-white"
+          className="shrink-0 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
         >
           <X className="size-4" />
         </Button>
       </div>
 
-      <div className="mt-3 space-y-2.5 border-t border-white/10 pt-3">
+      <div className="mt-3 space-y-2.5 border-t border-border pt-3">
         <div>
-          <p className="text-[0.65rem] text-white/45">Email</p>
-          <p className="mt-0.5 break-all text-xs text-white/85">
+          <p className="text-[0.65rem] text-muted-foreground">Email</p>
+          <p className="mt-0.5 break-all text-xs text-foreground">
             {user.email || "Не указан"}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {details.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex min-w-0 items-start gap-1.5">
-              <Icon className="mt-0.5 size-3.5 shrink-0 text-[#e4c477]" />
+              <Icon className="mt-0.5 size-3.5 shrink-0 text-primary" />
               <div className="min-w-0">
-                <p className="text-[0.62rem] text-white/45">{label}</p>
-                <p className="truncate text-xs text-white/85">{value}</p>
+                <p className="text-[0.62rem] text-muted-foreground">{label}</p>
+                <p className="truncate text-xs text-foreground">{value}</p>
               </div>
             </div>
           ))}
@@ -96,13 +96,13 @@ export function UserDetailsPanel({
       </div>
 
       {canManageActions && (
-        <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-white/10 pt-3">
+        <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-border pt-3">
           <Button
             type="button"
             variant="outline"
             disabled={isPending}
             onClick={onEdit}
-            className="h-auto min-h-9 flex-col gap-1 whitespace-normal border-white/15 bg-white/5 px-1.5 py-1.5 text-[0.62rem] leading-tight text-white hover:bg-white/10"
+            className="h-auto min-h-9 flex-col gap-1 whitespace-normal border-border bg-muted px-1.5 py-1.5 text-[0.62rem] leading-tight text-muted-foreground hover:bg-accent"
           >
             <Pencil className="size-3.5" />
             Изменить
@@ -112,7 +112,7 @@ export function UserDetailsPanel({
             variant="outline"
             disabled={isPending}
             onClick={onToggleBlocked}
-            className="h-auto min-h-9 flex-col gap-1 whitespace-normal border-white/15 bg-white/5 px-1.5 py-1.5 text-[0.62rem] leading-tight text-white hover:bg-white/10"
+            className="h-auto min-h-9 flex-col gap-1 whitespace-normal border-border bg-muted px-1.5 py-1.5 text-[0.62rem] leading-tight text-muted-foreground hover:bg-accent"
           >
             {user.isBlocked ? (
               <Check className="size-3.5" />

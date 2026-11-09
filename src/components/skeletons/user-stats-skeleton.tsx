@@ -14,7 +14,7 @@ export function UserStatsSkeleton() {
         <div
           key={card}
           aria-hidden="true"
-          className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4 sm:p-5"
+          className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted p-4 sm:p-5"
         >
           <div className="min-w-0 flex-1 space-y-3">
             <GlassSkeleton variant="line" className="h-3 w-28 rounded-md" />

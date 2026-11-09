@@ -45,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-full flex bg-white text-slate-900 transition-colors duration-500 dark:bg-slate-950 dark:text-slate-100">
+      <body className="flex min-h-full bg-background text-foreground transition-colors duration-500">
         <Providers>{children}</Providers>
       </body>
     </html>

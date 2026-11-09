@@ -27,7 +27,7 @@ export default function LoginCard({ children }: LoginCardProps) {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 35, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="group/card relative isolate w-full overflow-hidden rounded-[30px] border border-white/20 bg-white/8 p-6 shadow-[0_25px_80px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-[30px] sm:p-7"
+      className="glass-panel group/card relative isolate w-full overflow-hidden p-6 sm:p-7"
     >
       <div
         aria-hidden="true"
@@ -40,7 +40,7 @@ export default function LoginCard({ children }: LoginCardProps) {
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 rounded-[30px] bg-[linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0.02),rgba(201,164,92,0.04))]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0.02),rgba(201,164,92,0.04))]"
       />
 
       <div

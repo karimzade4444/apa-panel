@@ -32,10 +32,10 @@ export default function LoginHeader() {
         />
       </motion.div>
 
-      <h2 className="text-3xl font-semibold tracking-tight text-white">
+      <h2 className="text-3xl font-semibold tracking-tight text-foreground">
         Добро пожаловать!
       </h2>
-      <p className="mt-2 text-white/65">Войдите в административную панель</p>
+      <p className="mt-2 text-muted-foreground">Войдите в административную панель</p>
     </div>
   );
 }

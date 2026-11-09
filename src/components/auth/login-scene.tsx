@@ -41,7 +41,7 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
       ref={sceneRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#031426] px-4 py-10 lg:px-12"
+      className="login-scene relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#031426] px-4 py-10 lg:px-12"
     >
       {/* Фон: медленное «приближение» при загрузке + параллакс */}
       <motion.div
@@ -86,7 +86,7 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
         </motion.div>
       </div>
 
-      <p className="absolute bottom-5 left-6 z-10 text-xs text-white/60 lg:left-12">
+      <p className="absolute bottom-5 left-6 z-10 text-xs text-muted-foreground lg:left-12">
         © 2026 Академия государственного управления. Все права защищены.
       </p>
     </main>

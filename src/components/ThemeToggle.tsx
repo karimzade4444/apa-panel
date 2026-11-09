@@ -38,7 +38,7 @@ export default function ThemeToggle({ className = "" }: Props) {
             dark ? "Переключить на светлую тему" : "Переключить на тёмную тему"
           }
           onClick={toggle}
-          className="flex size-full items-center justify-center rounded-full text-white/75 transition-colors hover:text-[#f2d18a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2d18a]/80 focus-visible:ring-inset"
+          className="flex size-full items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
           whileHover={shouldReduceMotion ? undefined : { scale: 1.06 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.9 }}
         >

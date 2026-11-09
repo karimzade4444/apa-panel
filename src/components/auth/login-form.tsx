@@ -114,13 +114,13 @@ export default function LoginForm() {
                   size="icon-sm"
                   aria-label="Очистить поле"
                   onClick={() => setValue("login", "", { shouldDirty: true })}
-                  className="text-white/40 hover:bg-white/10 hover:text-white"
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 >
                   <X className="h-3.5 w-3.5" />
                 </Button>
               ) : null
             }
-            className="h-12 rounded-xl border border-white/10 bg-white/6 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
+            className="h-12 rounded-xl border border-border bg-muted text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
           />
 
           <FormInput
@@ -130,10 +130,10 @@ export default function LoginForm() {
             placeholder="Пароль"
             autoComplete="current-password"
             startIcon={<LockKeyhole className="h-4 w-4 text-gold-light/80" />}
-            className="h-12 rounded-xl border border-white/10 bg-white/6 text-sm text-white placeholder:text-white/35 focus-visible:border-gold-light focus-visible:ring-gold-light/20"
+            className="h-12 rounded-xl border border-border bg-muted text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
           />
 
-          <div className="flex items-center justify-between pt-1 text-[0.72rem] text-white/75">
+          <div className="flex items-center justify-between pt-1 text-[0.72rem] text-muted-foreground">
             <label className="inline-flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
@@ -144,7 +144,7 @@ export default function LoginForm() {
             <Button
               type="button"
               variant="ghost"
-              className="h-auto p-0 text-gold-light transition hover:bg-transparent hover:text-[#f2d792]"
+              className="h-auto p-0 text-gold-light transition hover:bg-transparent hover:text-primary"
             >
               Забыли пароль?
             </Button>
@@ -162,15 +162,15 @@ export default function LoginForm() {
           <Button
             type="submit"
             disabled={isPending}
-            className="group relative mt-2 flex h-12 w-full items-center justify-center overflow-hidden rounded-xl bg-linear-to-r from-[#b99148] via-[#e0c17d] to-[#b99148] text-sm font-bold text-navy shadow-[0_8px_25px_rgba(201,164,92,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(201,164,92,0.35)] disabled:translate-y-0 disabled:opacity-60"
+            className="group relative mt-2 flex h-12 w-full items-center justify-center overflow-hidden rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-[0_8px_25px_rgba(201,164,92,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/80 hover:shadow-[0_12px_30px_rgba(201,164,92,0.35)] disabled:translate-y-0 disabled:opacity-60"
           >
             <span className="relative z-10 flex items-center gap-2">
               {isPending ? "Выполняется вход..." : "Войти в систему"}
             </span>
           </Button>
 
-          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-white/70">
-            <span className="flex h-4 w-4 items-center justify-center rounded-full border border-gold-light/60 bg-[#0c2338] text-gold-light">
+          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full border border-gold-light/60 bg-secondary text-gold-light">
               <Check className="h-2.5 w-2.5" />
             </span>
             <span>Безопасный доступ</span>

@@ -179,30 +179,30 @@ export default function AdminTopbar() {
   return (
     <>
       <header
-        className="glass-panel relative z-50 flex min-h-23 items-center rounded-2xl px-3 py-3 sm:px-5 sm:py-4"
+        className="glass-panel relative z-50 flex min-h-23 items-center px-3 py-3 sm:px-5 sm:py-4"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-[#e4c477] lg:hidden">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-primary lg:hidden">
               <Landmark className="size-5" />
             </span>
             <div className="min-w-0 flex-1">
               <h1
                 aria-busy={isGreetingLoading}
-                className="text-lg font-semibold leading-tight text-white sm:text-2xl"
+                className="text-lg font-semibold leading-tight text-foreground sm:text-2xl"
               >
                 Добро пожаловать,{" "}
                 {isGreetingLoading ? (
                   <WelcomeSkeleton />
                 ) : (
-                  <span className="text-[#f0c46d]">
+                  <span className="text-primary">
                     {profileFirstName
                       ? `${profileFirstName}!`
                       : "Администратор!"}
                   </span>
                 )}
               </h1>
-              <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
+              <p className="mt-1 truncate text-xs text-muted-foreground sm:text-sm">
                 Панель управления сайтом Академии
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function AdminTopbar() {
 
           <div className="ml-auto flex shrink-0 items-center justify-end gap-1.5 sm:gap-3">
             <div className="hidden text-right sm:block">
-              <p className="text-xs capitalize text-white/70">{date}</p>
+              <p className="text-xs capitalize text-muted-foreground">{date}</p>
             </div>
             <ThemeToggle />
             <Button
@@ -218,7 +218,7 @@ export default function AdminTopbar() {
               variant="ghost"
               size="icon"
               aria-label="Уведомления"
-              className="relative text-white/70 hover:bg-white/10 hover:text-white"
+              className="relative text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             >
               <Bell className="size-4.5" />
               <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#e4c477] ring-2 ring-[#17324d]" />
@@ -232,7 +232,7 @@ export default function AdminTopbar() {
                 aria-expanded={profileOpen}
                 aria-controls="admin-profile-popover"
                 onClick={() => setProfileOpen((open) => !open)}
-                className="size-10 rounded-full p-0 hover:bg-white/10"
+                className="size-10 rounded-full p-0 hover:bg-accent"
               >
                 {profileAvatar ? (
                   <Image
@@ -244,7 +244,7 @@ export default function AdminTopbar() {
                     className="size-10 rounded-full border-2 border-[#f2d18a]/80 object-cover shadow-[0_0_20px_rgba(242,209,138,0.3)]"
                   />
                 ) : (
-                  <span className="flex size-10 aspect-square items-center justify-center rounded-full border-2 border-[#f2d18a]/80 bg-linear-to-br from-[#f2d18a]/45 via-gold-light/30 to-[#173c5d] text-xs font-semibold text-[#fff1c9] shadow-[0_0_20px_rgba(242,209,138,0.3)]">
+                  <span className="flex size-10 aspect-square items-center justify-center rounded-full border-2 border-[#f2d18a]/80 bg-linear-to-br from-[#f2d18a]/45 via-gold-light/30 to-[#173c5d] text-xs font-semibold text-primary shadow-[0_0_20px_rgba(242,209,138,0.3)]">
                     {profileInitials}
                   </span>
                 )}
@@ -268,14 +268,14 @@ export default function AdminTopbar() {
                         : { opacity: 0, y: -5, scale: 0.98 }
                     }
                     transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute right-0 top-full z-9999 mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-[#f2d18a]/45 bg-[linear-gradient(145deg,rgba(30,65,96,0.995),rgba(8,29,51,0.995))] p-4 text-white shadow-[0_24px_65px_rgba(0,0,0,0.7),0_0_26px_rgba(242,209,138,0.16)] backdrop-blur-2xl"
+                    className="absolute right-0 top-full z-9999 mt-3 w-[min(18rem,calc(100vw-2rem))] origin-top-right rounded-2xl border border-border bg-popover p-4 text-popover-foreground shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[var(--glass-blur)]"
                   >
                     {isProfileLoading ||
                     (canLookupProfile && isProfileUserLoading && !profileUser) ? (
                       <ProfileSkeleton />
                     ) : (
                       <>
-                    <div className="flex items-center gap-3 border-b border-white/15 pb-3">
+                    <div className="flex items-center gap-3 border-b border-border pb-3">
                       {profileAvatar ? (
                         <Image
                           src={profileAvatar}
@@ -286,15 +286,15 @@ export default function AdminTopbar() {
                           className="size-11 shrink-0 rounded-full border-2 border-[#f2d18a]/70 object-cover"
                         />
                       ) : (
-                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-gold-light/20 text-xs font-semibold text-[#fff1c9]">
+                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-gold-light/20 text-xs font-semibold text-primary">
                           {profileInitials}
                         </span>
                       )}
                       <div className="min-w-0">
-                        <h2 className="truncate text-sm font-semibold text-[#fff1c9]">
+                        <h2 className="truncate text-sm font-semibold text-primary">
                           {profileFullName}
                         </h2>
-                        <p className="mt-0.5 text-xs text-white/60">
+                        <p className="mt-0.5 text-xs text-muted-foreground">
                           {profileRole}
                         </p>
                       </div>
@@ -329,12 +329,12 @@ export default function AdminTopbar() {
                         },
                       ].map(({ label, value, icon: Icon }) => (
                         <div key={label} className="flex items-start gap-2.5">
-                          <Icon className="mt-0.5 size-4 shrink-0 text-[#f2d18a]" />
+                          <Icon className="mt-0.5 size-4 shrink-0 text-primary" />
                           <div className="min-w-0">
-                            <dt className="text-[0.68rem] text-white/55">
+                            <dt className="text-[0.68rem] text-muted-foreground">
                               {label}
                             </dt>
-                            <dd className="mt-0.5 wrap-break-word text-xs font-medium text-white/90">
+                            <dd className="mt-0.5 wrap-break-word text-xs font-medium text-foreground">
                               {value}
                             </dd>
                           </div>
@@ -358,7 +358,7 @@ export default function AdminTopbar() {
               size="icon"
               aria-label="Выйти из аккаунта"
               onClick={() => setLogoutConfirmOpen(true)}
-              className="text-white/70 hover:bg-white/10 hover:text-[#f2d18a]"
+              className="text-muted-foreground hover:bg-accent hover:text-primary"
             >
               <LogOut className="size-4.5" />
             </Button>
@@ -367,7 +367,7 @@ export default function AdminTopbar() {
 
         <nav
           aria-label="Мобильная навигация"
-          className="mt-4 flex gap-2 overflow-x-auto border-t border-white/10 pt-3 lg:hidden"
+          className="mt-4 flex gap-2 overflow-x-auto border-t border-border pt-3 lg:hidden"
         >
           {adminNavigation.filter((item) => can(item.permission)).map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
@@ -378,8 +378,8 @@ export default function AdminTopbar() {
                 aria-current={isActive ? "page" : undefined}
                 className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
                   isActive
-                    ? "bg-gold-light/20 text-[#f2d99b]"
-                    : "text-white/60 hover:bg-white/[0.07] hover:text-white"
+                    ? "bg-gold-light/20 text-primary"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }`}
               >
                 <Icon className="size-4" />
@@ -394,15 +394,15 @@ export default function AdminTopbar() {
         open={logoutConfirmOpen}
         onOpenChange={setLogoutConfirmOpen}
       >
-        <AlertDialogContent className="rounded-3xl p-6 text-white">
+        <AlertDialogContent className="p-6 text-muted-foreground">
           <AlertDialogHeader>
-            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-300/10 text-[#f2d18a]">
+            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-300/10 text-primary">
               <LogOut className="size-5" />
             </span>
-            <AlertDialogTitle className="text-lg text-white">
+            <AlertDialogTitle className="text-lg text-foreground">
               Выйти из аккаунта?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm leading-relaxed text-white/60">
+            <AlertDialogDescription className="text-sm leading-relaxed text-muted-foreground">
               Вы действительно хотите завершить текущий сеанс?
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -411,7 +411,7 @@ export default function AdminTopbar() {
               type="button"
               variant="outline"
               onClick={() => setLogoutConfirmOpen(false)}
-              className="border-white/15 bg-white/4 text-white/75 hover:bg-white/10 hover:text-white"
+              className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             >
               Остаться
             </Button>
@@ -421,7 +421,7 @@ export default function AdminTopbar() {
                 setLogoutConfirmOpen(false);
                 window.setTimeout(handleLogout, 300);
               }}
-              className="gap-2 bg-[#e1bb6e] font-semibold text-[#10243a] hover:bg-[#f2d18a]"
+              className="gap-2 bg-primary font-semibold text-primary-foreground hover:bg-primary"
             >
               <LogOut className="size-4" />
               Выйти

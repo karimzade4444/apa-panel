@@ -25,7 +25,7 @@ function DialogContent({
         <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={cn(
-            "glass-dialog glass-dialog-motion pointer-events-auto relative w-full outline-none",
+            "glass-dialog glass-dialog-motion pointer-events-auto relative w-full bg-popover text-popover-foreground outline-none",
             className,
           )}
           {...props}

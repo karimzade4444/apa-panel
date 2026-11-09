@@ -103,7 +103,7 @@ export function UserFormDialog({
         if (!open) requestClose();
       }}
     >
-      <DialogContent className="max-h-[92dvh] max-w-4xl overflow-hidden rounded-[28px] p-0 text-white">
+      <DialogContent className="max-h-[92dvh] max-w-4xl overflow-hidden p-0 text-card-foreground">
         <Button
           type="button"
           variant="ghost"
@@ -111,28 +111,28 @@ export function UserFormDialog({
           aria-label="Закрыть форму пользователя"
           disabled={isBusy}
           onClick={requestClose}
-          className="absolute right-4 top-4 z-20 flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-white/65 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e1bb6e]"
+          className="absolute right-4 top-4 z-20 flex size-9 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground transition hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <X className="size-4" />
         </Button>
 
         <div className="scrollbar-none max-h-[92dvh] overflow-y-auto">
-          <div className="relative overflow-hidden border-b border-white/10 px-6 pb-5 pt-6 sm:px-8 sm:pt-7">
+          <div className="relative overflow-hidden border-b border-border px-6 pb-5 pt-6 sm:px-8 sm:pt-7">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-10 -top-20 size-56 rounded-full bg-[#d4af62]/10 blur-[80px]"
             />
             <DialogHeader className="relative pr-12">
-              <span className="mb-1 inline-flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#e1bb6e]">
+              <span className="mb-1 inline-flex items-center gap-2 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-primary">
                 <ShieldCheck className="size-3.5" />
                 Управление доступом
               </span>
-              <DialogTitle className="text-xl font-semibold text-white sm:text-2xl">
+              <DialogTitle className="text-xl font-semibold text-foreground sm:text-2xl">
                 {formMode === "create"
                   ? "Новый пользователь"
                   : "Редактирование профиля"}
               </DialogTitle>
-              <DialogDescription className="max-w-xl text-sm leading-relaxed text-white/55">
+              <DialogDescription className="max-w-xl text-sm leading-relaxed text-muted-foreground">
                 {formMode === "create"
                   ? "Заполните данные учетной записи и при желании добавьте фотографию."
                   : "Обновите данные пользователя. Пароль можно оставить пустым."}
@@ -144,10 +144,10 @@ export function UserFormDialog({
             <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[230px_minmax(0,1fr)]">
               <section className="space-y-3">
                 <div>
-                  <h3 className="text-sm font-medium text-white">
+                  <h3 className="text-sm font-medium text-foreground">
                     Фото профиля
                   </h3>
-                  <p className="mt-1 text-xs leading-relaxed text-white/45">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     Перетащите изображение или выберите его на устройстве.
                   </p>
                 </div>
@@ -172,7 +172,7 @@ export function UserFormDialog({
                   className={`relative flex min-h-[230px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed p-4 text-center transition ${
                     isDragging
                       ? "border-[#f2d18a] bg-[#d4af62]/15"
-                      : "border-white/20 bg-white/[0.035] hover:border-[#d4af62]/55 hover:bg-white/[0.06]"
+                      : "border-border bg-muted hover:border-[#d4af62]/55 hover:bg-accent"
                   }`}
                 >
                   {photoSource ? (
@@ -188,10 +188,10 @@ export function UserFormDialog({
                       <div className="absolute inset-0 bg-gradient-to-t from-[#061a30]/95 via-[#061a30]/20 to-[#061a30]/10" />
                       <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 text-left">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-white">
+                          <p className="truncate text-sm font-medium text-foreground">
                             {previewName}
                           </p>
-                          <p className="mt-0.5 truncate text-[0.68rem] text-white/60">
+                          <p className="mt-0.5 truncate text-[0.68rem] text-muted-foreground">
                             {photoFile?.name ?? "Текущее фото профиля"}
                           </p>
                         </div>
@@ -205,7 +205,7 @@ export function UserFormDialog({
                               onPhotoChange(null);
                               setPhotoError("");
                             }}
-                            className="shrink-0 rounded-full bg-black/35 text-white hover:bg-black/55"
+                            className="shrink-0 rounded-full bg-popover text-popover-foreground hover:bg-accent"
                           >
                             <X className="size-4" />
                           </Button>
@@ -214,7 +214,7 @@ export function UserFormDialog({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="flex size-20 items-center justify-center rounded-full border border-[#d4af62]/35 bg-gradient-to-br from-[#d4af62]/20 to-sky-300/10 text-[#f2d99b] shadow-[0_0_35px_rgba(212,175,98,0.1)]">
+                      <span className="flex size-20 items-center justify-center rounded-full border border-[#d4af62]/35 bg-gradient-to-br from-[#d4af62]/20 to-sky-300/10 text-primary shadow-[0_0_35px_rgba(212,175,98,0.1)]">
                         {previewName !== "Новый пользователь" ? (
                           <span className="text-xl font-semibold">
                             {getProfileInitials(previewName)}
@@ -223,17 +223,17 @@ export function UserFormDialog({
                           <UserRound className="size-8" />
                         )}
                       </span>
-                      <span className="mt-4 flex items-center gap-2 text-sm font-medium text-white/85">
-                        <ImagePlus className="size-4 text-[#e1bb6e]" />
+                      <span className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <ImagePlus className="size-4 text-primary" />
                         Добавить фото
                       </span>
-                      <span className="mt-1.5 text-xs text-white/40">
+                      <span className="mt-1.5 text-xs text-muted-foreground">
                         JPG, PNG или WebP · до 5 МБ
                       </span>
                     </div>
                   )}
                   {isDragging && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#061a30]/80 text-sm font-medium text-[#f2d99b]">
+                    <div className="absolute inset-0 flex items-center justify-center bg-popover text-sm font-medium text-popover-foreground">
                       Отпустите файл, чтобы добавить фото
                     </div>
                   )}
@@ -255,7 +255,7 @@ export function UserFormDialog({
                   variant="outline"
                   disabled={isBusy}
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full border-white/15 bg-white/[0.04] text-white hover:border-[#d4af62]/45 hover:bg-white/[0.08] hover:text-white"
+                  className="w-full border-border bg-muted text-muted-foreground hover:border-[#d4af62]/45 hover:bg-accent hover:text-accent-foreground"
                 >
                   {photoSource ? (
                     <Camera className="size-4" />
@@ -276,7 +276,7 @@ export function UserFormDialog({
 
               <section className="min-w-0 space-y-4">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Имя пользователя
                     <FormInput
                       name="userName"
@@ -288,10 +288,10 @@ export function UserFormDialog({
                       title="От 3 до 50 латинских букв, цифр, точек, дефисов или подчёркиваний"
                       autoComplete="username"
                       placeholder="Логин (латиница, цифры, . _ -)"
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Email
                     <FormInput
                       name="email"
@@ -300,39 +300,39 @@ export function UserFormDialog({
                       type="email"
                       autoComplete="email"
                       placeholder="Введите email"
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Имя
                     <FormInput
                       name="firstName"
                       control={control}
                       required
                       placeholder="Введите имя"
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Отчество (необязательно)
                     <FormInput
                       name="middleName"
                       control={control}
                       placeholder="Введите отчество"
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Фамилия
                     <FormInput
                       name="lastName"
                       control={control}
                       required
                       placeholder="Введите фамилию"
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65">
+                  <label className="space-y-1.5 text-xs text-foreground">
                     Роль
                     <select
                       required
@@ -343,7 +343,7 @@ export function UserFormDialog({
                         )?.value;
                         if (nextRole) onRoleChange(nextRole);
                       }}
-                      className="h-10 w-full rounded-lg border border-white/10 bg-[#102b46]/80 px-3 text-sm text-white outline-none transition focus:border-[#d4af62]/50 focus:ring-2 focus:ring-[#d4af62]/15"
+                      className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       {formRoleOptions.map((role) => (
                         <option key={role.value} value={role.value}>
@@ -352,7 +352,7 @@ export function UserFormDialog({
                       ))}
                     </select>
                   </label>
-                  <label className="space-y-1.5 text-xs text-white/65 sm:col-span-2">
+                  <label className="space-y-1.5 text-xs text-foreground sm:col-span-2">
                     Пароль
                     {formMode === "edit" &&
                       " (оставьте пустым, чтобы не менять)"}
@@ -370,27 +370,27 @@ export function UserFormDialog({
                           ? "Придумайте пароль"
                           : "Введите новый пароль"
                       }
-                      className="h-10 border-white/10 bg-white/[0.05] text-white placeholder:text-white/40"
+                      className="h-10 border-border bg-muted text-foreground placeholder:text-muted-foreground"
                     />
                   </label>
                 </div>
               </section>
             </div>
 
-            <DialogFooter className="border-t border-white/10 bg-black/10 px-5 py-4 sm:px-7">
+            <DialogFooter className="border-t border-border bg-muted px-5 py-4 sm:px-7">
               <Button
                 type="button"
                 variant="ghost"
                 disabled={isBusy}
                 onClick={requestClose}
-                className="text-white/65 hover:bg-white/10 hover:text-white"
+                className="text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring"
               >
                 Отмена
               </Button>
               <Button
                 type="submit"
                 disabled={isBusy || !formRoleOptions.length}
-                className="min-w-32 bg-[#e1bb6e] text-[#10243a] shadow-[0_6px_20px_rgba(225,187,110,0.18)] hover:bg-[#f2d18a]"
+                className="min-w-32 bg-primary text-primary-foreground shadow-[0_6px_20px_rgba(225,187,110,0.18)] hover:bg-primary"
               >
                 {isBusy ? (
                   <>

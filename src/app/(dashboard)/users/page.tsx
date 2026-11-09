@@ -315,7 +315,7 @@ export default function UsersPage() {
       <section
         aria-label="Проверка прав доступа"
         aria-busy="true"
-        className="glass-panel min-h-48 rounded-2xl p-6"
+        className="glass-panel min-h-48 p-6"
       >
         <GlassSkeleton variant="block" className="h-6 w-40" />
         <GlassSkeleton variant="block" className="mt-4 h-20 w-full" />
@@ -327,12 +327,12 @@ export default function UsersPage() {
     return (
       <section
         role="alert"
-        className="glass-panel flex min-h-48 items-center justify-center rounded-2xl p-6 text-center"
+        className="glass-panel flex min-h-48 items-center justify-center p-6 text-center"
       >
         <div>
-          <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
-          <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
-          <p className="mt-1 text-sm text-white/55">
+          <ShieldCheck className="mx-auto size-8 text-primary" />
+          <h2 className="mt-3 font-semibold text-foreground">Нет доступа</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
             {isProfileError
               ? "Не удалось проверить права доступа."
               : "Нет доступа к просмотру пользователей."}
@@ -371,7 +371,7 @@ export default function UsersPage() {
                 label="Администраторы в списке"
                 value={adminCount.toLocaleString("ru-RU")}
                 icon={ShieldCheck}
-                tone="bg-amber-300/10 text-[#f2d99b]"
+                tone="bg-amber-300/10 text-primary"
               />
               <UserStatCard
                 label="Заблокированы в списке"
@@ -396,12 +396,12 @@ export default function UsersPage() {
                 variant="outline"
                 disabled={isRefetching}
                 onClick={() => void refetch()}
-                className="border-rose-200/20 bg-white/5 text-white hover:bg-white/10"
+                className="border-rose-200/20 bg-muted text-muted-foreground hover:bg-accent"
               >
                 {isRefetching ? (
                   <GlassSkeleton
                     variant="line"
-                    className="h-3 w-14 bg-white/10"
+                    className="h-3 w-14 bg-muted"
                   />
                 ) : (
                   "Повторить"
@@ -420,16 +420,16 @@ export default function UsersPage() {
           }
           className="grid min-h-0 grid-cols-1 gap-y-4 transition-[grid-template-columns,column-gap] duration-300 ease-out lg:grid-rows-[minmax(0,1fr)] xl:gap-x-(--user-details-gap) xl:grid-cols-[minmax(0,1fr)_var(--user-details-width)]"
         >
-          <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl xl:col-start-1 xl:row-start-1">
-            <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:p-5 xl:flex-row xl:items-center">
+          <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden xl:col-start-1 xl:row-start-1">
+            <div className="flex flex-col gap-3 border-b border-border p-4 sm:p-5 xl:flex-row xl:items-center">
               <label className="relative min-w-0 flex-1">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Поиск по имени, email или ID..."
                   aria-label="Поиск пользователей"
-                  className="h-10 border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-white/40 focus-visible:border-[#d4af62]/50 focus-visible:ring-[#d4af62]/20"
+                  className="h-10 border-border bg-muted pl-10 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
                 />
               </label>
               <div className="grid grid-cols-2 gap-2 xl:w-72.5">
@@ -438,37 +438,37 @@ export default function UsersPage() {
                   <select
                     value={roleFilter}
                     onChange={(event) => setRoleFilter(event.target.value)}
-                    className="h-10 w-full appearance-none rounded-lg border border-white/10 bg-[#102b46]/80 py-2 pl-3 pr-9 text-xs text-white outline-none transition focus:border-[#d4af62]/50"
+                    className="h-10 w-full appearance-none rounded-lg border border-border bg-card/80 py-2 pl-3 pr-9 text-xs text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="all" className="bg-[#102b46]">
+                    <option value="all" className="bg-card">
                       Все роли
                     </option>
                     {roles.map((role) => (
-                      <option key={role} value={role} className="bg-[#102b46]">
+                      <option key={role} value={role} className="bg-card">
                         {formatRole(role)}
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-white/45" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 </label>
                 <label className="relative">
                   <span className="sr-only">Фильтр по статусу</span>
                   <select
                     value={statusFilter}
                     onChange={(event) => setStatusFilter(event.target.value)}
-                    className="h-10 w-full appearance-none rounded-lg border border-white/10 bg-[#102b46]/80 py-2 pl-3 pr-9 text-xs text-white outline-none transition focus:border-[#d4af62]/50"
+                    className="h-10 w-full appearance-none rounded-lg border border-border bg-card/80 py-2 pl-3 pr-9 text-xs text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="all" className="bg-[#102b46]">
+                    <option value="all" className="bg-card">
                       Все статусы
                     </option>
-                    <option value="active" className="bg-[#102b46]">
+                    <option value="active" className="bg-card">
                       Активные
                     </option>
-                    <option value="blocked" className="bg-[#102b46]">
+                    <option value="blocked" className="bg-card">
                       Заблокированные
                     </option>
                   </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-white/45" />
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 </label>
               </div>
               {canCreateUsers && (
@@ -476,7 +476,7 @@ export default function UsersPage() {
                   type="button"
                   disabled={!assignableRoles.length}
                   onClick={openCreateForm}
-                  className="h-10 shrink-0 bg-[#e1bb6e] text-[#10243a] hover:bg-[#f2d18a]"
+                  className="h-10 shrink-0 bg-primary text-primary-foreground hover:bg-primary"
                 >
                   <Plus className="size-4" />
                   Добавить пользователя
@@ -490,7 +490,7 @@ export default function UsersPage() {
             >
               <table className="w-full min-w-190 border-collapse text-left text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 text-xs text-white/45">
+                  <tr className="border-b border-border text-xs text-muted-foreground">
                     <th scope="col" className="px-5 py-3 font-medium">
                       Пользователь
                     </th>
@@ -520,7 +520,7 @@ export default function UsersPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.07]">
+                <tbody className="divide-y divide-border">
                   {isLoading ? (
                     <UserTableSkeleton />
                   ) : filteredUsers.length ? (
@@ -529,8 +529,8 @@ export default function UsersPage() {
                       return (
                         <tr
                           key={user.id}
-                          className={`transition-colors hover:bg-white/4 ${
-                            isSelected ? "bg-white/5" : ""
+                          className={`transition-colors hover:bg-accent ${
+                            isSelected ? "bg-muted" : ""
                           }`}
                         >
                           <td className="px-5 py-3.5">
@@ -546,16 +546,16 @@ export default function UsersPage() {
                             >
                               <UserAvatar user={user} />
                               <div className="min-w-0">
-                                <p className="max-w-47.5 truncate font-medium text-white/90">
+                                <p className="max-w-47.5 truncate font-medium text-foreground">
                                   {getUserName(user)}
                                 </p>
-                                <p className="mt-0.5 text-[0.7rem] text-white/40">
+                                <p className="mt-0.5 text-[0.7rem] text-muted-foreground">
                                   ID: {user.id}
                                 </p>
                               </div>
                             </button>
                           </td>
-                          <td className="max-w-50 truncate px-4 py-3.5 text-xs text-white/65">
+                          <td className="max-w-50 truncate px-4 py-3.5 text-xs text-foreground">
                             {user.email || "—"}
                           </td>
                           <td className="px-4 py-3.5 text-center">
@@ -581,7 +581,7 @@ export default function UsersPage() {
                               {user.isBlocked ? "Заблокирован" : "Активен"}
                             </span>
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-xs text-white/60">
+                          <td className="whitespace-nowrap px-4 py-3.5 text-xs text-muted-foreground">
                             {formatDate(user.createdAt)}
                           </td>
                           <td className="px-4 py-3.5 text-right">
@@ -597,7 +597,7 @@ export default function UsersPage() {
                                 )
                               }
                               aria-expanded={isSelected}
-                              className="text-white/55 hover:bg-white/10 hover:text-[#f2d99b]"
+                              className="text-muted-foreground hover:bg-accent hover:text-primary"
                             >
                               <Eye className="size-4" />
                             </Button>
@@ -608,13 +608,13 @@ export default function UsersPage() {
                   ) : (
                     <tr>
                       <td colSpan={6} className="px-5 py-14 text-center">
-                        <div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-white/6 text-white/45">
+                        <div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
                           <UsersRound className="size-5" />
                         </div>
-                        <p className="mt-3 text-sm font-medium text-white/80">
+                        <p className="mt-3 text-sm font-medium text-foreground">
                           Пользователи не найдены
                         </p>
-                        <p className="mt-1 text-xs text-white/45">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           Измените запрос или выберите другие фильтры.
                         </p>
                       </td>
@@ -624,7 +624,7 @@ export default function UsersPage() {
               </table>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-5 py-3 text-xs text-white/45">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-3 text-xs text-muted-foreground">
               <span>
                 {isLoading ? (
                   <span className="inline-flex items-center gap-1">

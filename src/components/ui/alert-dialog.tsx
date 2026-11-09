@@ -21,7 +21,7 @@ function AlertDialogContent({
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-content"
           className={cn(
-            "glass-dialog glass-dialog-motion pointer-events-auto relative w-full max-w-md outline-none",
+            "glass-dialog glass-dialog-motion pointer-events-auto relative w-full max-w-md bg-popover text-popover-foreground outline-none",
             className,
           )}
           {...props}

@@ -18,7 +18,7 @@ export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
   return (
     <span
       aria-hidden="true"
-      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-gradient-to-br from-[#d4af62]/30 to-sky-400/20 font-semibold text-[#f2d99b] ${
+      className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-gradient-to-br from-[#d4af62]/30 to-sky-400/20 font-semibold text-primary ${
         size === "lg" ? "size-14 text-sm" : "size-9 text-xs"
       }`}
     >

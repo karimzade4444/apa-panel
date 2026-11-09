@@ -37,17 +37,17 @@ export default function AcademyBranding() {
       {/* Замените на <Image> со зданием Академии, когда будет файл */}
       <motion.div variants={item}>
         <Landmark
-          className="h-24 w-24 text-[#e0c17d] drop-shadow-[0_0_24px_rgba(212,175,98,0.5)]"
+          className="h-24 w-24 text-primary drop-shadow-[0_0_24px_rgba(212,175,98,0.5)]"
           strokeWidth={1.2}
         />
       </motion.div>
 
       <motion.h1
         variants={item}
-        className="mt-6 max-w-lg text-3xl font-semibold leading-tight text-white drop-shadow-lg xl:text-4xl"
+        className="mt-6 max-w-lg text-3xl font-semibold leading-tight text-foreground drop-shadow-lg xl:text-4xl"
       >
         Академия государственного управления при Президенте
-        <span className="block text-[#e0c17d]">Республики Таджикистан</span>
+        <span className="block text-primary">Республики Таджикистан</span>
       </motion.h1>
 
       {/* Разделитель: линия «рисуется» от центра */}
@@ -67,18 +67,18 @@ export default function AcademyBranding() {
         />
       </motion.div>
 
-      <motion.p variants={item} className="max-w-xs text-xl leading-snug text-white/80">
+      <motion.p variants={item} className="max-w-xs text-xl leading-snug text-foreground">
         Единая система управления и развития Академии
       </motion.p>
 
       {/* Три направления */}
       <motion.ul
         variants={item}
-        className="mt-14 flex divide-x divide-white/15 rounded-2xl border border-white/15 bg-white/[0.07] py-4 text-left text-sm text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-xl"
+        className="mt-14 flex divide-x divide-border rounded-2xl border border-border bg-muted py-4 text-left text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-xl"
       >
         {features.map(({ icon: Icon, label }) => (
           <li key={label} className="flex items-center gap-3 px-5">
-            <Icon className="h-6 w-6 shrink-0 text-[#d4af62]" />
+            <Icon className="h-6 w-6 shrink-0 text-primary" />
             <span className="whitespace-pre-line leading-snug">{label}</span>
           </li>
         ))}

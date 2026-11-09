@@ -19,7 +19,7 @@ export function AdminShell({
 
   return (
     <div
-      className={`relative w-full overflow-hidden text-white ${
+      className={`relative w-full overflow-hidden text-foreground ${
         fitViewport ? "min-h-screen lg:h-dvh lg:min-h-0" : "min-h-screen"
       }`}
     >
@@ -63,19 +63,19 @@ export function AdminShell({
           >
             {showPageHeading && (
               <div className="mb-4 px-1 sm:px-2">
-                <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                   {title}
                 </h1>
-                <p className="mt-1 text-sm text-white/55">{description}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{description}</p>
               </div>
             )}
             {children}
           </motion.main>
 
           <footer
-            className={`px-2 pb-1 text-center text-xs text-white/35 sm:text-left ${fitViewport ? "lg:hidden" : ""}`}
+            className={`px-2 pb-1 text-center text-xs text-muted-foreground sm:text-left ${fitViewport ? "lg:hidden" : ""}`}
           >
-            APA Administration <span className="mx-1.5 text-white/20">·</span>
+            APA Administration <span className="mx-1.5 text-muted-foreground">·</span>
             Академия государственного управления
           </footer>
         </div>

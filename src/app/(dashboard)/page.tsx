@@ -28,7 +28,7 @@ const stats = [
     title: "Пользователи",
     key: "users",
     icon: UsersRound,
-    color: "text-[#f2d18a]",
+    color: "text-primary",
     glow: "from-[#f2c56b]/80",
   },
   {
@@ -49,7 +49,7 @@ const stats = [
     title: "Обращения",
     key: "requests",
     icon: Mail,
-    color: "text-[#f2d18a]",
+    color: "text-primary",
     glow: "from-[#f2c56b]/80",
   },
 ] as const;
@@ -78,10 +78,10 @@ function StatCard({
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : index * 0.06, duration: 0.38 }}
-      className="glass-panel relative min-h-22 overflow-hidden rounded-[16px] p-3 sm:min-h-24 sm:p-3.5"
+      className="glass-panel relative min-h-22 overflow-hidden p-3 sm:min-h-24 sm:p-3.5"
     >
       <div className="flex items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#09223e]/85 text-[#e7c477] shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-primary shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
           <Icon className="size-5" strokeWidth={1.8} />
         </span>
         <div className="min-w-0">
@@ -91,11 +91,11 @@ function StatCard({
               className="h-6 w-14 rounded-md"
             />
           ) : (
-            <p className="text-2xl font-semibold leading-none tracking-tight text-white">
+            <p className="text-2xl font-semibold leading-none tracking-tight text-foreground">
               {value}
             </p>
           )}
-          <p className="mt-1 truncate text-xs text-white/85">{title}</p>
+          <p className="mt-1 truncate text-xs text-muted-foreground">{title}</p>
         </div>
       </div>
       <div className="absolute inset-x-0 bottom-0 h-6 overflow-hidden opacity-70">
@@ -134,13 +134,13 @@ function PublicationChart({ users }: { users: User[] }) {
   const max = Math.max(...metrics.map((metric) => metric.value), 1);
 
   return (
-    <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
+    <section className="glass-panel flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
           <Activity className="size-4.5 text-sky-200" />
           Статистика пользователей
         </h2>
-        <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-[0.68rem] text-white/70">
+        <span className="rounded-full border border-border bg-muted px-3 py-1 text-[0.68rem] text-muted-foreground">
           {users.length ? "Загруженный список" : "Нет данных"}
         </span>
       </div>
@@ -151,10 +151,10 @@ function PublicationChart({ users }: { users: User[] }) {
             key={metric.label}
             className="flex min-w-0 flex-col items-center justify-end"
           >
-            <span className="mb-2 text-xs font-medium tabular-nums text-white/80">
+            <span className="mb-2 text-xs font-medium tabular-nums text-muted-foreground">
               {metric.value}
             </span>
-            <div className="relative flex h-19 w-full items-end justify-center border-b border-l border-white/20 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-24">
+            <div className="relative flex h-19 w-full items-end justify-center border-b border-l border-border bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-24">
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: users.length ? `${Math.max((metric.value / max) * 88, 5)}%` : "4%" }}
@@ -162,14 +162,14 @@ function PublicationChart({ users }: { users: User[] }) {
                 className={`w-[45%] max-w-12 rounded-t-[5px] ${metric.color} shadow-[0_0_16px_rgba(98,174,255,0.18)]`}
               />
             </div>
-            <span className="mt-2 max-w-full truncate text-center text-[0.65rem] text-white/60 sm:text-xs">
+            <span className="mt-2 max-w-full truncate text-center text-[0.65rem] text-muted-foreground sm:text-xs">
               {metric.label}
             </span>
           </div>
         ))}
       </div>
 
-      <p className="mt-2 border-t border-white/10 pt-2 text-[0.62rem] text-white/40">
+      <p className="mt-2 border-t border-border pt-2 text-[0.62rem] text-muted-foreground">
         Показатели рассчитаны по записям, полученным от API.
       </p>
     </section>
@@ -178,30 +178,30 @@ function PublicationChart({ users }: { users: User[] }) {
 
 function LatestPublication() {
   return (
-    <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
+    <section className="glass-panel flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
           <Megaphone className="size-4.5 text-sky-200" />
           Последняя публикация
         </h2>
         <span className="text-xs font-medium text-sky-200">Всего 1</span>
       </div>
 
-      <article className="mt-3 flex min-w-0 flex-1 items-start gap-3 border-b border-white/10 pb-3">
+      <article className="mt-3 flex min-w-0 flex-1 items-start gap-3 border-b border-border pb-3">
         <div
           aria-hidden="true"
           className="relative flex h-14 w-19 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-16 sm:w-22"
           style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
         >
           <span className="absolute inset-0 bg-[#0b2b4d]/35" />
-          <Megaphone className="relative size-7 text-[#f2d18a] drop-shadow-lg" />
+          <Megaphone className="relative size-7 text-primary drop-shadow-lg" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="line-clamp-2 text-sm font-medium leading-snug text-white">
+          <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
             {publicationTitle}
           </p>
           <p className="mt-2 text-xs text-sky-200">Объявление</p>
-          <p className="mt-1 text-[0.68rem] text-white/45">
+          <p className="mt-1 text-[0.68rem] text-muted-foreground">
             Главная публикация Академии
           </p>
         </div>
@@ -211,7 +211,7 @@ function LatestPublication() {
       </article>
 
       <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[0.65rem]">
-        <span className="truncate text-white/45">В главном блоке отображается одна запись</span>
+        <span className="truncate text-muted-foreground">В главном блоке отображается одна запись</span>
         <span className="flex shrink-0 items-center gap-1 font-medium text-sky-200">
           <Check className="size-3" />
           1 публикация
@@ -231,13 +231,13 @@ function EmptyPanel({
   icon: typeof Mail;
 }) {
   return (
-    <section className="glass-panel flex min-h-0 items-center gap-3 overflow-hidden rounded-[16px] p-3 sm:p-3.5">
+    <section className="glass-panel flex min-h-0 items-center gap-3 overflow-hidden p-3 sm:p-3.5">
       <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10">
         <Icon className="size-4.5 text-sky-200" />
       </span>
       <div className="min-w-0">
-        <h2 className="truncate text-xs font-semibold text-white/90">{title}</h2>
-        <p className="mt-0.5 truncate text-[0.65rem] text-white/50">{subtitle}</p>
+        <h2 className="truncate text-xs font-semibold text-foreground">{title}</h2>
+        <p className="mt-0.5 truncate text-[0.65rem] text-muted-foreground">{subtitle}</p>
       </div>
     </section>
   );
@@ -246,19 +246,19 @@ function EmptyPanel({
 function AcademyCard() {
   return (
     <section
-      className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden rounded-[16px] border-[#e4c477]/30 bg-cover bg-center p-3.5"
+      className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden border-primary/30 bg-cover bg-center p-3.5"
       
     >
       <div className="absolute inset-0 bg-linear-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
       <div className="absolute inset-0 bg-linear-to-t from-[#061a30]/70 via-transparent to-white/4" />
       <div className="relative z-10 max-w-72.5">
-        <p className="text-xs leading-relaxed text-white/90">
+        <p className="text-xs leading-relaxed text-foreground">
           Академия государственного управления при Президенте Республики
           Таджикистан
         </p>
         <Link
           href="/users"
-          className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#f2d18a]/40 bg-[#e1bb6e] px-3 py-1.5 text-[0.68rem] font-semibold text-[#10243a] shadow-lg transition hover:bg-[#f2d18a]"
+          className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#f2d18a]/40 bg-primary px-3 py-1.5 text-[0.68rem] font-semibold text-primary-foreground shadow-lg transition hover:bg-primary"
         >
           Пользователи
           <ArrowRight className="size-3.5" />
@@ -313,12 +313,12 @@ export default function DashboardPage() {
                 variant="ghost"
                 disabled={isRefetching}
                 onClick={() => void refetch()}
-                className="h-auto rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10"
+                className="h-auto rounded-lg border border-border bg-muted px-3 py-1.5 text-xs text-muted-foreground hover:bg-accent"
               >
                 {isRefetching ? (
                   <GlassSkeleton
                     variant="line"
-                    className="h-3 w-14 bg-white/10"
+                    className="h-3 w-14 bg-muted"
                   />
                 ) : (
                   "Повторить"
