@@ -6,7 +6,6 @@ import Image from "next/image";
 import { jwtDecode } from "jwt-decode";
 import {
   Bell,
-  ChevronRight,
   Landmark,
   LogOut,
   Mail,
@@ -49,15 +48,7 @@ import { WelcomeSkeleton } from "@/components/skeletons/welcome-skeleton";
 import { adminNavigation } from "./admin-sidebar";
 import { ProfileSkeleton } from "./profile-skeleton";
 
-interface AdminTopbarProps {
-  title: string;
-  description: string;
-}
-
-export default function AdminTopbar({
-  title,
-  description,
-}: AdminTopbarProps) {
+export default function AdminTopbar() {
   const pathname = usePathname();
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -196,11 +187,7 @@ export default function AdminTopbar({
   return (
     <>
       <header
-        className={`relative z-50 rounded-2xl px-3 py-3 sm:px-5 sm:py-4 ${
-          pathname === "/"
-            ? "flex min-h-23 items-center border border-white/10 bg-[#092745]/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
-            : "glass-panel"
-        }`}
+        className="glass-panel relative z-50 flex min-h-23 items-center rounded-2xl px-3 py-3 sm:px-5 sm:py-4"
       >
         <div className="flex w-full items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
@@ -208,41 +195,24 @@ export default function AdminTopbar({
               <Landmark className="size-5" />
             </span>
             <div className="min-w-0 flex-1">
-              {pathname === "/" ? (
-                <>
-                  <h1
-                    aria-busy={isGreetingLoading}
-                    className="text-lg font-semibold leading-tight text-white sm:text-2xl"
-                  >
-                    Добро пожаловать,{" "}
-                    {isGreetingLoading ? (
-                      <WelcomeSkeleton />
-                    ) : (
-                      <span className="text-[#f0c46d]">
-                        {profileFirstName
-                          ? `${profileFirstName}!`
-                          : "Администратор!"}
-                      </span>
-                    )}
-                  </h1>
-                  <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
-                    Панель управления сайтом Академии
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="hidden items-center gap-2 text-xs text-white/45 sm:flex">
-                    <Link href="/" className="transition hover:text-white/80">
-                      Главная
-                    </Link>
-                    <ChevronRight className="size-3" />
-                    <span className="text-white/70">{title}</span>
-                  </div>
-                  <p className="truncate text-sm font-medium text-white/75 sm:mt-1">
-                    {description}
-                  </p>
-                </>
-              )}
+              <h1
+                aria-busy={isGreetingLoading}
+                className="text-lg font-semibold leading-tight text-white sm:text-2xl"
+              >
+                Добро пожаловать,{" "}
+                {isGreetingLoading ? (
+                  <WelcomeSkeleton />
+                ) : (
+                  <span className="text-[#f0c46d]">
+                    {profileFirstName
+                      ? `${profileFirstName}!`
+                      : "Администратор!"}
+                  </span>
+                )}
+              </h1>
+              <p className="mt-1 truncate text-xs text-white/80 sm:text-sm">
+                Панель управления сайтом Академии
+              </p>
             </div>
           </div>
 

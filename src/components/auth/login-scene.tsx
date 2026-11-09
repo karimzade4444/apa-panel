@@ -46,22 +46,20 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
       {/* Фон: медленное «приближение» при загрузке + параллакс */}
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-8 bg-cover bg-center"
+        className="login-scene-background pointer-events-none absolute -inset-8 bg-cover bg-center"
         initial={shouldReduceMotion ? false : { opacity: 0, scale: 1.2 }}
         animate={{ opacity: 1, scale: 1.08 }}
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
         style={{
-          backgroundImage: "url('/images/login/academy-background.jpg')",
           x: bg.x,
           y: bg.y,
-          filter: "saturate(1.1) contrast(1.04)",
         }}
       />
 
       {/* Затемнение и золотые подсветки */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(201,164,92,0.22),transparent_30%),linear-gradient(135deg,rgba(3,20,38,0.88),rgba(6,29,53,0.55),rgba(3,20,38,0.9))]"
+        className="login-scene-overlay pointer-events-none absolute inset-0"
       />
       <div
         aria-hidden="true"

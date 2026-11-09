@@ -78,7 +78,7 @@ function StatCard({
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : index * 0.06, duration: 0.38 }}
-      className="glass-panel relative min-h-[88px] overflow-hidden rounded-[16px] p-3 sm:min-h-[96px] sm:p-3.5"
+      className="glass-panel relative min-h-22 overflow-hidden rounded-[16px] p-3 sm:min-h-24 sm:p-3.5"
     >
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#09223e]/85 text-[#e7c477] shadow-[0_8px_24px_rgba(0,0,0,0.28)]">

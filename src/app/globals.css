@@ -54,6 +54,18 @@
 /* ---------- LIGHT (frosted white) ---------- */
 :root {
   --radius: 0.75rem;
+  --app-background-image: url("/images/login/academy-background.jpg");
+  --app-background-overlay:
+    linear-gradient(rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.14));
+  --app-login-overlay:
+    radial-gradient(circle at top left, rgb(201 164 92 / 0.2), transparent 30%),
+    linear-gradient(
+      135deg,
+      rgb(3 20 38 / 0.56),
+      rgb(6 29 53 / 0.3),
+      rgb(3 20 38 / 0.62)
+    );
+  --app-background-filter: brightness(1.28) saturate(1.04) contrast(1.02);
 
   --background: oklch(0.9683 0.0069 247.8956);
   --foreground: oklch(0.1823 0.0315 261.0989);
@@ -98,7 +110,6 @@
 /* ---------- DARK (glass) ---------- */
 .dark {
   --radius: 0.75rem;
-
   --background: oklch(0.1823 0.0315 261.0989);
   --foreground: oklch(0.9683 0.0069 247.8956);
 
@@ -143,6 +154,36 @@
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 0.35);
 }
 
+:root[data-lg-theme="light"] {
+  --app-background-image: url("/images/login/academy-background.jpg");
+  --app-background-overlay:
+    linear-gradient(rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.14));
+  --app-login-overlay:
+    radial-gradient(circle at top left, rgb(201 164 92 / 0.2), transparent 30%),
+    linear-gradient(
+      135deg,
+      rgb(3 20 38 / 0.56),
+      rgb(6 29 53 / 0.3),
+      rgb(3 20 38 / 0.62)
+    );
+  --app-background-filter: brightness(1.28) saturate(1.04) contrast(1.02);
+}
+
+:root[data-lg-theme="dark"] {
+  --app-background-image: url("/images/login/academy-background-dark.jpg");
+  --app-background-overlay:
+    linear-gradient(rgb(6 12 24 / 0.52), rgb(6 12 24 / 0.66));
+  --app-login-overlay:
+    radial-gradient(circle at top left, rgb(201 164 92 / 0.22), transparent 30%),
+    linear-gradient(
+      135deg,
+      rgb(3 20 38 / 0.88),
+      rgb(6 29 53 / 0.55),
+      rgb(3 20 38 / 0.9)
+    );
+  --app-background-filter: brightness(0.9) saturate(1.1) contrast(1.04);
+}
+
 /* ---------- BASE ---------- */
 @layer base {
   * {
@@ -151,22 +192,32 @@
 
   body {
     @apply text-foreground antialiased;
-    background-image:
-      linear-gradient(rgb(6 12 24 / 0.78), rgb(6 12 24 / 0.88)),
-      url("/images/login/academy-background.jpg");
+    background-image: var(--app-background-overlay), var(--app-background-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     font-family: var(--font-sans);
     letter-spacing: -0.011em;
     background-color: var(--background);
   }
 
-  /* фон-картинка: затемнён и слегка размыт, чтобы текст читался */
-  .dark body {
-    background-image:
-      linear-gradient(rgb(6 12 24 / 0.78), rgb(6 12 24 / 0.88)),
-      url("/images/login/academy-background.jpg");
+  .login-scene-background {
+    background-image: var(--app-background-image);
+    filter: var(--app-background-filter);
+    transition: filter 500ms ease;
+  }
+
+  .admin-shell-background {
+    background-image: var(--app-background-overlay), var(--app-background-image);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    filter: var(--app-background-filter);
+    transition: filter 500ms ease;
+  }
+
+  .login-scene-overlay {
+    background-image: var(--app-login-overlay);
   }
 
   h1,
@@ -178,6 +229,18 @@
 }
 
 /* ---------- GLASS ---------- */
+@layer components {
+  .glass-panel {
+    border: 1px solid rgb(255 255 255 / 0.1);
+    background-color: rgb(9 39 69 / 0.36);
+    box-shadow:
+      0 12px 32px rgb(0 0 0 / 0.16),
+      inset 0 1px 0 rgb(255 255 255 / 0.08);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+  }
+}
+
 [data-slot="card"],
 [data-slot="dialog-content"],
 [data-slot="sheet-content"],

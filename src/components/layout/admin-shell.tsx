@@ -25,7 +25,7 @@ export function AdminShell({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 bg-cover bg-center"
+        className="admin-shell-background pointer-events-none fixed inset-0"
       />
       <div aria-hidden="true" className="pointer-events-none fixed inset-0" />
       <div
@@ -49,7 +49,7 @@ export function AdminShell({
             fitViewport ? "lg:min-h-0" : ""
           }`}
         >
-          <AdminTopbar title={title} description={description} />
+          <AdminTopbar />
 
           <motion.main
             initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}

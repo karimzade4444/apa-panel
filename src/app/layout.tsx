@@ -28,8 +28,10 @@ const themeScript = `
       if (savedTheme === "light" || savedTheme === "dark") t = savedTheme;
     }
     document.documentElement.classList.toggle("dark", t === "dark");
+    document.documentElement.setAttribute("data-lg-theme", t);
   } catch (e) {
     document.documentElement.classList.add("dark");
+    document.documentElement.setAttribute("data-lg-theme", "dark");
   }
 `;
 
