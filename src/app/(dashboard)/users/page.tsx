@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
+  AlertCircle,
   CircleAlert,
   Eye,
   Plus,
@@ -27,6 +28,14 @@ import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
 import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
 import { PermissionAction } from "@/config/permissions";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   GlassAlert,
   GlassBadge,
@@ -69,6 +78,10 @@ export default function UsersPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [statusConfirmation, setStatusConfirmation] = useState<{
+    user: User;
+    isBlocked: boolean;
+  } | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit" | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const { control, handleSubmit, reset, setValue } = useForm<UserFormValues>({
@@ -122,6 +135,7 @@ export default function UsersPage() {
       setUserBlocked(id, isBlocked),
     onSuccess: async (_, variables) => {
       await refreshUsers();
+      setStatusConfirmation(null);
       toast.success(
         variables.isBlocked
           ? "Пользователь заблокирован"
@@ -317,8 +331,28 @@ export default function UsersPage() {
       toast.error("Недостаточно прав для изменения статуса пользователя.");
       return;
     }
-    blockMutation.mutate({ id: user.id, isBlocked: !user.isBlocked });
+    setStatusConfirmation({ user, isBlocked: !user.isBlocked });
   };
+
+  const confirmStatusChange = () => {
+    if (!statusConfirmation) return;
+
+    const { user, isBlocked } = statusConfirmation;
+    if (
+      !can(PermissionAction.BlockUser) ||
+      isCurrentUser(user, actorIdentifiers) ||
+      getRoleLevel(user.role) >= actorLevel
+    ) {
+      setStatusConfirmation(null);
+      toast.error("Недостаточно прав для изменения статуса пользователя.");
+      return;
+    }
+
+    blockMutation.mutate({ id: user.id, isBlocked });
+  };
+  const statusConfirmationUserName = statusConfirmation
+    ? getUserName(statusConfirmation.user)
+    : "";
 
   if (isProfileLoading) {
     return (
@@ -689,6 +723,58 @@ export default function UsersPage() {
           />
         )}
       </AnimatePresence>
+
+      <AlertDialog
+        open={statusConfirmation !== null}
+        onOpenChange={(open) => {
+          if (!open && !blockMutation.isPending) setStatusConfirmation(null);
+        }}
+      >
+        <AlertDialogContent className="text-popover-foreground">
+          <AlertDialogHeader>
+            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-200/20 dark:bg-amber-300/10 dark:text-primary">
+              <AlertCircle className="size-5" />
+            </span>
+            <AlertDialogTitle>
+              {statusConfirmation?.isBlocked
+                ? "Заблокировать пользователя?"
+                : "Разблокировать пользователя?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="leading-relaxed">
+              {statusConfirmation?.isBlocked
+                ? `Пользователь «${statusConfirmationUserName}» потеряет доступ к системе.`
+                : `Пользователю «${statusConfirmationUserName}» снова будет доступна система.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-5">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={blockMutation.isPending}
+              onClick={() => setStatusConfirmation(null)}
+              className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              Отмена
+            </Button>
+            <Button
+              type="button"
+              disabled={blockMutation.isPending}
+              onClick={confirmStatusChange}
+              className={
+                statusConfirmation?.isBlocked
+                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  : "bg-primary text-primary-foreground hover:bg-primary"
+              }
+            >
+              {blockMutation.isPending
+                ? "Выполняется..."
+                : statusConfirmation?.isBlocked
+                  ? "Заблокировать"
+                  : "Разблокировать"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

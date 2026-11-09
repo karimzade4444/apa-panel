@@ -42,9 +42,9 @@ export const updateUser = async (id: string, data: UserWriteData) => {
 };
 
 export const setUserBlocked = async (id: string, isBlocked: boolean) => {
-  const response = await instance.patch(
-    `/users/${encodeURIComponent(id)}`,
-    { isBlocked },
+  const action = isBlocked ? "block" : "unblock";
+  const response = await instance.post(
+    `/users/${encodeURIComponent(id)}/${action}`,
   );
   return response.data;
 };
