@@ -24,6 +24,24 @@ function getLoginErrorMessage(error: unknown) {
   }
 
   const responseData: unknown = error.response?.data;
+  const errorDetails =
+    responseData && typeof responseData === "object"
+      ? ["message", "error", "code", "detail"]
+          .map((key) => Reflect.get(responseData, key))
+          .filter((value): value is string => typeof value === "string")
+      : typeof responseData === "string"
+        ? [responseData]
+        : [];
+  const blockedAccountPattern =
+    /block|ban|disabled|inactive|suspend|заблок|блокиров|отключен|неактив/i;
+  const isBlockedAccount =
+    error.response?.status === 403 ||
+    errorDetails.some((detail) => blockedAccountPattern.test(detail));
+
+  if (isBlockedAccount) {
+    return "Ваша учетная запись заблокирована. Пожалуйста, обратитесь к администратору системы.";
+  }
+
   if (
     responseData &&
     typeof responseData === "object" &&
@@ -38,7 +56,7 @@ function getLoginErrorMessage(error: unknown) {
     return "Не удалось связаться с сервером. Проверьте подключение и попробуйте снова.";
   }
 
-  if (error.response.status === 401 || error.response.status === 403) {
+  if (error.response.status === 401) {
     return "Сервер отклонил данные входа. Проверьте логин и пароль.";
   }
 
