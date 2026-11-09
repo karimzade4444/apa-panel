@@ -382,17 +382,19 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <FormInput
+                    <FormInput<UserFormValues>
+                      control={control}
+                      name="firstName"
                       label="Имя"
                       autoComplete="given-name"
-                      aria-invalid={!!errors.firstName}
-                      {...register("firstName", {
+                      placeholder="Введите имя"
+                      rules={{
                         required: "Введите имя.",
                         minLength: {
                           value: 2,
                           message: "Имя должно содержать не менее 2 символов.",
                         },
-                      })}
+                      }}
                     />
                     {errors.firstName && (
                       <p className="mt-1 text-xs text-destructive">
@@ -401,18 +403,20 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                     )}
                   </div>
                   <div>
-                    <GlassInput
+                    <FormInput<UserFormValues>
+                      control={control}
+                      name="lastName"
                       label="Фамилия"
                       autoComplete="family-name"
-                      aria-invalid={!!errors.lastName}
-                      {...register("lastName", {
+                      placeholder="Введите фамилию"
+                      rules={{
                         required: "Введите фамилию.",
                         minLength: {
                           value: 2,
                           message:
                             "Фамилия должна содержать не менее 2 символов.",
                         },
-                      })}
+                      }}
                     />
                     {errors.lastName && (
                       <p className="mt-1 text-xs text-destructive">
@@ -420,25 +424,29 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                       </p>
                     )}
                   </div>
-                  <GlassInput
+                  <FormInput<UserFormValues>
+                    control={control}
+                    name="middleName"
                     label="Отчество"
                     autoComplete="additional-name"
-                    {...register("middleName")}
+                    placeholder="Необязательно"
                   />
                   <div>
-                    <GlassInput
+                    <FormInput<UserFormValues>
+                      control={control}
+                      name="email"
                       label="Электронная почта"
                       type="email"
                       autoComplete="email"
-                      aria-invalid={!!errors.email}
-                      {...register("email", {
+                      placeholder="name@example.com"
+                      rules={{
                         required: "Введите электронную почту.",
                         pattern: {
                           value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                           message:
                             "Введите корректный адрес электронной почты.",
                         },
-                      })}
+                      }}
                     />
                     {errors.email && (
                       <p className="mt-1 text-xs text-destructive">
@@ -465,12 +473,14 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <GlassInput
+                    <FormInput<UserFormValues>
+                      control={control}
+                      name="userName"
                       label="Имя пользователя"
                       autoComplete="username"
+                      placeholder="Латиница, цифры, . _ -"
                       maxLength={50}
-                      aria-invalid={!!errors.userName}
-                      {...register("userName", {
+                      rules={{
                         required: "Введите имя пользователя.",
                         minLength: {
                           value: 3,
@@ -485,7 +495,7 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                           message:
                             "Используйте латинские буквы, цифры, точку, дефис или подчеркивание.",
                         },
-                      })}
+                      }}
                     />
                     {errors.userName && (
                       <p className="mt-1 text-xs text-destructive">
@@ -508,7 +518,7 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                         >
                           <GlassSelectTrigger
                             aria-label="Роль пользователя"
-                            className="w-full"
+                            className="w-full h-10"
                           >
                             <GlassSelectValue placeholder="Выберите роль" />
                           </GlassSelectTrigger>
@@ -532,19 +542,21 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                     )}
                   </div>
                   <div className="sm:col-span-2">
-                    <GlassInput
+                    <FormInput<UserFormValues>
+                      control={control}
+                      name="password"
                       label="Новый пароль"
                       type="password"
                       autoComplete="new-password"
                       placeholder="Оставьте пустым, чтобы не менять пароль"
-                      aria-invalid={!!errors.password}
-                      {...register("password", {
+                      rules={{
+                        required: "Задайте пароль пользователя.",
                         minLength: {
                           value: 8,
                           message:
                             "Пароль должен содержать не менее 8 символов.",
                         },
-                      })}
+                      }}
                     />
                     {errors.password && (
                       <p className="mt-1 text-xs text-destructive">
