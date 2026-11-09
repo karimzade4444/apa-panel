@@ -2,12 +2,12 @@ import clsx from 'clsx';
 import { forwardRef } from 'react';
 import type { HTMLAttributes } from 'react';
 
-export type GlassSkeletonVariant = 'block' | 'circle' | 'text';
+export type GlassSkeletonVariant = 'block' | 'circle' | 'line' | 'text';
 
 export type GlassSkeletonProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'> & {
   /** How many lines a `text` skeleton draws. The last is shorter. Defaults to 3. */
   lines?: number;
-  /** A `block` is sized with CSS, a `circle` is square and a `text` is a stack of lines. */
+  /** A `block` is sized with CSS, a `circle` is square, and `text` stacks lines. */
   variant?: GlassSkeletonVariant;
 };
 

@@ -23,7 +23,6 @@ import {
   setUserBlocked,
   updateUser,
 } from "@/api/users";
-import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
 import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
 import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
 import { PermissionAction } from "@/config/permissions";
@@ -38,6 +37,7 @@ import {
   GlassSelectItem,
   GlassSelectTrigger,
   GlassSelectValue,
+  GlassSkeleton,
 } from "@/components/ui/glassyui";
 import { Input } from "@/components/ui/input";
 import { useCan } from "@/hooks/use-can";

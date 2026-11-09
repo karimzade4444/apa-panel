@@ -16,10 +16,14 @@ import {
 import Link from "next/link";
 
 import { getUsers } from "@/api/users";
-import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
 import { PublicationChartSkeleton } from "@/components/skeletons/publication-chart-skeleton";
 import { Button } from "@/components/ui/button";
-import { GlassAlert, GlassBadge, GlassPanel } from "@/components/ui/glassyui";
+import {
+  GlassAlert,
+  GlassBadge,
+  GlassPanel,
+  GlassSkeleton,
+} from "@/components/ui/glassyui";
 import type { User } from "@/types/user";
 
 const publicationTitle = "Главное объявление Академии";

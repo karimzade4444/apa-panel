@@ -1,4 +1,4 @@
-import { GlassSkeleton } from "./glass-skeleton";
+import { GlassSkeleton } from "@/components/ui/glassyui";
 
 interface UserTableSkeletonProps {
   rows?: number;

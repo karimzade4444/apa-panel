@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
+import { GlassSkeleton } from "@/components/ui/glassyui";
 
 export function LoginSkeleton() {
   return (

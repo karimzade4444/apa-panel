@@ -1,7 +1,7 @@
 import { Activity } from "lucide-react";
 
 import { GlassPanel } from "@/components/ui/glassyui";
-import { GlassSkeleton } from "./glass-skeleton";
+import { GlassSkeleton } from "@/components/ui/glassyui";
 
 export function PublicationChartSkeleton() {
   return (

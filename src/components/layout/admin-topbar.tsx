@@ -33,6 +33,7 @@ import {
   GlassPopover,
   GlassPopoverContent,
   GlassPopoverTrigger,
+  GlassSkeleton,
 } from "@/components/ui/glassyui";
 import {
   getActorIdentifiers,
@@ -114,6 +115,8 @@ export default function AdminTopbar() {
   const isGreetingLoading =
     isProfileLoading ||
     (canLookupProfile && isProfileUserLoading && !getProfileFirstName(claims));
+  const isProfileAvatarLoading =
+    isProfileLoading || (canLookupProfile && isProfileUserLoading);
   const profileInitials = getProfileInitials(profileFullName);
   const profileUserName = profileUser?.userName || getProfileUserName(claims);
   const profileEmail = profileUser?.email || getProfileEmail(claims);
@@ -216,14 +219,24 @@ export default function AdminTopbar() {
                   variant="ghost"
                   size="md"
                   aria-label="Открыть профиль администратора"
+                  aria-busy={isProfileAvatarLoading}
                   className="size-10 rounded-full p-0 hover:bg-accent"
                 >
-                  <GlassAvatar
-                    src={profileAvatar ?? undefined}
-                    alt={profileFullName}
-                    name={profileFullName || profileUserName || "Администратор"}
-                    fallback={profileInitials}
-                  />
+                  {isProfileAvatarLoading ? (
+                    <GlassSkeleton
+                      variant="circle"
+                      className="size-10 shrink-0"
+                    />
+                  ) : (
+                    <GlassAvatar
+                      src={profileAvatar ?? undefined}
+                      alt={profileFullName}
+                      name={
+                        profileFullName || profileUserName || "Администратор"
+                      }
+                      fallback={profileInitials}
+                    />
+                  )}
                 </GlassButton>
               </GlassPopoverTrigger>
               <GlassPopoverContent

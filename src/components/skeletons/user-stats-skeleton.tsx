@@ -1,4 +1,4 @@
-import { GlassSkeleton } from "./glass-skeleton";
+import { GlassSkeleton } from "@/components/ui/glassyui";
 import { GlassPanel } from "@/components/ui/glassyui";
 
 const cards = ["users", "active", "admins", "blocked"];
