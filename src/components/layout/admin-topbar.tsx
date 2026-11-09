@@ -3,7 +3,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { jwtDecode } from "jwt-decode";
 import {
   Bell,
   Landmark,
@@ -31,7 +30,6 @@ import { Button } from "@/components/ui/button";
 import {
   getActorIdentifiers,
   getClaim,
-  getEffectiveRole,
   getProfileAvatar,
   getProfileEmail,
   getProfileFirstName,
@@ -40,12 +38,12 @@ import {
   getProfilePhone,
   getProfileRole,
   getProfileUserName,
-  type AccessTokenClaims,
 } from "@/lib/auth";
 import { resolveApiAssetUrl } from "@/lib/api-assets";
-import { getAccessToken, removeToken } from "@/lib/cookies";
+import { removeToken } from "@/lib/cookies";
 import { WelcomeSkeleton } from "@/components/skeletons/welcome-skeleton";
-import { adminNavigation } from "./admin-sidebar";
+import { adminNavigation } from "@/config/navigation";
+import { useCan } from "@/hooks/use-can";
 import { ProfileSkeleton } from "./profile-skeleton";
 
 export default function AdminTopbar() {
@@ -59,18 +57,12 @@ export default function AdminTopbar() {
   const profileRef = useRef<HTMLDivElement>(null);
 
   const {
-    data: profileClaims,
+    can,
+    claims: profileClaims,
     isError: isProfileError,
     isLoading: isProfileLoading,
-  } = useQuery({
-    queryKey: ["auth-profile"],
-    queryFn: () => {
-      const token = getAccessToken();
-      return token ? jwtDecode<AccessTokenClaims>(token) : null;
-    },
-    retry: false,
-    staleTime: Infinity,
-  });
+    role,
+  } = useCan();
   const claims = profileClaims ?? null;
   const profileIdentifiers = getActorIdentifiers(claims);
   const profileLookupTerm =
@@ -86,7 +78,7 @@ export default function AdminTopbar() {
       "nameid",
       "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
     );
-  const canLookupProfile = Boolean(getEffectiveRole(claims));
+  const canLookupProfile = Boolean(role);
   const {
     data: profileUsers,
     isError: isProfileUserError,
@@ -377,7 +369,7 @@ export default function AdminTopbar() {
           aria-label="Мобильная навигация"
           className="mt-4 flex gap-2 overflow-x-auto border-t border-white/10 pt-3 lg:hidden"
         >
-          {adminNavigation.map(({ href, label, icon: Icon }) => {
+          {adminNavigation.filter((item) => can(item.permission)).map(({ href, label, icon: Icon }) => {
             const isActive = pathname === href;
             return (
               <Link

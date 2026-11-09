@@ -11,19 +11,14 @@ import {
   FileText,
   FolderKanban,
   GraduationCap,
-  LayoutDashboard,
   Megaphone,
   ScrollText,
   Settings,
-  UsersRound,
 } from "lucide-react";
 
+import { adminNavigation } from "@/config/navigation";
+import { useCan } from "@/hooks/use-can";
 import type { AdminSidebarProps } from "./admin-sidebar.types";
-
-export const adminNavigation = [
-  { href: "/", label: "Панель управления", icon: LayoutDashboard },
-  { href: "/users", label: "Пользователи", icon: UsersRound },
-];
 
 const publicationLinks = [
   { label: "Новости", icon: BellRing },
@@ -33,6 +28,10 @@ const publicationLinks = [
 
 export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
   const [publicationsOpen, setPublicationsOpen] = useState(true);
+  const { can } = useCan();
+  const visibleNavigation = adminNavigation.filter((item) =>
+    can(item.permission),
+  );
 
   return (
     <aside
@@ -63,7 +62,7 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
       <div className="my-3 h-px bg-white/10" />
 
       <nav aria-label="Главная навигация" className="space-y-1">
-        {adminNavigation.map(({ href, label, icon: Icon }) => {
+        {visibleNavigation.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           return (
             <Link

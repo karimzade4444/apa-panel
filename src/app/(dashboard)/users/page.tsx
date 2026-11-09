@@ -13,7 +13,6 @@ import {
   UserRoundX,
   UsersRound,
 } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useGlassToast } from "@/components/ui/glassyui/glass-toaster";
@@ -28,14 +27,11 @@ import {
 import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
 import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
 import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
+import { PermissionAction } from "@/config/permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  getActorIdentifiers,
-  getEffectiveRole,
-  type AccessTokenClaims,
-} from "@/lib/auth";
-import { getAccessToken } from "@/lib/cookies";
+import { useCan } from "@/hooks/use-can";
+import { getActorIdentifiers } from "@/lib/auth";
 import {
   formatDate,
   formatRole,
@@ -70,22 +66,23 @@ export default function UsersPage() {
   });
   const formRole = useWatch({ control, name: "role" });
 
-  const { data: profileClaims } = useQuery({
-    queryKey: ["auth-profile"],
-    queryFn: () => {
-      const token = getAccessToken();
-      return token ? jwtDecode<AccessTokenClaims>(token) : null;
-    },
-    retry: false,
-    staleTime: Infinity,
-  });
-  const actorRole = getEffectiveRole(profileClaims ?? null);
+  const {
+    can,
+    claims: profileClaims,
+    isError: isProfileError,
+    isLoading: isProfileLoading,
+    role: actorRole,
+  } = useCan();
   const actorLevel =
     roleOptions.find((role) => role.value === actorRole)?.level ?? 0;
-  const assignableRoles = roleOptions.filter((role) => role.level < actorLevel);
-  const canManageUsers = actorRole === "SuperAdmin" || actorRole === "Admin";
-  const canViewUsers = canManageUsers || actorRole === "Editor";
-  const actorIdentifiers = getActorIdentifiers(profileClaims ?? null);
+  const assignableRoles = can(PermissionAction.AssignUserRole)
+    ? roleOptions.filter((role) => role.level < actorLevel)
+    : [];
+  const canCreateUsers =
+    can(PermissionAction.CreateUser) &&
+    can(PermissionAction.AssignUserRole);
+  const canViewUsers = can(PermissionAction.ViewUsers);
+  const actorIdentifiers = getActorIdentifiers(profileClaims);
 
   const refreshUsers = () =>
     queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -139,6 +136,10 @@ export default function UsersPage() {
     deleteMutation.isPending;
 
   const openCreateForm = () => {
+    if (!canCreateUsers) {
+      toast.error("Недостаточно прав для создания пользователя.");
+      return;
+    }
     setPhotoFile(null);
     reset({
       ...emptyUserForm,
@@ -147,6 +148,13 @@ export default function UsersPage() {
     setFormMode("create");
   };
   const openEditForm = (user: User) => {
+    if (
+      !can(PermissionAction.UpdateUser) ||
+      !can(PermissionAction.AssignUserRole)
+    ) {
+      toast.error("Недостаточно прав для изменения пользователя.");
+      return;
+    }
     if (isCurrentUser(user, actorIdentifiers)) {
       toast.error("Нельзя изменять собственную учетную запись.");
       return;
@@ -174,7 +182,12 @@ export default function UsersPage() {
   ) => {
     const roleLevel = getRoleLevel(values.role);
     if (
-      !canManageUsers ||
+      !can(
+        formMode === "create"
+          ? PermissionAction.CreateUser
+          : PermissionAction.UpdateUser,
+      ) ||
+      !can(PermissionAction.AssignUserRole) ||
       (formMode === "edit" &&
         !!selectedUser &&
         isCurrentUser(selectedUser, actorIdentifiers)) ||
@@ -253,7 +266,9 @@ export default function UsersPage() {
   const adminCount = users.filter((user) => /admin/i.test(user.role)).length;
   const canManageSelectedUser =
     !!selectedUser &&
-    canManageUsers &&
+    can(PermissionAction.UpdateUser) &&
+    can(PermissionAction.BlockUser) &&
+    can(PermissionAction.DeleteUser) &&
     !isCurrentUser(selectedUser, actorIdentifiers) &&
     getRoleLevel(selectedUser.role) < actorLevel;
   const formRoleOptions =
@@ -265,13 +280,48 @@ export default function UsersPage() {
         );
 
   const handleDeleteSelectedUser = () => {
-    if (!selectedUser) return;
+    if (!selectedUser || !can(PermissionAction.DeleteUser)) {
+      toast.error("Недостаточно прав для удаления пользователя.");
+      return;
+    }
+    if (
+      isCurrentUser(selectedUser, actorIdentifiers) ||
+      getRoleLevel(selectedUser.role) >= actorLevel
+    ) {
+      toast.error("Недостаточно прав для удаления этого пользователя.");
+      return;
+    }
     if (
       window.confirm(`Удалить пользователя «${getUserName(selectedUser)}»?`)
     ) {
       deleteMutation.mutate(selectedUser.id);
     }
   };
+
+  const handleToggleBlocked = (user: User) => {
+    if (
+      !can(PermissionAction.BlockUser) ||
+      isCurrentUser(user, actorIdentifiers) ||
+      getRoleLevel(user.role) >= actorLevel
+    ) {
+      toast.error("Недостаточно прав для изменения статуса пользователя.");
+      return;
+    }
+    blockMutation.mutate({ id: user.id, isBlocked: !user.isBlocked });
+  };
+
+  if (isProfileLoading) {
+    return (
+      <section
+        aria-label="Проверка прав доступа"
+        aria-busy="true"
+        className="glass-panel min-h-48 rounded-2xl p-6"
+      >
+        <GlassSkeleton variant="block" className="h-6 w-40" />
+        <GlassSkeleton variant="block" className="mt-4 h-20 w-full" />
+      </section>
+    );
+  }
 
   if (!canViewUsers) {
     return (
@@ -283,7 +333,9 @@ export default function UsersPage() {
           <ShieldCheck className="mx-auto size-8 text-[#e4c477]" />
           <h2 className="mt-3 font-semibold text-white">Нет доступа</h2>
           <p className="mt-1 text-sm text-white/55">
-            Нет доступа к просмотру пользователей.
+            {isProfileError
+              ? "Не удалось проверить права доступа."
+              : "Нет доступа к просмотру пользователей."}
           </p>
         </div>
       </section>
@@ -419,7 +471,7 @@ export default function UsersPage() {
                   <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-white/45" />
                 </label>
               </div>
-              {canManageUsers && (
+              {canCreateUsers && (
                 <Button
                   type="button"
                   disabled={!assignableRoles.length}
@@ -608,12 +660,7 @@ export default function UsersPage() {
                 canManageActions={canManageSelectedUser}
                 isPending={isMutating}
                 onEdit={() => openEditForm(selectedUser)}
-                onToggleBlocked={() =>
-                  blockMutation.mutate({
-                    id: selectedUser.id,
-                    isBlocked: !selectedUser.isBlocked,
-                  })
-                }
+                onToggleBlocked={() => handleToggleBlocked(selectedUser)}
                 onDelete={handleDeleteSelectedUser}
               />
             )}
