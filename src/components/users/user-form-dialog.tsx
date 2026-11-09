@@ -232,7 +232,7 @@ export function UserFormDialog({
                         Добавить фото
                       </span>
                       <span className="mt-1.5 text-xs text-muted-foreground">
-                        JPG, PNG или WebP · до 5 МБ
+                        JPG, PNG или WebP · до 10 МБ
                       </span>
                     </div>
                   )}

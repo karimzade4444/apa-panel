@@ -271,7 +271,7 @@ function AcademyCard() {
       <div className="absolute inset-0 bg-linear-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
       <div className="absolute inset-0 bg-linear-to-t from-[#061a30]/70 via-transparent to-white/4" />
       <div className="relative z-10 max-w-72.5">
-        <p className="text-xs leading-relaxed text-foreground">
+        <p className="text-xs leading-relaxed text-white">
           Академия государственного управления при Президенте Республики
           Таджикистан
         </p>
