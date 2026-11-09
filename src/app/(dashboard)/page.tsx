@@ -19,6 +19,7 @@ import { getUsers } from "@/api/users";
 import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
 import { PublicationChartSkeleton } from "@/components/skeletons/publication-chart-skeleton";
 import { Button } from "@/components/ui/button";
+import { GlassBadge, GlassPanel } from "@/components/ui/glassyui";
 import type { User } from "@/types/user";
 
 const publicationTitle = "Главное объявление Академии";
@@ -78,9 +79,10 @@ function StatCard({
       initial={reduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: reduceMotion ? 0 : index * 0.06, duration: 0.38 }}
-      className="glass-panel relative min-h-22 overflow-hidden p-3 sm:min-h-24 sm:p-3.5"
+      className="relative isolate min-h-22 overflow-hidden p-3 sm:min-h-24 sm:p-3.5"
     >
-      <div className="flex items-center gap-3">
+      <GlassPanel aria-hidden className="absolute inset-0 z-0" />
+      <div className="relative z-10 flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-primary shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
           <Icon className="size-5" strokeWidth={1.8} />
         </span>
@@ -98,7 +100,7 @@ function StatCard({
           <p className="mt-1 truncate text-xs text-muted-foreground">{title}</p>
         </div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-6 overflow-hidden opacity-70">
+      <div className="absolute inset-x-0 bottom-0 z-10 h-6 overflow-hidden opacity-70">
         <svg
           aria-hidden="true"
           viewBox="0 0 240 34"
@@ -116,7 +118,7 @@ function StatCard({
       </div>
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute -bottom-6 right-0 h-10 w-2/3 bg-linear-to-t ${glow} to-transparent opacity-10 blur-xl`}
+        className={`pointer-events-none absolute -bottom-6 right-0 z-10 h-10 w-2/3 bg-linear-to-t ${glow} to-transparent opacity-10 blur-xl`}
       />
     </motion.article>
   );
@@ -134,15 +136,15 @@ function PublicationChart({ users }: { users: User[] }) {
   const max = Math.max(...metrics.map((metric) => metric.value), 1);
 
   return (
-    <section className="glass-panel flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
+    <GlassPanel role="region" aria-label="Статистика пользователей" className="flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
           <Activity className="size-4.5 text-sky-200" />
           Статистика пользователей
         </h2>
-        <span className="rounded-full border border-border bg-muted px-3 py-1 text-[0.68rem] text-muted-foreground">
+        <GlassBadge tone="neutral">
           {users.length ? "Загруженный список" : "Нет данных"}
-        </span>
+        </GlassBadge>
       </div>
 
       <div className="mt-3 grid min-h-0 flex-1 grid-cols-3 gap-3 sm:gap-5">
@@ -172,13 +174,13 @@ function PublicationChart({ users }: { users: User[] }) {
       <p className="mt-2 border-t border-border pt-2 text-[0.62rem] text-muted-foreground">
         Показатели рассчитаны по записям, полученным от API.
       </p>
-    </section>
+    </GlassPanel>
   );
 }
 
 function LatestPublication() {
   return (
-    <section className="glass-panel flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
+    <GlassPanel role="region" aria-label="Последняя публикация" className="flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
           <Megaphone className="size-4.5 text-sky-200" />
@@ -205,9 +207,9 @@ function LatestPublication() {
             Главная публикация Академии
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2 py-1 text-[0.62rem] text-emerald-200">
+        <GlassBadge tone="green" className="shrink-0 text-[0.62rem]">
           Главное
-        </span>
+        </GlassBadge>
       </article>
 
       <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[0.65rem]">
@@ -217,7 +219,7 @@ function LatestPublication() {
           1 публикация
         </span>
       </div>
-    </section>
+    </GlassPanel>
   );
 }
 
@@ -231,7 +233,7 @@ function EmptyPanel({
   icon: typeof Mail;
 }) {
   return (
-    <section className="glass-panel flex min-h-0 items-center gap-3 overflow-hidden p-3 sm:p-3.5">
+    <GlassPanel role="region" aria-label={title} className="flex min-h-0 items-center gap-3 overflow-hidden p-3 sm:p-3.5">
       <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10">
         <Icon className="size-4.5 text-sky-200" />
       </span>
@@ -239,15 +241,16 @@ function EmptyPanel({
         <h2 className="truncate text-xs font-semibold text-foreground">{title}</h2>
         <p className="mt-0.5 truncate text-[0.65rem] text-muted-foreground">{subtitle}</p>
       </div>
-    </section>
+    </GlassPanel>
   );
 }
 
 function AcademyCard() {
   return (
-    <section
-      className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden border-primary/30 bg-cover bg-center p-3.5"
-      
+    <GlassPanel
+      role="region"
+      aria-label="Академия государственного управления"
+      className="relative flex min-h-0 flex-col justify-end overflow-hidden border-primary/30 bg-cover bg-center p-3.5"
     >
       <div className="absolute inset-0 bg-linear-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
       <div className="absolute inset-0 bg-linear-to-t from-[#061a30]/70 via-transparent to-white/4" />
@@ -264,7 +267,7 @@ function AcademyCard() {
           <ArrowRight className="size-3.5" />
         </Link>
       </div>
-    </section>
+    </GlassPanel>
   );
 }
 

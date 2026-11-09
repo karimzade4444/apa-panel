@@ -1,14 +1,15 @@
 import { Activity } from "lucide-react";
 
+import { GlassPanel } from "@/components/ui/glassyui";
 import { GlassSkeleton } from "./glass-skeleton";
 
 export function PublicationChartSkeleton() {
   return (
-    <section
+    <GlassPanel
       role="status"
       aria-label="Загрузка статистики пользователей"
       aria-busy="true"
-      className="glass-panel flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4"
+      className="flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4"
     >
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground sm:text-base">
@@ -37,6 +38,6 @@ export function PublicationChartSkeleton() {
       <div className="mt-2 border-t border-border pt-2">
         <GlassSkeleton variant="line" className="h-2.5 w-3/4 rounded-md" />
       </div>
-    </section>
+    </GlassPanel>
   );
 }

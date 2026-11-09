@@ -1,4 +1,5 @@
 import type { UserStatCardProps } from "@/types/user-components";
+import { GlassPanel } from "@/components/ui/glassyui";
 
 export function UserStatCard({
   label,
@@ -7,9 +8,9 @@ export function UserStatCard({
   tone,
 }: UserStatCardProps) {
   return (
-    <div
-      data-slot="card"
-      className="rounded-2xl border border-border bg-card p-4 text-card-foreground sm:p-5"
+    <GlassPanel
+      variant="card"
+      className="p-4 text-card-foreground sm:p-5"
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
@@ -17,7 +18,7 @@ export function UserStatCard({
             {label}
           </p>
           <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
-        </div>
+        </GlassPanel>
         <span
           className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${tone}`}
         >

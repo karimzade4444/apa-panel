@@ -28,6 +28,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
+  GlassAlert,
+  GlassHeader,
+} from "@/components/ui/glassyui";
+import {
   getActorIdentifiers,
   getClaim,
   getProfileAvatar,
@@ -178,9 +182,11 @@ export default function AdminTopbar() {
 
   return (
     <>
-      <header
-        className="glass-panel relative z-50 flex min-h-23 items-center px-3 py-3 sm:px-5 sm:py-4"
-      >
+      <GlassHeader
+        position="static"
+        className="z-50 h-auto min-h-23 max-w-none rounded-2xl"
+        brand={
+          <div className="w-full whitespace-normal">
         <div className="flex w-full items-center justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-primary lg:hidden">
@@ -342,9 +348,12 @@ export default function AdminTopbar() {
                       ))}
                     </dl>
                     {profileErrorMessage && (
-                      <p role="alert" className="mt-3 text-xs text-rose-200">
+                      <GlassAlert
+                        tone="danger"
+                        className="mt-3 text-xs"
+                      >
                         {profileErrorMessage}
-                      </p>
+                      </GlassAlert>
                     )}
                       </>
                     )}
@@ -388,7 +397,9 @@ export default function AdminTopbar() {
             );
           })}
         </nav>
-      </header>
+          </div>
+        }
+      />
 
       <AlertDialog
         open={logoutConfirmOpen}

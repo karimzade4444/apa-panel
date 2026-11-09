@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
-  ChevronDown,
   CircleAlert,
   Eye,
   Plus,
@@ -29,6 +28,17 @@ import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
 import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
 import { PermissionAction } from "@/config/permissions";
 import { Button } from "@/components/ui/button";
+import {
+  GlassAlert,
+  GlassBadge,
+  GlassPanel,
+  GlassScrollArea,
+  GlassSelect,
+  GlassSelectContent,
+  GlassSelectItem,
+  GlassSelectTrigger,
+  GlassSelectValue,
+} from "@/components/ui/glassyui";
 import { Input } from "@/components/ui/input";
 import { useCan } from "@/hooks/use-can";
 import { getActorIdentifiers } from "@/lib/auth";
@@ -312,22 +322,22 @@ export default function UsersPage() {
 
   if (isProfileLoading) {
     return (
-      <section
+      <GlassPanel
         aria-label="Проверка прав доступа"
         aria-busy="true"
-        className="glass-panel min-h-48 p-6"
+        className="min-h-48 p-6"
       >
         <GlassSkeleton variant="block" className="h-6 w-40" />
         <GlassSkeleton variant="block" className="mt-4 h-20 w-full" />
-      </section>
+      </GlassPanel>
     );
   }
 
   if (!canViewUsers) {
     return (
-      <section
+      <GlassPanel
         role="alert"
-        className="glass-panel flex min-h-48 items-center justify-center p-6 text-center"
+        className="flex min-h-48 items-center justify-center p-6 text-center"
       >
         <div>
           <ShieldCheck className="mx-auto size-8 text-primary" />
@@ -338,7 +348,7 @@ export default function UsersPage() {
               : "Нет доступа к просмотру пользователей."}
           </p>
         </div>
-      </section>
+      </GlassPanel>
     );
   }
 
@@ -383,9 +393,9 @@ export default function UsersPage() {
           )}
 
           {isError && (
-            <div
-              role="alert"
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-100"
+            <GlassAlert
+              tone="danger"
+              className="flex flex-wrap items-center justify-between gap-3 text-sm"
             >
               <span className="flex items-center gap-2">
                 <CircleAlert className="size-4" />
@@ -407,7 +417,7 @@ export default function UsersPage() {
                   "Повторить"
                 )}
               </Button>
-            </div>
+            </GlassAlert>
           )}
         </div>
 
@@ -420,7 +430,7 @@ export default function UsersPage() {
           }
           className="grid min-h-0 grid-cols-1 gap-y-4 transition-[grid-template-columns,column-gap] duration-300 ease-out lg:grid-rows-[minmax(0,1fr)] xl:gap-x-(--user-details-gap) xl:grid-cols-[minmax(0,1fr)_var(--user-details-width)]"
         >
-          <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden xl:col-start-1 xl:row-start-1">
+          <GlassPanel role="region" aria-label="Список пользователей" className="flex min-h-0 min-w-0 flex-col overflow-hidden xl:col-start-1 xl:row-start-1">
             <div className="flex flex-col gap-3 border-b border-border p-4 sm:p-5 xl:flex-row xl:items-center">
               <label className="relative min-w-0 flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -433,43 +443,43 @@ export default function UsersPage() {
                 />
               </label>
               <div className="grid grid-cols-2 gap-2 xl:w-72.5">
-                <label className="relative">
-                  <span className="sr-only">Фильтр по роли</span>
-                  <select
-                    value={roleFilter}
-                    onChange={(event) => setRoleFilter(event.target.value)}
-                    className="h-10 w-full appearance-none rounded-lg border border-border bg-card/80 py-2 pl-3 pr-9 text-xs text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
+                <GlassSelect
+                  value={roleFilter}
+                  onValueChange={(value) => setRoleFilter(value)}
+                >
+                  <GlassSelectTrigger
+                    aria-label="Фильтр по роли"
+                    className="h-10 w-full text-xs"
                   >
-                    <option value="all" className="bg-card">
-                      Все роли
-                    </option>
+                    <GlassSelectValue placeholder="Все роли" />
+                  </GlassSelectTrigger>
+                  <GlassSelectContent>
+                    <GlassSelectItem value="all">Все роли</GlassSelectItem>
                     {roles.map((role) => (
-                      <option key={role} value={role} className="bg-card">
+                      <GlassSelectItem key={role} value={role}>
                         {formatRole(role)}
-                      </option>
+                      </GlassSelectItem>
                     ))}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                </label>
-                <label className="relative">
-                  <span className="sr-only">Фильтр по статусу</span>
-                  <select
-                    value={statusFilter}
-                    onChange={(event) => setStatusFilter(event.target.value)}
-                    className="h-10 w-full appearance-none rounded-lg border border-border bg-card/80 py-2 pl-3 pr-9 text-xs text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-ring"
+                  </GlassSelectContent>
+                </GlassSelect>
+                <GlassSelect
+                  value={statusFilter}
+                  onValueChange={(value) => setStatusFilter(value)}
+                >
+                  <GlassSelectTrigger
+                    aria-label="Фильтр по статусу"
+                    className="h-10 w-full text-xs"
                   >
-                    <option value="all" className="bg-card">
-                      Все статусы
-                    </option>
-                    <option value="active" className="bg-card">
-                      Активные
-                    </option>
-                    <option value="blocked" className="bg-card">
+                    <GlassSelectValue placeholder="Все статусы" />
+                  </GlassSelectTrigger>
+                  <GlassSelectContent>
+                    <GlassSelectItem value="all">Все статусы</GlassSelectItem>
+                    <GlassSelectItem value="active">Активные</GlassSelectItem>
+                    <GlassSelectItem value="blocked">
                       Заблокированные
-                    </option>
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                </label>
+                    </GlassSelectItem>
+                  </GlassSelectContent>
+                </GlassSelect>
               </div>
               {canCreateUsers && (
                 <Button
@@ -484,9 +494,10 @@ export default function UsersPage() {
               )}
             </div>
 
-            <div
+            <GlassScrollArea
               aria-busy={isLoading}
-              className="scrollbar-none min-h-0 flex-1 overflow-auto"
+              scrollbars="horizontal"
+              className="min-h-0 flex-1"
             >
               <table className="w-full min-w-190 border-collapse text-left text-sm">
                 <thead>
@@ -497,25 +508,16 @@ export default function UsersPage() {
                     <th scope="col" className="px-4 py-3 font-medium">
                       Email
                     </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-3 text-center font-medium"
-                    >
+                    <th scope="col" className="px-4 py-3 text-center font-medium">
                       Роль
                     </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-3 text-center font-medium"
-                    >
+                    <th scope="col" className="px-4 py-3 text-center font-medium">
                       Статус
                     </th>
                     <th scope="col" className="px-4 py-3 font-medium">
                       Регистрация
                     </th>
-                    <th
-                      scope="col"
-                      className="px-4 py-3 text-right font-medium"
-                    >
+                    <th scope="col" className="px-4 py-3 text-right font-medium">
                       Детали
                     </th>
                   </tr>
@@ -559,27 +561,17 @@ export default function UsersPage() {
                             {user.email || "—"}
                           </td>
                           <td className="px-4 py-3.5 text-center">
-                            <span className="mx-auto inline-flex max-w-37.5 items-center truncate rounded-full border border-sky-200/15 bg-sky-300/10 px-2.5 py-1 text-[0.7rem] text-sky-100">
+                            <GlassBadge tone="neutral">
                               {formatRole(user.role)}
-                            </span>
+                            </GlassBadge>
                           </td>
                           <td className="px-4 py-3.5 text-center">
-                            <span
-                              className={`mx-auto inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.7rem] ${
-                                user.isBlocked
-                                  ? "border-rose-300/20 bg-rose-300/10 text-rose-200"
-                                  : "border-emerald-300/20 bg-emerald-300/10 text-emerald-200"
-                              }`}
+                            <GlassBadge
+                              tone={user.isBlocked ? "red" : "green"}
+                              dot
                             >
-                              <span
-                                className={`size-1.5 rounded-full ${
-                                  user.isBlocked
-                                    ? "bg-rose-300"
-                                    : "bg-emerald-300"
-                                }`}
-                              />
                               {user.isBlocked ? "Заблокирован" : "Активен"}
-                            </span>
+                            </GlassBadge>
                           </td>
                           <td className="whitespace-nowrap px-4 py-3.5 text-xs text-muted-foreground">
                             {formatDate(user.createdAt)}
@@ -622,7 +614,7 @@ export default function UsersPage() {
                   )}
                 </tbody>
               </table>
-            </div>
+            </GlassScrollArea>
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-5 py-3 text-xs text-muted-foreground">
               <span>
@@ -648,7 +640,7 @@ export default function UsersPage() {
                   : "Все найденные записи"}
               </span>
             </div>
-          </section>
+          </GlassPanel>
 
           <AnimatePresence initial={false}>
             {selectedUser && (

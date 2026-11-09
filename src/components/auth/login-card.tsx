@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { GlassPanel } from "@/components/ui/glassyui";
 
 interface LoginCardProps {
   children: ReactNode;
@@ -27,8 +28,9 @@ export default function LoginCard({ children }: LoginCardProps) {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 35, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="glass-panel group/card relative isolate w-full overflow-hidden p-6 sm:p-7"
+      className="group/card relative isolate w-full overflow-hidden p-6 sm:p-7"
     >
+      <GlassPanel aria-hidden className="absolute inset-0 z-0" />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"

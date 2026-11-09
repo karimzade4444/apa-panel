@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { adminNavigation } from "@/config/navigation";
+import { GlassPanel } from "@/components/ui/glassyui";
 import { useCan } from "@/hooks/use-can";
 import type { AdminSidebarProps } from "./admin-sidebar.types";
 
@@ -34,8 +35,10 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
   );
 
   return (
-    <aside
-      className={`glass-panel scrollbar-none hidden w-51 shrink-0 flex-col overflow-y-auto p-3 lg:flex xl:w-53 ${
+    <GlassPanel
+      role="complementary"
+      aria-label="Главная навигация"
+      className={`scrollbar-none hidden w-51 shrink-0 flex-col overflow-y-auto p-3 lg:flex xl:w-53 ${
         fitViewport ? "lg:min-h-0" : ""
       }`}
     >
@@ -152,6 +155,6 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
           Система работает
         </div>
       </div>
-    </aside>
+    </GlassPanel>
   );
 }

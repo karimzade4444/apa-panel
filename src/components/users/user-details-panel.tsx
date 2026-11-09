@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { GlassPanel } from "@/components/ui/glassyui";
 import { formatDate, formatRole, getUserName } from "@/lib/user-utils";
 import type { UserDetailsPanelProps } from "@/types/user-components";
 import { UserAvatar } from "./user-avatar";
@@ -49,8 +50,9 @@ export function UserDetailsPanel({
         duration: reduceMotion ? 0.12 : 0.22,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className="glass-panel h-fit min-w-0 p-3.5 xl:col-start-2 xl:row-start-1"
+      className="relative isolate h-fit min-w-0 p-3.5 xl:col-start-2 xl:row-start-1"
     >
+      <GlassPanel aria-hidden className="absolute inset-0 -z-10" />
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
           <UserAvatar user={user} />
