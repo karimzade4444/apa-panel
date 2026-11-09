@@ -151,7 +151,7 @@ export function AdminSidebar({ pathname, fitViewport }: AdminSidebarProps) {
       <div className="mt-auto px-1 pb-1 pt-3">
         <div className="h-px bg-muted" />
         <div className="mt-3 flex items-center justify-center gap-1.5 text-[0.65rem] text-muted-foreground">
-          <span className="size-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.75)]" />
+          <span className="size-1.5 rounded-full bg-emerald-600 shadow-[0_0_10px_rgba(5,150,105,0.55)] dark:bg-emerald-400 dark:shadow-[0_0_10px_rgba(52,211,153,0.75)]" />
           Система работает
         </div>
       </div>

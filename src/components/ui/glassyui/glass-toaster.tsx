@@ -114,8 +114,8 @@ export function GlassToaster({ children }: { children: ReactNode }) {
               aria-hidden="true"
               className={
                 toast.type === "success"
-                  ? "text-emerald-300"
-                  : "text-red-300"
+                  ? "text-emerald-700 dark:text-emerald-300"
+                  : "text-red-700 dark:text-red-300"
               }
             >
               {toast.type === "success" ? (

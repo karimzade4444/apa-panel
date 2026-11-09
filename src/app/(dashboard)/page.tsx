@@ -40,14 +40,14 @@ const stats = [
     title: "Новости",
     key: "news",
     icon: Newspaper,
-    color: "text-sky-200",
+    color: "text-sky-700 dark:text-sky-200",
     glow: "from-sky-300/80",
   },
   {
     title: "Статьи",
     key: "articles",
     icon: BookOpenText,
-    color: "text-blue-200",
+    color: "text-blue-700 dark:text-blue-200",
     glow: "from-blue-300/80",
   },
   {
@@ -87,7 +87,7 @@ function StatCard({
     >
       <GlassPanel aria-hidden className="absolute inset-0 z-0" />
       <div className="relative z-10 flex items-center gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-primary shadow-[0_8px_24px_rgba(0,0,0,0.28)]">
+        <span className={`flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card ${color}`}>
           <Icon className="size-5" strokeWidth={1.8} />
         </span>
         <div className="min-w-0">
@@ -133,9 +133,21 @@ function PublicationChart({ users }: { users: User[] }) {
   const blocked = users.filter((user) => user.isBlocked).length;
   const admin = users.filter((user) => /admin/i.test(user.role)).length;
   const metrics = [
-    { label: "Активные", value: active, color: "bg-sky-400" },
-    { label: "Администраторы", value: admin, color: "bg-amber-300" },
-    { label: "Заблокированы", value: blocked, color: "bg-blue-300" },
+    {
+      label: "Активные",
+      value: active,
+      color: "bg-sky-600 dark:bg-sky-400",
+    },
+    {
+      label: "Администраторы",
+      value: admin,
+      color: "bg-amber-600 dark:bg-amber-300",
+    },
+    {
+      label: "Заблокированы",
+      value: blocked,
+      color: "bg-blue-600 dark:bg-blue-300",
+    },
   ];
   const max = Math.max(...metrics.map((metric) => metric.value), 1);
 
@@ -143,7 +155,7 @@ function PublicationChart({ users }: { users: User[] }) {
     <GlassPanel role="region" aria-label="Статистика пользователей" className="flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
-          <Activity className="size-4.5 text-sky-200" />
+          <Activity className="size-4.5 text-sky-700 dark:text-sky-200" />
           Статистика пользователей
         </h2>
         <GlassBadge tone="neutral">
@@ -160,7 +172,7 @@ function PublicationChart({ users }: { users: User[] }) {
             <span className="mb-2 text-xs font-medium tabular-nums text-muted-foreground">
               {metric.value}
             </span>
-            <div className="relative flex h-19 w-full items-end justify-center border-b border-l border-border bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-24">
+            <div className="relative flex h-19 w-full items-end justify-center border-b border-l border-border bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,var(--border)_25px)] sm:h-24">
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: users.length ? `${Math.max((metric.value / max) * 88, 5)}%` : "4%" }}
@@ -187,16 +199,16 @@ function LatestPublication() {
     <GlassPanel role="region" aria-label="Последняя публикация" className="flex min-h-0 flex-col overflow-hidden p-3.5 sm:p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground sm:text-base">
-          <Megaphone className="size-4.5 text-sky-200" />
+          <Megaphone className="size-4.5 text-sky-700 dark:text-sky-200" />
           Последняя публикация
         </h2>
-        <span className="text-xs font-medium text-sky-200">Всего 1</span>
+        <span className="text-xs font-medium text-sky-700 dark:text-sky-200">Всего 1</span>
       </div>
 
       <article className="mt-3 flex min-w-0 flex-1 items-start gap-3 border-b border-border pb-3">
         <div
           aria-hidden="true"
-          className="relative flex h-14 w-19 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-16 sm:w-22"
+          className="relative flex h-14 w-19 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-700/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] dark:border-sky-200/30 sm:h-16 sm:w-22"
           style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
         >
           <span className="absolute inset-0 bg-[#0b2b4d]/35" />
@@ -206,7 +218,7 @@ function LatestPublication() {
           <p className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
             {publicationTitle}
           </p>
-          <p className="mt-2 text-xs text-sky-200">Объявление</p>
+          <p className="mt-2 text-xs text-sky-700 dark:text-sky-200">Объявление</p>
           <p className="mt-1 text-[0.68rem] text-muted-foreground">
             Главная публикация Академии
           </p>
@@ -218,7 +230,7 @@ function LatestPublication() {
 
       <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-[0.65rem]">
         <span className="truncate text-muted-foreground">В главном блоке отображается одна запись</span>
-        <span className="flex shrink-0 items-center gap-1 font-medium text-sky-200">
+        <span className="flex shrink-0 items-center gap-1 font-medium text-sky-700 dark:text-sky-200">
           <Check className="size-3" />
           1 публикация
         </span>
@@ -238,8 +250,8 @@ function EmptyPanel({
 }) {
   return (
     <GlassPanel role="region" aria-label={title} className="flex min-h-0 items-center gap-3 overflow-hidden p-3 sm:p-3.5">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10">
-        <Icon className="size-4.5 text-sky-200" />
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-300/10">
+        <Icon className="size-4.5 text-sky-700 dark:text-sky-200" />
       </span>
       <div className="min-w-0">
         <h2 className="truncate text-xs font-semibold text-foreground">{title}</h2>

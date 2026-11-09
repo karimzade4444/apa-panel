@@ -369,25 +369,25 @@ export default function UsersPage() {
                 label="Всего пользователей"
                 value={data?.total.toLocaleString("ru-RU") ?? "0"}
                 icon={UsersRound}
-                tone="bg-sky-300/10 text-sky-200"
+                tone="bg-sky-100 text-sky-800 dark:bg-sky-300/10 dark:text-sky-200"
               />
               <UserStatCard
                 label="Активны в списке"
                 value={activeCount.toLocaleString("ru-RU")}
                 icon={UserRoundCheck}
-                tone="bg-emerald-300/10 text-emerald-200"
+                tone="bg-emerald-100 text-emerald-800 dark:bg-emerald-300/10 dark:text-emerald-200"
               />
               <UserStatCard
                 label="Администраторы в списке"
                 value={adminCount.toLocaleString("ru-RU")}
                 icon={ShieldCheck}
-                tone="bg-amber-300/10 text-primary"
+                tone="bg-amber-100 text-amber-800 dark:bg-amber-300/10 dark:text-primary"
               />
               <UserStatCard
                 label="Заблокированы в списке"
                 value={blockedCount.toLocaleString("ru-RU")}
                 icon={UserRoundX}
-                tone="bg-rose-300/10 text-rose-200"
+                tone="bg-rose-100 text-rose-800 dark:bg-rose-300/10 dark:text-rose-200"
               />
             </motion.div>
           )}

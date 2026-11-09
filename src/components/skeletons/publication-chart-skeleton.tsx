@@ -13,7 +13,7 @@ export function PublicationChartSkeleton() {
     >
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground sm:text-base">
-          <Activity className="size-4.5 text-sky-200" />
+          <Activity className="size-4.5 text-sky-700 dark:text-sky-200" />
           Статистика пользователей
         </h2>
         <GlassSkeleton variant="line" className="h-5 w-24 rounded-full" />

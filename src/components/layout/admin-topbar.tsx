@@ -365,7 +365,7 @@ export default function AdminTopbar() {
       >
         <AlertDialogContent className="p-6 text-muted-foreground">
           <AlertDialogHeader>
-            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-300/10 text-primary">
+            <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-200/20 dark:bg-amber-300/10 dark:text-primary">
               <LogOut className="size-5" />
             </span>
             <AlertDialogTitle className="text-lg text-foreground">

@@ -271,7 +271,7 @@ export function UserFormDialog({
                 {photoError && (
                   <p
                     role="alert"
-                    className="text-xs leading-relaxed text-rose-200"
+                    className="text-xs leading-relaxed text-rose-700 dark:text-rose-200"
                   >
                     {photoError}
                   </p>
