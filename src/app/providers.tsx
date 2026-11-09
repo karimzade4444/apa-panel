@@ -2,8 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { GlassProvider } from "@/components/glassyui/glass-provider";
-import { GlassToaster } from "@/components/glassyui/glass-toaster";
+import { GlassProvider } from "@/components/ui/glassyui/glass-provider";
+import { GlassToaster } from "@/components/ui/glassyui/glass-toaster";
 
 interface ProvidersProps {
   children: ReactNode;

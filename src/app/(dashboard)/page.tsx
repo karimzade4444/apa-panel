@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 
 import { getUsers } from "@/api/users";
+import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
+import { PublicationChartSkeleton } from "@/components/skeletons/publication-chart-skeleton";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types/user";
 
@@ -60,6 +62,7 @@ function StatCard({
   glow,
   index,
   reduceMotion,
+  loading,
 }: {
   title: string;
   value: string;
@@ -68,6 +71,7 @@ function StatCard({
   glow: string;
   index: number;
   reduceMotion: boolean;
+  loading: boolean;
 }) {
   return (
     <motion.article
@@ -81,9 +85,16 @@ function StatCard({
           <Icon className="size-5" strokeWidth={1.8} />
         </span>
         <div className="min-w-0">
-          <p className="text-2xl font-semibold leading-none tracking-tight text-white">
-            {value}
-          </p>
+          {loading ? (
+            <GlassSkeleton
+              variant="line"
+              className="h-6 w-14 rounded-md"
+            />
+          ) : (
+            <p className="text-2xl font-semibold leading-none tracking-tight text-white">
+              {value}
+            </p>
+          )}
           <p className="mt-1 truncate text-xs text-white/85">{title}</p>
         </div>
       </div>
@@ -266,7 +277,7 @@ export default function DashboardPage() {
   const users = data?.items ?? [];
 
   const statValues = {
-    users: isLoading ? "…" : isError ? "—" : (data?.total ?? 0).toLocaleString("ru-RU"),
+    users: isError ? "—" : (data?.total ?? 0).toLocaleString("ru-RU"),
     news: "—",
     articles: "—",
     requests: "—",
@@ -286,6 +297,7 @@ export default function DashboardPage() {
                 glow={stat.glow}
                 index={index}
                 reduceMotion={shouldReduceMotion}
+                loading={stat.key === "users" && isLoading}
               />
             ))}
           </div>
@@ -303,14 +315,25 @@ export default function DashboardPage() {
                 onClick={() => void refetch()}
                 className="h-auto rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white hover:bg-white/10"
               >
-                {isRefetching ? "Загрузка..." : "Повторить"}
+                {isRefetching ? (
+                  <GlassSkeleton
+                    variant="line"
+                    className="h-3 w-14 bg-white/10"
+                  />
+                ) : (
+                  "Повторить"
+                )}
               </Button>
             </div>
           )}
         </div>
 
         <div className="grid min-h-[220px] gap-3 lg:min-h-0 xl:grid-cols-[1.08fr_0.92fr]">
-          <PublicationChart users={users} />
+          {isLoading ? (
+            <PublicationChartSkeleton />
+          ) : (
+            <PublicationChart users={users} />
+          )}
           <LatestPublication />
         </div>
 

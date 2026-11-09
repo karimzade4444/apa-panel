@@ -16,7 +16,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useGlassToast } from "@/components/glassyui/glass-toaster";
+import { useGlassToast } from "@/components/ui/glassyui/glass-toaster";
 
 import {
   createUser,
@@ -25,6 +25,9 @@ import {
   setUserBlocked,
   updateUser,
 } from "@/api/users";
+import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
+import { UserStatsSkeleton } from "@/components/skeletons/user-stats-skeleton";
+import { UserTableSkeleton } from "@/components/skeletons/user-table-skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -45,14 +48,8 @@ import { UserAvatar } from "@/components/users/user-avatar";
 import { UserDetailsPanel } from "@/components/users/user-details-panel";
 import { UserFormDialog } from "@/components/users/user-form-dialog";
 import { UserStatCard } from "@/components/users/user-stat-card";
-import {
-  emptyUserForm,
-  roleOptions,
-} from "@/types/user-management";
-import type {
-  UserFormValues,
-  UserRole,
-} from "@/types/user-management";
+import { emptyUserForm, roleOptions } from "@/types/user-management";
+import type { UserFormValues, UserRole } from "@/types/user-management";
 import type { CreateUserData, User, UserWriteData } from "@/types/user";
 
 const emptyUsers: User[] = [];
@@ -297,43 +294,41 @@ export default function UsersPage() {
     <>
       <div className="space-y-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-4 lg:space-y-0">
         <div className="space-y-3">
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4"
-          >
-            <UserStatCard
-              label="Всего пользователей"
-              value={
-                data
-                  ? data.total.toLocaleString("ru-RU")
-                  : isLoading
-                    ? "—"
-                    : "0"
-              }
-              icon={UsersRound}
-              tone="bg-sky-300/10 text-sky-200"
-            />
-            <UserStatCard
-              label="Активны в списке"
-              value={isLoading ? "—" : activeCount.toLocaleString("ru-RU")}
-              icon={UserRoundCheck}
-              tone="bg-emerald-300/10 text-emerald-200"
-            />
-            <UserStatCard
-              label="Администраторы в списке"
-              value={isLoading ? "—" : adminCount.toLocaleString("ru-RU")}
-              icon={ShieldCheck}
-              tone="bg-amber-300/10 text-[#f2d99b]"
-            />
-            <UserStatCard
-              label="Заблокированы в списке"
-              value={isLoading ? "—" : blockedCount.toLocaleString("ru-RU")}
-              icon={UserRoundX}
-              tone="bg-rose-300/10 text-rose-200"
-            />
-          </motion.div>
+          {isLoading ? (
+            <UserStatsSkeleton />
+          ) : (
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4"
+            >
+              <UserStatCard
+                label="Всего пользователей"
+                value={data?.total.toLocaleString("ru-RU") ?? "0"}
+                icon={UsersRound}
+                tone="bg-sky-300/10 text-sky-200"
+              />
+              <UserStatCard
+                label="Активны в списке"
+                value={activeCount.toLocaleString("ru-RU")}
+                icon={UserRoundCheck}
+                tone="bg-emerald-300/10 text-emerald-200"
+              />
+              <UserStatCard
+                label="Администраторы в списке"
+                value={adminCount.toLocaleString("ru-RU")}
+                icon={ShieldCheck}
+                tone="bg-amber-300/10 text-[#f2d99b]"
+              />
+              <UserStatCard
+                label="Заблокированы в списке"
+                value={blockedCount.toLocaleString("ru-RU")}
+                icon={UserRoundX}
+                tone="bg-rose-300/10 text-rose-200"
+              />
+            </motion.div>
+          )}
 
           {isError && (
             <div
@@ -351,7 +346,14 @@ export default function UsersPage() {
                 onClick={() => void refetch()}
                 className="border-rose-200/20 bg-white/5 text-white hover:bg-white/10"
               >
-                {isRefetching ? "Загрузка..." : "Повторить"}
+                {isRefetching ? (
+                  <GlassSkeleton
+                    variant="line"
+                    className="h-3 w-14 bg-white/10"
+                  />
+                ) : (
+                  "Повторить"
+                )}
               </Button>
             </div>
           )}
@@ -430,7 +432,10 @@ export default function UsersPage() {
               )}
             </div>
 
-            <div className="scrollbar-none min-h-0 flex-1 overflow-auto">
+            <div
+              aria-busy={isLoading}
+              className="scrollbar-none min-h-0 flex-1 overflow-auto"
+            >
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-xs text-white/45">
@@ -465,15 +470,7 @@ export default function UsersPage() {
                 </thead>
                 <tbody className="divide-y divide-white/[0.07]">
                   {isLoading ? (
-                    Array.from({ length: 5 }, (_, index) => (
-                      <tr key={index}>
-                        {Array.from({ length: 6 }, (_, cell) => (
-                          <td key={cell} className="px-4 py-4">
-                            <span className="block h-4 animate-pulse rounded bg-white/[0.08]" />
-                          </td>
-                        ))}
-                      </tr>
-                    ))
+                    <UserTableSkeleton />
                   ) : filteredUsers.length ? (
                     filteredUsers.map((user) => {
                       const isSelected = selectedUser?.id === user.id;
@@ -577,8 +574,21 @@ export default function UsersPage() {
 
             <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-5 py-3 text-xs text-white/45">
               <span>
-                Показано {filteredUsers.length} из{" "}
-                {data?.total.toLocaleString("ru-RU") ?? "—"} пользователей
+                {isLoading ? (
+                  <span className="inline-flex items-center gap-1">
+                    Показано{" "}
+                    <GlassSkeleton
+                      variant="line"
+                      className="h-3 w-8 rounded-sm"
+                    />{" "}
+                    пользователей
+                  </span>
+                ) : (
+                  <>
+                    Показано {filteredUsers.length} из{" "}
+                    {data?.total.toLocaleString("ru-RU") ?? "—"} пользователей
+                  </>
+                )}
               </span>
               <span>
                 {data && data.total > users.length
