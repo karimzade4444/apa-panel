@@ -3,6 +3,7 @@
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog";
 import type { ComponentProps } from "react";
 
+import { GlassPanel } from "@/components/ui/glassyui";
 import { cn } from "@/lib/utils";
 
 function AlertDialog(props: ComponentProps<typeof AlertDialogPrimitive.Root>) {
@@ -21,12 +22,21 @@ function AlertDialogContent({
         <AlertDialogPrimitive.Popup
           data-slot="alert-dialog-content"
           className={cn(
-            "glass-dialog glass-dialog-motion pointer-events-auto relative w-full max-w-md bg-popover text-popover-foreground outline-none",
-            className,
+            "pointer-events-auto relative w-full max-w-md outline-none",
           )}
           {...props}
         >
-          {children}
+          <GlassPanel
+            variant="card"
+            preset="prominent"
+            elevation="raised"
+            className={cn(
+              "glass-dialog-motion w-full p-6 text-popover-foreground",
+              className,
+            )}
+          >
+            {children}
+          </GlassPanel>
         </AlertDialogPrimitive.Popup>
       </AlertDialogPrimitive.Viewport>
     </AlertDialogPrimitive.Portal>

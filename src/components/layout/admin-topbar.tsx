@@ -169,35 +169,62 @@ export default function AdminTopbar() {
         position="static"
         className="z-50 h-auto min-h-23 max-w-none rounded-2xl"
         brand={
-          <div className="w-full whitespace-normal">
-        <div className="flex w-full items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-primary lg:hidden">
-              <Landmark className="size-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <h1
-                aria-busy={isGreetingLoading}
-                className="text-lg font-semibold leading-tight text-foreground sm:text-2xl"
-              >
-                Добро пожаловать,{" "}
-                {isGreetingLoading ? (
-                  <WelcomeSkeleton />
-                ) : (
-                  <span className="text-primary">
-                    {profileFirstName
-                      ? `${profileFirstName}!`
-                      : "Администратор!"}
-                  </span>
-                )}
-              </h1>
-              <p className="mt-1 truncate text-xs text-muted-foreground sm:text-sm">
-                Панель управления сайтом Академии
-              </p>
+          <div className="min-w-0 flex-1 whitespace-normal">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-gold-light/30 bg-gold-light/10 text-primary lg:hidden">
+                <Landmark className="size-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h1
+                  aria-busy={isGreetingLoading}
+                  className="text-lg font-semibold leading-tight text-foreground sm:text-2xl"
+                >
+                  Добро пожаловать,{" "}
+                  {isGreetingLoading ? (
+                    <WelcomeSkeleton />
+                  ) : (
+                    <span className="text-primary">
+                      {profileFirstName
+                        ? `${profileFirstName}!`
+                        : "Администратор!"}
+                    </span>
+                  )}
+                </h1>
+                <p className="mt-1 truncate text-xs text-muted-foreground sm:text-sm">
+                  Панель управления сайтом Академии
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="ml-auto flex shrink-0 items-center justify-end gap-1.5 sm:gap-3">
+            <nav
+              aria-label="Мобильная навигация"
+              className="mt-4 flex gap-2 overflow-x-auto border-t border-border pt-3 lg:hidden"
+            >
+              {adminNavigation
+                .filter((item) => can(item.permission))
+                .map(({ href, label, icon: Icon }) => {
+                  const isActive = pathname === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
+                        isActive
+                          ? "bg-gold-light/20 text-primary"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      }`}
+                    >
+                      <Icon className="size-4" />
+                      {label}
+                    </Link>
+                  );
+                })}
+            </nav>
+          </div>
+        }
+        actions={
+          <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-3">
             <div className="hidden text-right sm:block">
               <p className="text-xs capitalize text-muted-foreground">{date}</p>
             </div>
@@ -328,32 +355,6 @@ export default function AdminTopbar() {
             >
               <LogOut className="size-4.5" />
             </Button>
-          </div>
-        </div>
-
-        <nav
-          aria-label="Мобильная навигация"
-          className="mt-4 flex gap-2 overflow-x-auto border-t border-border pt-3 lg:hidden"
-        >
-          {adminNavigation.filter((item) => can(item.permission)).map(({ href, label, icon: Icon }) => {
-            const isActive = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={isActive ? "page" : undefined}
-                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs transition ${
-                  isActive
-                    ? "bg-gold-light/20 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                }`}
-              >
-                <Icon className="size-4" />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
           </div>
         }
       />

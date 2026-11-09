@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
-import { Check, LockKeyhole, Mail, X } from "lucide-react";
+import { AlertCircle, Check, LockKeyhole, Mail, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -12,7 +12,7 @@ import { isAxiosError } from "axios";
 import { login } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/forminput";
-import { GlassAlert } from "@/components/ui/glassyui";
+import { GlassPanel } from "@/components/ui/glassyui";
 import { useGlassToast } from "@/components/ui/glassyui/glass-toaster";
 import { saveToken } from "@/lib/cookies";
 import { LoginSkeleton } from "./login-skeleton";
@@ -152,9 +152,15 @@ export default function LoginForm() {
           </div>
 
           {error && (
-            <GlassAlert tone="danger" className="text-sm">
-              {error}
-            </GlassAlert>
+            <GlassPanel
+              role="alert"
+              variant="card"
+              preset="prominent"
+              className="flex items-start gap-2 p-3 text-sm text-destructive"
+            >
+              <AlertCircle className="mt-0.5 size-4 shrink-0" />
+              <span>{error}</span>
+            </GlassPanel>
           )}
 
           <Button

@@ -430,7 +430,11 @@ export default function UsersPage() {
           }
           className="grid min-h-0 grid-cols-1 gap-y-4 transition-[grid-template-columns,column-gap] duration-300 ease-out lg:grid-rows-[minmax(0,1fr)] xl:gap-x-(--user-details-gap) xl:grid-cols-[minmax(0,1fr)_var(--user-details-width)]"
         >
-          <GlassPanel role="region" aria-label="Список пользователей" className="flex min-h-0 min-w-0 flex-col overflow-hidden xl:col-start-1 xl:row-start-1">
+          <GlassPanel
+            role="region"
+            aria-label="Список пользователей"
+            className="users-table-panel flex min-h-0 min-w-0 flex-col overflow-hidden xl:col-start-1 xl:row-start-1"
+          >
             <div className="flex flex-col gap-3 border-b border-border p-4 sm:p-5 xl:flex-row xl:items-center">
               <label className="relative min-w-0 flex-1">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -499,7 +503,7 @@ export default function UsersPage() {
               scrollbars="horizontal"
               className="min-h-0 flex-1"
             >
-              <table className="w-full min-w-190 border-collapse text-left text-sm">
+              <table className="w-full min-w-190 border-separate border-spacing-x-0 border-spacing-y-1.5 px-2 text-left text-sm">
                 <thead>
                   <tr className="border-b border-border text-xs text-muted-foreground">
                     <th scope="col" className="px-5 py-3 font-medium">
@@ -522,20 +526,22 @@ export default function UsersPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody>
                   {isLoading ? (
                     <UserTableSkeleton />
                   ) : filteredUsers.length ? (
                     filteredUsers.map((user) => {
                       const isSelected = selectedUser?.id === user.id;
+                      const rowCellClass = `border-y border-border bg-card/70 transition-colors group-hover:bg-accent ${
+                        isSelected ? "border-primary/50 bg-muted" : ""
+                      }`;
                       return (
                         <tr
                           key={user.id}
-                          className={`transition-colors hover:bg-accent ${
-                            isSelected ? "bg-muted" : ""
-                          }`}
+                          className="group"
+                          data-selected={isSelected || undefined}
                         >
-                          <td className="px-5 py-3.5">
+                          <td className={`${rowCellClass} rounded-l-xl border-l px-5 py-3.5`}>
                             <button
                               type="button"
                               aria-expanded={isSelected}
@@ -557,15 +563,15 @@ export default function UsersPage() {
                               </div>
                             </button>
                           </td>
-                          <td className="max-w-50 truncate px-4 py-3.5 text-xs text-foreground">
+                          <td className={`${rowCellClass} max-w-50 truncate px-4 py-3.5 text-xs text-foreground`}>
                             {user.email || "—"}
                           </td>
-                          <td className="px-4 py-3.5 text-center">
+                          <td className={`${rowCellClass} px-4 py-3.5 text-center`}>
                             <GlassBadge tone="neutral">
                               {formatRole(user.role)}
                             </GlassBadge>
                           </td>
-                          <td className="px-4 py-3.5 text-center">
+                          <td className={`${rowCellClass} px-4 py-3.5 text-center`}>
                             <GlassBadge
                               tone={user.isBlocked ? "red" : "green"}
                               dot
@@ -573,10 +579,10 @@ export default function UsersPage() {
                               {user.isBlocked ? "Заблокирован" : "Активен"}
                             </GlassBadge>
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-xs text-muted-foreground">
+                          <td className={`${rowCellClass} whitespace-nowrap px-4 py-3.5 text-xs text-muted-foreground`}>
                             {formatDate(user.createdAt)}
                           </td>
-                          <td className="px-4 py-3.5 text-right">
+                          <td className={`${rowCellClass} rounded-r-xl border-r px-4 py-3.5 text-right`}>
                             <Button
                               type="button"
                               variant="ghost"

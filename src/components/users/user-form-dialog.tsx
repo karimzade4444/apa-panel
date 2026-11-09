@@ -170,7 +170,7 @@ export function UserFormDialog({
                     setIsDragging(false);
                     acceptPhoto(event.dataTransfer.files[0]);
                   }}
-                  className={`relative flex min-h-[230px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed p-4 text-center transition ${
+                  className={`relative flex min-h-57.5 flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed p-4 text-center transition ${
                     isDragging
                       ? "border-[#f2d18a] bg-[#d4af62]/15"
                       : "border-border bg-muted hover:border-[#d4af62]/55 hover:bg-accent"
@@ -186,7 +186,7 @@ export function UserFormDialog({
                         className="object-cover"
                         sizes="230px"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#061a30]/95 via-[#061a30]/20 to-[#061a30]/10" />
+                      <div className="absolute inset-0 bg-linear-to-t from-[#061a30]/95 via-[#061a30]/20 to-[#061a30]/10" />
                       <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 text-left">
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium text-foreground">
