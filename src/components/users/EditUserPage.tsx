@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   ArrowLeft,
   Camera,
@@ -22,6 +21,7 @@ import {
   GlassAlert,
   GlassAvatar,
   GlassBadge,
+  GlassInput,
   GlassPanel,
   GlassSelect,
   GlassSelectContent,
@@ -39,6 +39,7 @@ import { resolveApiAssetUrl } from "@/lib/api-assets";
 import {
   formatRole,
   getApiErrorMessage,
+  getInitials,
   getRoleLevel,
   getUserName,
   isCurrentUser,
@@ -76,6 +77,7 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
     can(PermissionAction.UpdateUser) &&
     can(PermissionAction.AssignUserRole);
   const {
+    register,
     control,
     handleSubmit,
     reset,
