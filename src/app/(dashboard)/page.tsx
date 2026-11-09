@@ -116,7 +116,7 @@ function StatCard({
       </div>
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute -bottom-6 right-0 h-10 w-2/3 bg-gradient-to-t ${glow} to-transparent opacity-10 blur-xl`}
+        className={`pointer-events-none absolute -bottom-6 right-0 h-10 w-2/3 bg-linear-to-t ${glow} to-transparent opacity-10 blur-xl`}
       />
     </motion.article>
   );
@@ -137,10 +137,10 @@ function PublicationChart({ users }: { users: User[] }) {
     <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
-          <Activity className="size-[18px] text-sky-200" />
+          <Activity className="size-4.5 text-sky-200" />
           Статистика пользователей
         </h2>
-        <span className="rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-[0.68rem] text-white/70">
+        <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-[0.68rem] text-white/70">
           {users.length ? "Загруженный список" : "Нет данных"}
         </span>
       </div>
@@ -154,7 +154,7 @@ function PublicationChart({ users }: { users: User[] }) {
             <span className="mb-2 text-xs font-medium tabular-nums text-white/80">
               {metric.value}
             </span>
-            <div className="relative flex h-[76px] w-full items-end justify-center border-b border-l border-white/20 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-[96px]">
+            <div className="relative flex h-19 w-full items-end justify-center border-b border-l border-white/20 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_24px,rgba(255,255,255,0.08)_25px)] sm:h-24">
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: users.length ? `${Math.max((metric.value / max) * 88, 5)}%` : "4%" }}
@@ -181,7 +181,7 @@ function LatestPublication() {
     <section className="glass-panel flex min-h-0 flex-col overflow-hidden rounded-[18px] p-3.5 sm:p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-white sm:text-base">
-          <Megaphone className="size-[18px] text-sky-200" />
+          <Megaphone className="size-4.5 text-sky-200" />
           Последняя публикация
         </h2>
         <span className="text-xs font-medium text-sky-200">Всего 1</span>
@@ -190,7 +190,7 @@ function LatestPublication() {
       <article className="mt-3 flex min-w-0 flex-1 items-start gap-3 border-b border-white/10 pb-3">
         <div
           aria-hidden="true"
-          className="relative flex h-[56px] w-[76px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-[64px] sm:w-[88px]"
+          className="relative flex h-14 w-19 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-sky-200/30 bg-cover bg-center shadow-[0_4px_18px_rgba(0,0,0,0.25)] sm:h-16 sm:w-22"
           style={{ backgroundImage: "url('/images/login/academy-background.jpg')" }}
         >
           <span className="absolute inset-0 bg-[#0b2b4d]/35" />
@@ -233,7 +233,7 @@ function EmptyPanel({
   return (
     <section className="glass-panel flex min-h-0 items-center gap-3 overflow-hidden rounded-[16px] p-3 sm:p-3.5">
       <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10">
-        <Icon className="size-[18px] text-sky-200" />
+        <Icon className="size-4.5 text-sky-200" />
       </span>
       <div className="min-w-0">
         <h2 className="truncate text-xs font-semibold text-white/90">{title}</h2>
@@ -249,9 +249,9 @@ function AcademyCard() {
       className="glass-panel relative flex min-h-0 flex-col justify-end overflow-hidden rounded-[16px] border-[#e4c477]/30 bg-cover bg-center p-3.5"
       
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#061a30]/70 via-transparent to-white/[0.04]" />
-      <div className="relative z-10 max-w-[290px]">
+      <div className="absolute inset-0 bg-linear-to-r from-[#081e36]/95 via-[#0b2947]/70 to-[#0b2947]/25" />
+      <div className="absolute inset-0 bg-linear-to-t from-[#061a30]/70 via-transparent to-white/4" />
+      <div className="relative z-10 max-w-72.5">
         <p className="text-xs leading-relaxed text-white/90">
           Академия государственного управления при Президенте Республики
           Таджикистан
@@ -328,7 +328,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="grid min-h-[220px] gap-3 lg:min-h-0 xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="grid min-h-55 gap-3 lg:min-h-0 xl:grid-cols-[1.08fr_0.92fr]">
           {isLoading ? (
             <PublicationChartSkeleton />
           ) : (
@@ -337,7 +337,7 @@ export default function DashboardPage() {
           <LatestPublication />
         </div>
 
-        <div className="grid min-h-[100px] gap-3 sm:grid-cols-2 xl:grid-cols-[0.95fr_1.2fr_1fr] lg:min-h-0">
+        <div className="grid min-h-25 gap-3 sm:grid-cols-2 xl:grid-cols-[0.95fr_1.2fr_1fr] lg:min-h-0">
           <EmptyPanel
             title="Обращения граждан"
             subtitle="Модуль обращений пока не подключён к панели."

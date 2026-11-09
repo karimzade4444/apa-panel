@@ -63,14 +63,14 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-[#c9a45c]/12 blur-[120px]"
+        className="pointer-events-none absolute -right-40 -top-40 h-125 w-125 rounded-full bg-[#c9a45c]/12 blur-[120px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-[120px]"
+        className="pointer-events-none absolute -bottom-40 -left-40 h-125 w-125 rounded-full bg-blue-400/10 blur-[120px]"
       />
 
-      <div className="relative z-10 grid w-full max-w-[1280px] items-center gap-10 lg:grid-cols-2">
+      <div className="relative z-10 grid w-full max-w-7xl items-center gap-10 lg:grid-cols-2">
         <motion.div
           style={{ x: leftLayer.x, y: leftLayer.y }}
           className="hidden lg:block"
@@ -80,7 +80,7 @@ export default function LoginScene({ left, children }: LoginSceneProps) {
 
         <motion.div
           style={{ x: card.x, y: card.y }}
-          className="mx-auto w-full max-w-[460px] lg:ml-auto lg:mr-0"
+          className="mx-auto w-full max-w-115 lg:ml-auto lg:mr-0"
         >
           {children}
         </motion.div>

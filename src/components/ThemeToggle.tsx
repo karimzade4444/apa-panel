@@ -61,9 +61,9 @@ export default function ThemeToggle({ className = "" }: Props) {
               className="flex"
             >
               {dark ? (
-                <Sun className="size-[1.125rem]" />
+                <Sun className="size-4.5" />
               ) : (
-                <Moon className="size-[1.125rem]" />
+                <Moon className="size-4.5" />
               )}
             </motion.span>
           </AnimatePresence>

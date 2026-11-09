@@ -366,7 +366,7 @@ export default function UsersPage() {
               "--user-details-gap": selectedUser ? "1rem" : "0px",
             } as CSSProperties
           }
-          className="grid min-h-0 grid-cols-1 gap-y-4 transition-[grid-template-columns,column-gap] duration-300 ease-out lg:grid-rows-[minmax(0,1fr)] xl:gap-x-[var(--user-details-gap)] xl:grid-cols-[minmax(0,1fr)_var(--user-details-width)]"
+          className="grid min-h-0 grid-cols-1 gap-y-4 transition-[grid-template-columns,column-gap] duration-300 ease-out lg:grid-rows-[minmax(0,1fr)] xl:gap-x-(--user-details-gap) xl:grid-cols-[minmax(0,1fr)_var(--user-details-width)]"
         >
           <section className="glass-panel flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl xl:col-start-1 xl:row-start-1">
             <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:p-5 xl:flex-row xl:items-center">
@@ -377,10 +377,10 @@ export default function UsersPage() {
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Поиск по имени, email или ID..."
                   aria-label="Поиск пользователей"
-                  className="h-10 border-white/10 bg-white/[0.05] pl-10 text-sm text-white placeholder:text-white/40 focus-visible:border-[#d4af62]/50 focus-visible:ring-[#d4af62]/20"
+                  className="h-10 border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-white/40 focus-visible:border-[#d4af62]/50 focus-visible:ring-[#d4af62]/20"
                 />
               </label>
-              <div className="grid grid-cols-2 gap-2 xl:w-[290px]">
+              <div className="grid grid-cols-2 gap-2 xl:w-72.5">
                 <label className="relative">
                   <span className="sr-only">Фильтр по роли</span>
                   <select
@@ -436,7 +436,7 @@ export default function UsersPage() {
               aria-busy={isLoading}
               className="scrollbar-none min-h-0 flex-1 overflow-auto"
             >
-              <table className="w-full min-w-[760px] border-collapse text-left text-sm">
+              <table className="w-full min-w-190 border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-white/10 text-xs text-white/45">
                     <th scope="col" className="px-5 py-3 font-medium">
@@ -477,8 +477,8 @@ export default function UsersPage() {
                       return (
                         <tr
                           key={user.id}
-                          className={`transition-colors hover:bg-white/[0.04] ${
-                            isSelected ? "bg-white/[0.05]" : ""
+                          className={`transition-colors hover:bg-white/4 ${
+                            isSelected ? "bg-white/5" : ""
                           }`}
                         >
                           <td className="px-5 py-3.5">
@@ -494,7 +494,7 @@ export default function UsersPage() {
                             >
                               <UserAvatar user={user} />
                               <div className="min-w-0">
-                                <p className="max-w-[190px] truncate font-medium text-white/90">
+                                <p className="max-w-47.5 truncate font-medium text-white/90">
                                   {getUserName(user)}
                                 </p>
                                 <p className="mt-0.5 text-[0.7rem] text-white/40">
@@ -503,11 +503,11 @@ export default function UsersPage() {
                               </div>
                             </button>
                           </td>
-                          <td className="max-w-[200px] truncate px-4 py-3.5 text-xs text-white/65">
+                          <td className="max-w-50 truncate px-4 py-3.5 text-xs text-white/65">
                             {user.email || "—"}
                           </td>
                           <td className="px-4 py-3.5 text-center">
-                            <span className="mx-auto inline-flex max-w-[150px] items-center truncate rounded-full border border-sky-200/15 bg-sky-300/10 px-2.5 py-1 text-[0.7rem] text-sky-100">
+                            <span className="mx-auto inline-flex max-w-37.5 items-center truncate rounded-full border border-sky-200/15 bg-sky-300/10 px-2.5 py-1 text-[0.7rem] text-sky-100">
                               {formatRole(user.role)}
                             </span>
                           </td>
@@ -556,7 +556,7 @@ export default function UsersPage() {
                   ) : (
                     <tr>
                       <td colSpan={6} className="px-5 py-14 text-center">
-                        <div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-white/[0.06] text-white/45">
+                        <div className="mx-auto flex size-11 items-center justify-center rounded-2xl bg-white/6 text-white/45">
                           <UsersRound className="size-5" />
                         </div>
                         <p className="mt-3 text-sm font-medium text-white/80">
