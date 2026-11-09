@@ -20,9 +20,9 @@ export function UserStatsSkeleton() {
           <div className="min-w-0 flex-1 space-y-3">
             <GlassSkeleton variant="line" className="h-3 w-28 rounded-md" />
             <GlassSkeleton variant="line" className="h-7 w-16 rounded-md" />
-          </GlassPanel>
+          </div>
           <GlassSkeleton variant="block" className="size-10 shrink-0 rounded-xl" />
-        </div>
+        </GlassPanel>
       ))}
     </div>
   );

@@ -15,6 +15,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { GlassAvatar } from "@/components/ui/glassyui";
 import {
   Dialog,
   DialogContent,
@@ -214,15 +215,18 @@ export function UserFormDialog({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
-                      <span className="flex size-20 items-center justify-center rounded-full border border-[#d4af62]/35 bg-gradient-to-br from-[#d4af62]/20 to-sky-300/10 text-primary shadow-[0_0_35px_rgba(212,175,98,0.1)]">
-                        {previewName !== "Новый пользователь" ? (
-                          <span className="text-xl font-semibold">
-                            {getProfileInitials(previewName)}
-                          </span>
-                        ) : (
-                          <UserRound className="size-8" />
-                        )}
-                      </span>
+                      <GlassAvatar
+                        name={previewName}
+                        size="xl"
+                        className="size-20 border border-border text-primary"
+                        fallback={
+                          previewName !== "Новый пользователь" ? (
+                            getProfileInitials(previewName)
+                          ) : (
+                            <UserRound className="size-8" />
+                          )
+                        }
+                      />
                       <span className="mt-4 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                         <ImagePlus className="size-4 text-primary" />
                         Добавить фото

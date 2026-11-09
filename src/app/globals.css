@@ -228,15 +228,6 @@
 
 /* ---------- GLASS ---------- */
 @layer components {
-  .glass-panel {
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background-color: var(--card);
-    box-shadow: var(--glass-shadow);
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    backdrop-filter: blur(var(--glass-blur));
-  }
-
   .glass-dialog {
     border: 1px solid var(--border);
     border-radius: 16px;

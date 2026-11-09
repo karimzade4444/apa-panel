@@ -19,7 +19,7 @@ import { getUsers } from "@/api/users";
 import { GlassSkeleton } from "@/components/skeletons/glass-skeleton";
 import { PublicationChartSkeleton } from "@/components/skeletons/publication-chart-skeleton";
 import { Button } from "@/components/ui/button";
-import { GlassBadge, GlassPanel } from "@/components/ui/glassyui";
+import { GlassAlert, GlassBadge, GlassPanel } from "@/components/ui/glassyui";
 import type { User } from "@/types/user";
 
 const publicationTitle = "Главное объявление Академии";
@@ -306,9 +306,9 @@ export default function DashboardPage() {
           </div>
 
           {isError && (
-            <div
-              role="alert"
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-300/20 bg-rose-400/10 px-4 py-2 text-xs text-rose-100"
+            <GlassAlert
+              tone="danger"
+              className="flex flex-wrap items-center justify-between gap-3 text-xs"
             >
               <span>Не удалось получить статистику пользователей.</span>
               <Button
@@ -327,7 +327,7 @@ export default function DashboardPage() {
                   "Повторить"
                 )}
               </Button>
-            </div>
+            </GlassAlert>
           )}
         </div>
 

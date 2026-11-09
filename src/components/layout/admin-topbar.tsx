@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import {
   Bell,
   Landmark,
@@ -29,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   GlassAlert,
+  GlassAvatar,
   GlassHeader,
 } from "@/components/ui/glassyui";
 import {
@@ -240,20 +240,13 @@ export default function AdminTopbar() {
                 onClick={() => setProfileOpen((open) => !open)}
                 className="size-10 rounded-full p-0 hover:bg-accent"
               >
-                {profileAvatar ? (
-                  <Image
-                    src={profileAvatar}
-                    alt=""
-                    width={40}
-                    height={40}
-                    unoptimized
-                    className="size-10 rounded-full border-2 border-[#f2d18a]/80 object-cover shadow-[0_0_20px_rgba(242,209,138,0.3)]"
-                  />
-                ) : (
-                  <span className="flex size-10 aspect-square items-center justify-center rounded-full border-2 border-[#f2d18a]/80 bg-linear-to-br from-[#f2d18a]/45 via-gold-light/30 to-[#173c5d] text-xs font-semibold text-primary shadow-[0_0_20px_rgba(242,209,138,0.3)]">
-                    {profileInitials}
-                  </span>
-                )}
+                <GlassAvatar
+                  src={profileAvatar ?? undefined}
+                  alt={profileFullName}
+                  name={profileFullName || profileUserName || "Администратор"}
+                  fallback={profileInitials}
+                  className="size-10 border-2 border-primary/70 text-xs font-semibold text-primary"
+                />
               </Button>
 
               <AnimatePresence>
@@ -282,20 +275,13 @@ export default function AdminTopbar() {
                     ) : (
                       <>
                     <div className="flex items-center gap-3 border-b border-border pb-3">
-                      {profileAvatar ? (
-                        <Image
-                          src={profileAvatar}
-                          alt=""
-                          width={44}
-                          height={44}
-                          unoptimized
-                          className="size-11 shrink-0 rounded-full border-2 border-[#f2d18a]/70 object-cover"
-                        />
-                      ) : (
-                        <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-[#f2d18a]/70 bg-gold-light/20 text-xs font-semibold text-primary">
-                          {profileInitials}
-                        </span>
-                      )}
+                      <GlassAvatar
+                        src={profileAvatar ?? undefined}
+                        alt={profileFullName}
+                        name={profileFullName || profileUserName || "Администратор"}
+                        fallback={profileInitials}
+                        className="size-11 shrink-0 border-2 border-primary/70 text-xs font-semibold text-primary"
+                      />
                       <div className="min-w-0">
                         <h2 className="truncate text-sm font-semibold text-primary">
                           {profileFullName}

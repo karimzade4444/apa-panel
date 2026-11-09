@@ -12,6 +12,7 @@ import { isAxiosError } from "axios";
 import { login } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import FormInput from "@/components/ui/forminput";
+import { GlassAlert } from "@/components/ui/glassyui";
 import { useGlassToast } from "@/components/ui/glassyui/glass-toaster";
 import { saveToken } from "@/lib/cookies";
 import { LoginSkeleton } from "./login-skeleton";
@@ -151,12 +152,9 @@ export default function LoginForm() {
           </div>
 
           {error && (
-            <div
-              role="alert"
-              className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
-            >
+            <GlassAlert tone="danger" className="text-sm">
               {error}
-            </div>
+            </GlassAlert>
           )}
 
           <Button
