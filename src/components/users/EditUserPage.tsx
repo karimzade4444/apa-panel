@@ -15,7 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState, type DragEvent } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { motion, useReducedMotion } from "motion/react"; 
 import { getUser, updateUser } from "@/api/users";
 import { Button } from "@/components/ui/button";
@@ -83,7 +83,6 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
     control,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<UserFormValues>({
     defaultValues: {
@@ -96,6 +95,8 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
       password: "",
     },
   });
+  const firstName = useWatch({ control, name: "firstName" });
+  const lastName = useWatch({ control, name: "lastName" });
   const {
     data: user,
     isError: isUserError,
@@ -328,8 +329,7 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
   const originalPhotoUrl = resolveApiAssetUrl(user.photoUrl);
   const photoSource =
     photoPreviewUrl ?? (!removePhoto ? originalPhotoUrl || null : null);
-  const firstName = watch("firstName");
-  const lastName = watch("lastName");
+  
   const userName =
     [firstName, lastName].filter(Boolean).join(" ") || getUserName(user);
 
@@ -565,10 +565,13 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
                     placeholder="Оставьте пустым, чтобы не менять пароль"
                     rules={{
                       // Пароль необязателен: проверяем длину, только если он введён
-                      validate: (value) =>
-                        !value ||
-                        value.length >= 8 ||
-                        "Пароль должен содержать не менее 8 символов.",
+                      validate: (value: unknown) => {
+                        if (!value || typeof value !== "string") return true;
+                        return (
+                          value.length >= 8 ||
+                          "Пароль должен содержать не менее 8 символов."
+                        );
+                      },
                     }}
                   />
                   {errors.password && (

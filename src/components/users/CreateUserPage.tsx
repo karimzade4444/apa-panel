@@ -15,7 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState, type DragEvent } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { createUser } from "@/api/users";
 import { Button } from "@/components/ui/button";
@@ -71,15 +71,15 @@ export default function CreateUserPage() {
     control,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<UserFormValues>({
     defaultValues: {
       ...emptyUserForm,
       role: assignableRoles[assignableRoles.length - 1]?.value ?? "Editor",
     },
   });
-  const firstName = watch("firstName");
-  const lastName = watch("lastName");
+  const firstName = useWatch({ control, name: "firstName" });
+    const lastName = useWatch({ control, name: "lastName" });
+  
   const previewName =
     [firstName, lastName].filter(Boolean).join(" ") || "Новый пользователь";
 
