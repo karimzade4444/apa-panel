@@ -335,6 +335,7 @@ export default function AdminTopbar() {
                           </div>
                         </div>
                       ))}
+                      <Button className="w-full mt-2">Сменить пароль</Button>
                     </dl>
                     {profileErrorMessage && (
                       <GlassAlert tone="danger" className="mt-3 text-xs">

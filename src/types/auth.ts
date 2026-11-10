@@ -6,3 +6,8 @@ export interface LoginPayload {
 export interface LoginResponse {
   accessToken?: string;
 }
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
