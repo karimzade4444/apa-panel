@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
@@ -33,6 +33,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import FormInput from "../ui/forminput";
 import { useGlassToast } from "../ui/glassyui/glass-toaster";
+import { useRouter } from "next/router";
+import { removeToken } from "@/lib/cookies";
+
 
 interface ChangePasswordModalProps {
   open: boolean;
@@ -51,6 +54,8 @@ export function ChangePasswordModal({
   const [success, setSuccess] = useState("");
   const [requestError, setRequestError] = useState("");
   const toast = useGlassToast();
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -71,7 +76,6 @@ export function ChangePasswordModal({
 
     onSuccess: () => {
       setConfirmOpen(false);
-      onOpenChange(false);
 
       setFormValues(null);
       setRequestError("");
@@ -80,6 +84,16 @@ export function ChangePasswordModal({
       toast.success("Пароль успешно изменён", {
         description: "Ваш пароль успешно обновлён.",
       });
+      removeToken();
+
+      // Очищаем кеш React Query
+      queryClient.clear();
+
+      // Закрываем модалку
+      onOpenChange(false);
+
+      // Перенаправляем пользователя на страницу входа
+      router.replace("/login");
     },
 
     onError: (error: unknown) => {

@@ -10,5 +10,5 @@ export const saveToken = (token: string) => {
 };
 
 export const removeToken = () => {
-  return Cookies.remove("accessToken");
+  return Cookies.remove("accessToken", { path: "/" });
 };
