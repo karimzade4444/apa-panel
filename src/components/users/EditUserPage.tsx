@@ -325,42 +325,43 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className=" max-w-full space-y-5 pb-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <GlassAvatar
-              alt={userName}
-              name={userName}
-              src={photoSource ?? undefined}
-              size="lg"
-              className="size-12 shrink-0 border border-border"
-              fallback={
-                getInitials(userName) || <UserRound className="size-5" />
-              }
-            />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {userName}
-              </p>
-              <p className="truncate text-xs text-muted-foreground">
-                ID: {user.id}
-              </p>
+      <GlassPanel className="w-full">
+        <div className=" max-w-full space-y-5 pb-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <GlassAvatar
+                alt={userName}
+                name={userName}
+                src={photoSource ?? undefined}
+                size="lg"
+                className="size-12 shrink-0 border border-border"
+                fallback={
+                  getInitials(userName) || <UserRound className="size-5" />
+                }
+              />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {userName}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  ID: {user.id}
+                </p>
+              </div>
+              <GlassBadge tone={user.isBlocked ? "red" : "green"}>
+                {user.isBlocked ? "Заблокирован" : "Активен"}
+              </GlassBadge>
             </div>
-            <GlassBadge tone={user.isBlocked ? "red" : "green"}>
-              {user.isBlocked ? "Заблокирован" : "Активен"}
-            </GlassBadge>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/users")}
+              className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            >
+              <ArrowLeft className="size-4" />
+              Назад к списку
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/users")}
-            className="border-border bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            <ArrowLeft className="size-4" />
-            Назад к списку
-          </Button>
-        </div>
-        <GlassPanel className="w-full">
+
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.8fr)]"
@@ -699,8 +700,8 @@ export default function EditUserPage({ userId }: EditUserPageProps) {
               </GlassPanel>
             </div>
           </form>
-        </GlassPanel>
-      </div>
+        </div>
+      </GlassPanel>
     </div>
   );
 }
