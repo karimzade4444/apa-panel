@@ -5456,3 +5456,28 @@
     }
   }
 }
+
+
+/* Sync GlassyUI colors with shadcn theme */
+
+:root:not(.dark) {
+  color-scheme: light;
+
+  --lg-foreground: #222224;
+  --lg-muted-foreground: #505055;
+  --lg-ink: #222224;
+  --lg-ink-dark: #222224;
+  --lg-ink-light: #222224;
+
+  --lg-border: rgba(0, 0, 0, 0.14);
+  --lg-control-surface: rgba(255, 255, 255, 0.72);
+  --lg-control-surface-hover: rgba(255, 255, 255, 0.95);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --lg-foreground: #f5f5f7;
+  --lg-muted-foreground: #e5e5ea;
+  --lg-ink: #f5f5f7;
+}

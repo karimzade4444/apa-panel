@@ -124,7 +124,7 @@ export default function LoginForm() {
             control={control}
             placeholder="Логин или email"
             autoComplete="username"
-            startIcon={<Mail className="h-4 w-4 text-gold-light/80" />}
+            startIcon={<Mail className="h-4 w-4" color="gold" />}
             endIcon={
               loginValue ? (
                 <Button
@@ -135,7 +135,7 @@ export default function LoginForm() {
                   onClick={() => setValue("login", "", { shouldDirty: true })}
                   className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-3.5 w-3.5"color="white" />
                 </Button>
               ) : null
             }
@@ -148,7 +148,7 @@ export default function LoginForm() {
             type="password"
             placeholder="Пароль"
             autoComplete="current-password"
-            startIcon={<LockKeyhole className="h-4 w-4 text-gold-light/80" />}
+            startIcon={<LockKeyhole className="h-4 w-4" color="gold" />}
             className="h-12 rounded-xl border border-border bg-muted text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
           />
 

@@ -2,6 +2,7 @@
 
 import { Eye, EyeOff } from "lucide-react";
 import { useState, type ComponentProps, type ReactNode } from "react";
+
 import {
   Controller,
   type Control,
@@ -34,7 +35,7 @@ const FormInput = <T extends FieldValues>({
   label,
   hint,
   placeholder,
-  type,
+  type = "text",
   className,
   rules,
   startIcon,
@@ -42,8 +43,32 @@ const FormInput = <T extends FieldValues>({
   ...props
 }: FormInputProps<T>) => {
   const [showPassword, setShowPassword] = useState(false);
+
   const isPassword = type === "password";
-  const hasEndContent = endIcon != null || isPassword;
+
+  const rightContent = (
+    <div className="flex items-center gap-1">
+      {endIcon}
+
+      {isPassword && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+          aria-pressed={showPassword}
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        >
+          {showPassword ? (
+            <EyeOff className="h-4 w-4" />
+          ) : (
+            <Eye className="h-4 w-4" />
+          )}
+        </Button>
+      )}
+    </div>
+  );
 
   return (
     <Controller
@@ -52,54 +77,27 @@ const FormInput = <T extends FieldValues>({
       rules={rules}
       render={({ field, fieldState }) => (
         <div className="min-w-0">
-          <div className="relative">
-            <GlassInput
-              {...props}
-              {...field}
-              id={props.id ?? `form-${name}`}
-              label={label}
-              hint={hint}
-              type={isPassword ? (showPassword ? "text" : "password") : type}
-              value={field.value ?? ""}
-              placeholder={placeholder}
-              aria-invalid={Boolean(fieldState.error)}
-              className={cn(
-                "h-10 w-full border-border bg-muted text-foreground placeholder:text-muted-foreground focus-visible:ring-ring",
-                startIcon && "pl-10",
-                hasEndContent && (endIcon && isPassword ? "pr-20" : "pr-10"),
-                className,
-              )}
-            />
-            {(startIcon || hasEndContent) && (
-              <span
-                className={cn(
-                  "absolute z-10 flex items-center gap-0.5",
-                  label || hint ? "bottom-2 right-2" : "right-2 top-1/2 -translate-y-1/2",
-                  !label && !hint && startIcon && "right-auto left-4",
-                )}
-              >
-                {startIcon}
-                {endIcon}
-                {isPassword && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
-                    aria-pressed={showPassword}
-                    onClick={() => setShowPassword((visible) => !visible)}
-                    className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
-              </span>
+          <GlassInput
+            {...props}
+            {...field}
+            id={props.id ?? `form-${name}`}
+            label={label}
+            hint={hint}
+            type={isPassword ? (showPassword ? "text" : "password") : type}
+            value={field.value ?? ""}
+            placeholder={placeholder}
+            aria-invalid={Boolean(fieldState.error)}
+            startIcon={startIcon}
+            endIcon={endIcon || isPassword ? rightContent : undefined}
+            className={cn(
+              "h-12 w-full rounded-xl",
+              "border border-border",
+              "bg-background text-foreground",
+              "placeholder:text-muted-foreground",
+              "focus-visible:ring-ring",
+              className,
             )}
-          </div>
+          />
 
           {fieldState.error && (
             <p className="mt-1 text-xs text-destructive" role="alert">
