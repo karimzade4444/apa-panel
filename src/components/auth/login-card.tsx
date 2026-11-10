@@ -28,7 +28,7 @@ export default function LoginCard({ children }: LoginCardProps) {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 35, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="group/card relative isolate w-full overflow-hidden p-6 sm:p-7"
+      className="group/card relative isolate w-full overflow-hidden p-6 sm:p-7 rounded-2xl"
     >
       <GlassPanel aria-hidden className="absolute inset-0 z-0" />
       <div
