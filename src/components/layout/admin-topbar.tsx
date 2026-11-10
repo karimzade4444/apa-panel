@@ -53,6 +53,7 @@ import { WelcomeSkeleton } from "@/components/skeletons/welcome-skeleton";
 import { adminNavigation } from "@/config/navigation";
 import { useCan } from "@/hooks/use-can";
 import { ProfileSkeleton } from "./profile-skeleton";
+import { ChangePasswordModal } from "../modals/ChangePasswordModal";
 
 export default function AdminTopbar() {
   const pathname = usePathname();
@@ -61,6 +62,7 @@ export default function AdminTopbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [date, setDate] = useState("");
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const {
     can,
@@ -335,7 +337,15 @@ export default function AdminTopbar() {
                           </div>
                         </div>
                       ))}
-                      <Button className="w-full mt-2">Сменить пароль</Button>
+                      <Button
+                        className="w-full mt-2"
+                        onClick={() => {
+                          setProfileOpen(false);
+                          setChangePasswordOpen(true);
+                        }}
+                      >
+                        Сменить пароль
+                      </Button>
                     </dl>
                     {profileErrorMessage && (
                       <GlassAlert tone="danger" className="mt-3 text-xs">
@@ -360,10 +370,7 @@ export default function AdminTopbar() {
         }
       />
 
-      <AlertDialog
-        open={logoutConfirmOpen}
-        onOpenChange={setLogoutConfirmOpen}
-      >
+      <AlertDialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
         <AlertDialogContent className="p-6 text-muted-foreground">
           <AlertDialogHeader>
             <span className="mb-1 flex size-11 items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-200/20 dark:bg-amber-300/10 dark:text-primary">
@@ -399,6 +406,10 @@ export default function AdminTopbar() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <ChangePasswordModal
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </>
   );
 }

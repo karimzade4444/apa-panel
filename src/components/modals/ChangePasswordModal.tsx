@@ -5,7 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
-import { KeyRound } from "lucide-react";
 
 import { changePassword } from "@/api/auth";
 import {
@@ -32,22 +31,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import FormInput from "../ui/forminput";
+import { useGlassToast } from "../ui/glassyui/glass-toaster";
 
 interface ChangePasswordModalProps {
-  onOpen?: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
-  const [open, setOpen] = useState(false);
+export function ChangePasswordModal({
+  open,
+  onOpenChange,
+}: ChangePasswordModalProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [formValues, setFormValues] = useState<ChangePasswordFormValues | null>(
     null,
   );
+
   const [success, setSuccess] = useState("");
   const [requestError, setRequestError] = useState("");
+  const toast = useGlassToast();
 
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -65,10 +71,15 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
 
     onSuccess: () => {
       setConfirmOpen(false);
-      setSuccess("Пароль успешно изменён.");
-      setRequestError("");
+      onOpenChange(false);
+
       setFormValues(null);
+      setRequestError("");
       reset();
+
+      toast.success("Пароль успешно изменён", {
+        description: "Ваш пароль успешно обновлён.",
+      });
     },
 
     onError: (error: unknown) => {
@@ -81,20 +92,21 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
       setRequestError(
         message || "Не удалось изменить пароль. Проверьте текущий пароль.",
       );
+      toast.error("Не удалось изменить пароль");
     },
   });
 
+  // Пользователь отправил форму
   const handleFormSubmit = (values: ChangePasswordFormValues) => {
     setSuccess("");
     setRequestError("");
     setFormValues(values);
     setConfirmOpen(true);
-    
   };
-  
 
+  // Пользователь подтвердил смену пароля
   const handleConfirm = () => {
-    if (!formValues) return;
+    if (!formValues || mutation.isPending) return;
 
     mutation.mutate({
       currentPassword: formValues.currentPassword,
@@ -102,14 +114,16 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
     });
   };
 
+  // Закрытие основной модалки
   const handleClose = (nextOpen: boolean) => {
     if (mutation.isPending) return;
 
-    setOpen(nextOpen);
+    onOpenChange(nextOpen);
 
     if (!nextOpen) {
       reset();
       setSuccess("");
+      setRequestError("");
       setFormValues(null);
       setConfirmOpen(false);
     }
@@ -117,23 +131,11 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
 
   return (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={() => {
-          onOpen?.();
-          setOpen(true);
-        }}
-      >
-        <KeyRound className="mr-2 size-4" />
-        Сменить пароль
-      </Button>
-
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="max-w-md p-6">
           <DialogHeader>
             <DialogTitle>Смена пароля</DialogTitle>
+
             <DialogDescription>
               Для смены пароля сначала подтвердите текущий пароль.
             </DialogDescription>
@@ -143,62 +145,67 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
             onSubmit={handleSubmit(handleFormSubmit)}
             className="mt-5 space-y-4"
           >
+            {/* Текущий пароль */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Текущий пароль</label>
-              <input
-                {...register("currentPassword")}
+
+              <FormInput
+                control={control}
+                name="currentPassword"
                 type="password"
                 autoComplete="current-password"
                 placeholder="Введите текущий пароль"
                 aria-invalid={!!errors.currentPassword}
                 className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
-              {errors.currentPassword && (
-                <p className="text-xs text-destructive">
-                  {errors.currentPassword.message}
-                </p>
-              )}
+
             </div>
 
+            {/* Новый пароль */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Новый пароль</label>
-              <input
-                {...register("newPassword")}
+
+              <FormInput
+                control={control}
+                name="newPassword"
                 type="password"
                 autoComplete="new-password"
                 placeholder="Введите новый пароль"
                 aria-invalid={!!errors.newPassword}
                 className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
-              {errors.newPassword && (
-                <p className="text-xs text-destructive">
-                  {errors.newPassword.message}
-                </p>
-              )}
+
+           
             </div>
 
+            {/* Подтверждение нового пароля */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Повторите новый пароль
               </label>
-              <input
-                {...register("confirmPassword")}
+
+              <FormInput
+                control={control}
+                name="confirmPassword"
                 type="password"
                 autoComplete="new-password"
                 placeholder="Повторите новый пароль"
                 aria-invalid={!!errors.confirmPassword}
                 className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
-              {errors.confirmPassword && (
-                <p className="text-xs text-destructive">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
             </div>
 
+            {/* Сообщение об успехе */}
             {success && (
-              <p role="status" className="text-sm text-foreground">
+              <p role="status" className="text-sm text-green-600">
                 {success}
+              </p>
+            )}
+
+            {/* Ошибка от сервера */}
+            {requestError && (
+              <p role="alert" className="text-sm text-destructive">
+                {requestError}
               </p>
             )}
 
@@ -206,17 +213,21 @@ export function ChangePasswordModal({ onOpen }: ChangePasswordModalProps) {
               <Button
                 type="button"
                 variant="outline"
+                disabled={mutation.isPending}
                 onClick={() => handleClose(false)}
               >
                 Отмена
               </Button>
 
-              <Button type="submit">Продолжить</Button>
+              <Button type="submit" disabled={mutation.isPending}>
+                Продолжить
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
+      {/* Дополнительное подтверждение */}
       <AlertDialog
         open={confirmOpen}
         onOpenChange={(nextOpen) => {

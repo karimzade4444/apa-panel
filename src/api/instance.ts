@@ -1,17 +1,20 @@
 import { getAccessToken } from "@/lib/cookies";
-import { createApiClient } from "./client";
+import axios from "axios";
 
-export const api = createApiClient();
+
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  withCredentials: true,
+});
 
 api.interceptors.request.use((config) => {
-  const accessToken = getAccessToken();
+  const token = getAccessToken();
 
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;
 });
 
-// Оба имени указывают на один Axios-клиент
 export const instance = api;
