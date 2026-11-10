@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {  motion, useReducedMotion } from "motion/react"; 
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -52,6 +53,7 @@ export default function CreateUserPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
   const {
     can,
     isError: isProfileError,
@@ -155,6 +157,7 @@ export default function CreateUserPage() {
 
   if (isProfileLoading) {
     return (
+      
       <GlassPanel
         aria-label="Проверка прав доступа"
         aria-busy="true"
@@ -191,7 +194,11 @@ export default function CreateUserPage() {
   }
 
   return (
-    // Контейнер на всю высоту <main>. Скролл только ниже 1280px.
+    <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+            >
     <GlassPanel className="flex min-h-0 flex-1 flex-col gap-4 p-4 max-xl:overflow-y-auto">
       {/* Шапка */}
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
@@ -556,5 +563,6 @@ export default function CreateUserPage() {
         </div>
       </form>
     </GlassPanel>
+    </motion.div>
   );
 }
